@@ -31,6 +31,7 @@ void version();
 
 #define ARGEND 		default:\
 				fprintf(stderr,"-%c : invalid option (see -h)\n",argv[j][1]);\
+				return -1;\
 			}\
 		}\
 	}

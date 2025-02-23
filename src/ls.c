@@ -8,6 +8,9 @@ void help(){
 
 VERSION("beta v0.0.1")
 
+int column = 5;
+int column_size = 8;
+
 int main(int argc,char **argv){
 	int all = 0;
 	ARGSTART
@@ -16,6 +19,10 @@ int main(int argc,char **argv){
 		break;
 	case 'a':
 		all = 2;
+		break;
+	case 'l':
+		//everythings on a separate line
+		column = 1;
 		break;
 	ARGEND
 	
@@ -36,6 +43,8 @@ int main(int argc,char **argv){
 	}
 
 	struct dirent *entry;
+
+	int column_index = 0;
 
 	for(;;){
 		entry = readdir(dir);
@@ -60,8 +69,17 @@ int main(int argc,char **argv){
 			}
 		}
 
-		printf("%s\n",name);
+		//too many column new line
+		if(column_index >= column){
+			printf("\n");
+			column_index = 0;
+		}
+
+		printf("%*s ",-column_size,name);
+		column_index++;
 	}
+
+	printf("\n");
 
 	closedir(dir);
 }
