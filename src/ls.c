@@ -1,6 +1,7 @@
 #include "stdopt.h"
 #include <dirent.h>
 #include <errno.h>
+#include <stdlib.h>
 
 void help(){
 	fprintf(stderr,"help !!!\n");
@@ -9,7 +10,18 @@ void help(){
 VERSION("beta v0.0.1")
 
 int column = 5;
-int column_size = 8;
+
+char **list = NULL;
+int entry_count;
+
+void list_add(char *str){
+	if(!list){
+		list = malloc(1);
+	}
+	entry_count++;
+	list = realloc(list,entry_count * sizeof(char *));
+	list[entry_count-1] = str;
+}
 
 int main(int argc,char **argv){
 	int all = 0;
@@ -44,8 +56,6 @@ int main(int argc,char **argv){
 
 	struct dirent *entry;
 
-	int column_index = 0;
-
 	for(;;){
 		entry = readdir(dir);
 		if(!entry){
@@ -69,16 +79,33 @@ int main(int argc,char **argv){
 			}
 		}
 
-		//too many column new line
-		if(column_index >= column){
-			printf("\n");
-			column_index = 0;
+		list_add(name);
+	}
+	
+	//determinates column sizes
+	int *column_size = malloc(column);
+	for(int i=0; i<column; i++){
+		int size = 0;
+		for(int j=i; j<entry_count; j+= column){
+			if(strlen(list[j]) > size){
+				size = strlen(list[j]);
+			}
 		}
-
-		printf("%*s ",-column_size,name);
+		column_size[i] = size;
+	}
+	
+	//print time !!
+	int column_index = 0;
+	for(int i=0; i<entry_count; i++){
+		if(column_index >= column){
+			column_index = 0;
+			printf("\n");
+		} else if (i){
+			printf(" ");
+		}
+		printf("%*s",-column_size[column_index],list[i]);
 		column_index++;
 	}
-
 	printf("\n");
 
 	closedir(dir);
