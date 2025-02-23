@@ -5,8 +5,8 @@ this is the todo list :
 - [x] pwd
 - [ ] basename
 - [ ] dirname
-- [ ] true
-- [ ] flase
+- [x] true
+- [x] flase
 - [ ] yes
 - [ ] sleep
 ## files utils
