@@ -2,7 +2,7 @@
 this is the todo list :
 ## shell utils
 - [ ] echo
-- [ ] pwd
+- [x] pwd
 - [ ] basename
 - [ ] dirname
 - [ ] true

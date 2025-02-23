@@ -1,5 +1,6 @@
 #include "stdopt.h"
 #include <dirent.h>
+#include <errno.h>
 
 void help(){
 	fprintf(stderr,"help !!!\n");
@@ -18,7 +19,21 @@ int main(int argc,char **argv){
 		break;
 	ARGEND
 	
-	DIR *dir = opendir(".");
+	//get the dir to open
+	char *dirpath = ".";
+	for(int i=1;i<argc;i++){
+		if(argv[i][0] != '-'){
+			dirpath = argv[i];
+			break;
+		}
+	}
+	
+	DIR *dir = opendir(dirpath);
+
+	if(dir == NULL){
+		iprintf("%s : %s\n",dirpath,strerror(errno));
+		return -1;
+	}
 
 	struct dirent *entry;
 
