@@ -37,7 +37,9 @@ void version();
 	}
 
 #define VERSION(ver) void version(){\
+	fprintf(stderr,"Tayoky's core utils 0.0.3\n");\
 	fprintf(stderr,"%s\n",ver);\
+	fprintf(stderr,"see https://github.com/tayoky/tutils for last version\n");\
 }
 
 //simple macro used for things like --help or error

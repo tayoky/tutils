@@ -1,34 +1,64 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include "stdopt.h"
+
+VERSION("0.1.9")
+
+int ret = 0;
+
+void help(){
+	iprintf("cat [FILES] ...\n");
+	iprintf("show content of file or stdin\n");
+	iprintf("special file name \"-\" is equivalent to stdin\n");
+	iprintf("if no files is specified stdin is used by default\n");
+}
+
+void cat(const char *path){
+	FILE *file;
+	//"-" is stdin
+	if(!strcmp(path,"-")){
+		file = stdin;
+	} else {
+		file = fopen(path,"r");
+	}
+
+	//handle error
+	if(file == NULL){
+		iprintf("%s : %s\n",path,strerror(errno));
+		ret = -1;
+		return;
+	}
+
+	//TODO : make it run fast ... really fast
+	//i need speed
+	for(;;){
+		int c = fgetc(file);
+		if(feof(file)){
+			break;
+		}
+		putchar(c);
+	}
+
+	//don't close stdin
+	if(file != stdin){
+		fclose(file);
+	}
+}
+
+
+
 
 int main(int argc,char **argv){
-	int ret = 0;
+	//only default options
+	ARGSTART
+	ARGEND
 	for(int i=1; i<argc;i++){
-		FILE *file;
-		if(!strcmp(argv[i],"-")){
-			file = stdin;
-		} else {
-			file = fopen(argv[i],"r");
-		}
-		//handle error
-		if(file == NULL){
-			fprintf(stderr,"%s : %s \n",argv[i],strerror(errno));
-			ret = -1;
-			continue;
-		}
-
-		for(;;){
-			int c = fgetc(file);
-			if(feof(file)){
-				break;
-			}
-			putchar(c);
-		}
-		//don't close stdin
-		if(file != stdin){
-			fclose(file);
-		}
+		cat(argv[i]);
+	}
+	//if nothing stdin by default
+	if(argc - 1 <= 0){
+		cat("-");
 	}
 	return ret;
 }
