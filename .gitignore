@@ -6,3 +6,4 @@ whoami
 echo
 false
 true
+touch
