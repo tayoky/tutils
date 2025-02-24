@@ -7,3 +7,4 @@ echo
 false
 true
 touch
+rm
