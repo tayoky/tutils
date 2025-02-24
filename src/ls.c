@@ -8,7 +8,11 @@
 #define ESC "\033"
 
 void help(){
-	fprintf(stderr,"help !!!\n");
+	iprintf("ls -[laA] [DIR]\n");
+	iprintf("list all files in a directory\n");
+	iprintf("-A\nshow all files except . and ..\n");
+	iprintf("-a\nshow all files (including . and ..\n");
+	iprintf("-l\nshow one file/directory per line\n");
 }
 
 VERSION("beta v0.0.1")

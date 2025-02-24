@@ -12,7 +12,7 @@ VERSION("beta 0.0.1")
 
 void help(){
 	iprintf("touch -[ca]\n");
-	iprintf("-a\ndon't change acces time\n");
+	iprintf("-a\nchange only access time\n");
 	iprintf("-c\ndon't create any file\n");
 }
 
