@@ -4,6 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include <dirent.h>
+#include <stdlib.h>
 #include "stdopt.h"
 
 VERSION("beta 0.0.1")
@@ -42,9 +43,6 @@ int rm(const char *path){
 			return -1;
 		}
 
-		//jump into the directory
-		chdir(path);
-
 		for(;;){
 			struct dirent *ret = readdir(dir);
 			if(!ret)break;
@@ -57,11 +55,13 @@ int rm(const char *path){
 				continue;
 			}
 
+			//find the full name
+			char *full_name = malloc(strlen(ret->d_name) + strlen(path) + 2);
+			sprintf(full_name,"%s/%s",path,ret->d_name);
+
 			//that why it's recursive
-			rm(ret->d_name);
+			rm(full_name);
 		}
-		//jump back
-		chdir(".."); //can't fail
 
 		//delete the directory
 		if(rmdir(path)){
