@@ -8,3 +8,7 @@ false
 true
 touch
 rm
+mkdir
+
+#this is where test tmp files are
+test/tmp/**

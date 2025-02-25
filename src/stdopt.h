@@ -9,6 +9,8 @@
 void help();
 void version();
 
+static char verbose_mode = 0;
+
 #define ARGSTART for(int j=0;j<argc;j++){ \
 	if(argv[j][0] == '-'){ \
 		if(!strcmp(argv[j],"--help")){\
