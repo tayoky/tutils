@@ -9,6 +9,7 @@ true
 touch
 rm
 mkdir
+clear
 
 #this is where test tmp files are
 test/tmp/**
