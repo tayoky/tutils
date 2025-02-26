@@ -15,7 +15,8 @@ mode_t mode = DMODE;
 VERSION("indev 0.0.1")
 
 void help(){
-	iprintf("mkdir -[p] DIRECTORIES\n");
+	iprintf("mkdir -[p] DIRECTORIES -[m] [MODE]\n");
+	iprintf("-p\nmake parent directories if needed and ignore if any directory aready exist\n");
 }
 
 void make_dir(const char *path){
