@@ -13,3 +13,6 @@ clear
 
 #this is where test tmp files are
 test/tmp/**
+
+#config
+config.mk

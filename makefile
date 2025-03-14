@@ -1,12 +1,17 @@
 SRC = $(shell find src -name "*.c" | xargs -L 1 basename)
 
 EXE = ${SRC:.c=}
-SYSROOT = 
+
+include config.mk
+
+CFLAGS += -DHOST="${HOST}"
 
 all :  ${EXE}
 % : src/%.c
 	${CC} ${CFLAGS} -o $@ $^
 clean :
 	rm ${EXE}
-install : all
-	cp ${EXE} ${SYSROOT}/bin
+install : ${EXE}
+	cp ${EXE} ${PREFIX}/bin
+config.mk :
+	$(error "run ./configure before running make")
