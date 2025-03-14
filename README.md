@@ -35,3 +35,4 @@ list of all the current tools
 - mkdir
 - clear
 - unlink
+- test

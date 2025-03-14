@@ -11,9 +11,10 @@ rm
 mkdir
 clear
 unlink
+test
 
 #this is where test tmp files are
-test/tmp/**
+tests/tmp/**
 
 #config
 config.mk
