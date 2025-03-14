@@ -8,10 +8,11 @@
 int create = 1;
 int change_modify = 1;
 
-VERSION("beta 0.0.1")
+VERSION("0.1.1")
 
 void help(){
-	iprintf("touch -[ca]\n");
+	iprintf("touch [-ca]\n");
+	iprintf("create files/update access and modify times\n");
 	iprintf("-a\nchange only access time\n");
 	iprintf("-c\ndon't create any file\n");
 }
@@ -38,9 +39,11 @@ int main(int argc,char **argv){
 	}
 
 	int ret = 0;
+	int count = 0;
 
 	for(int i=1; i<argc; i++){
 		if(argv[i][0] == '-')continue;
+		count++;
 		int fd = open(argv[i],flags,DMODE);
 		if(fd < 0){
 			ret = -1;
@@ -49,6 +52,11 @@ int main(int argc,char **argv){
 		}
 		close(fd);
 	}
+
+	if(!count){
+		iprintf("touch : missing argument\n");
+		return 1;
+	}
 		
-	return 0;
+	return ret;
 }

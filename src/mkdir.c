@@ -12,11 +12,13 @@ int parent = 0;
 int ret = 0;
 mode_t mode = DMODE;
 
-VERSION("indev 0.0.1")
+VERSION("0.1.0")
 
 void help(){
-	iprintf("mkdir -[p] DIRECTORIES -[m] [MODE]\n");
+	iprintf("mkdir [-p] DIRECTORIES [-m] [MODE]\n");
+	iprintf("create direcories\n");
 	iprintf("-p\nmake parent directories if needed and ignore if any directory aready exist\n");
+	iprintf("-m\nprecise mode of created directories\n");
 }
 
 void make_dir(const char *path){
@@ -73,10 +75,18 @@ int main(int argc,char **argv){
 		break;
 	ARGEND
 
+	int dir_count = 0;
+
 	for(int i=1; i<argc; i++){
 		if(argv[i][0] == '-')continue;
 		make_dir(argv[i]);
+		dir_count ++;
+	}
+
+	if(!dir_count){
+		iprintf("mkdir : missing argument\n");
+		return -1;
 	}
 	
-	return 0;
+	return ret;
 }
