@@ -34,3 +34,4 @@ list of all the current tools
 - rm
 - mkdir
 - clear
+- unlink

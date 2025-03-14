@@ -10,6 +10,7 @@ touch
 rm
 mkdir
 clear
+unlink
 
 #this is where test tmp files are
 test/tmp/**
