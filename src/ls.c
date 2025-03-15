@@ -18,6 +18,7 @@ void help(){
 VERSION("v0.1.0")
 
 int column = 5;
+int to_tty = 0;
 
 char **list = NULL;
 
@@ -47,6 +48,18 @@ void color(char *path){
 }
 
 int main(int argc,char **argv){
+	//are we wrinting to a tty ?
+	to_tty = isatty(STDOUT_FILENO);
+	if(to_tty < 0){
+		to_tty = 0;
+	}
+
+	//when writing to a not tty
+	//only one output per line
+	if(!to_tty){
+		column = 1;
+	}
+
 	int all = 0;
 	ARGSTART
 	case 'A':
@@ -127,9 +140,10 @@ int main(int argc,char **argv){
 		} else if (i){
 			printf(" ");
 		}
-		color(list[i]);
+		//color only for tty
+		if(to_tty)color(list[i]);
 		printf("%*s",-column_size[column_index],list[i]);
-		printf(ESC"[0m");
+		if(to_tty)printf(ESC"[0m");
 		column_index++;
 	}
 	printf("\n");
