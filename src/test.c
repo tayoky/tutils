@@ -54,13 +54,36 @@ int main(int argc,char **argv){
 			return !S_ISDIR(st.st_mode);
 		case 'f':
 			return !S_ISREG(st.st_mode);
+		case 'p':
+			return !S_ISFIFO(st.st_mode);
 		case 'h':
 		case 'L':
 			return !S_ISLNK(st.st_mode);
+		case 'u':
+			return !(st.st_mode & S_ISUID);
+		case 'g':
+			return !(st.st_mode & S_ISGID);
+		case 'k':
+			//TODO: sticky bit
+			return 1;
+		case 's':
+			//TODO: not empty check
+			return 1;
+		case 'S':
+			//TODO: socket check
+			return 1;
 		case 'O':
 			return st.st_uid != geteuid();
 		case 'G':
 			return st.st_gid != getegid();
+		case 'r':
+		case 'w':
+		case 'x':
+			//TODO : perm check
+			return 1;
+		case 'N':
+			//modify since last write
+			return st.st_atime > st.st_mtime;
 		default:
 			//invalid option
 			return 1;
