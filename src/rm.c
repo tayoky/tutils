@@ -7,10 +7,11 @@
 #include <stdlib.h>
 #include "stdopt.h"
 
-VERSION("0.1.0")
+VERSION("0.1.1")
 
 int ret = 0;
 int recursive = 0;
+int force = 0;
 
 void help(){
 	iprintf("rm [-rf] FILES DIRECTORIES ...\n");
@@ -23,6 +24,11 @@ int rm(const char *path){
 	//get info on it
 	struct stat info;
 	if(lstat(path,&info)){
+		//when force
+		//not existing is not a problem
+		if(force && errno == ENOENT){
+			return 0;
+		}
 		iprintf("%s : %s\n",path,strerror(errno));
 		ret = -1;
 		return -1;
@@ -87,6 +93,7 @@ int main(int argc,char **argv){
 		recursive = 1;
 		break;
 	case 'f':
+		force = 1;
 		break;
 	ARGEND
 	

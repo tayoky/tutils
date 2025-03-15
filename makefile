@@ -10,7 +10,7 @@ all :  ${EXE}
 % : src/%.c
 	${CC} ${CFLAGS} -o $@ $^
 clean :
-	rm ${EXE}
+	rm -f ${EXE}
 install : ${EXE}
 	cp ${EXE} ${PREFIX}/bin
 config.mk :
