@@ -8,14 +8,14 @@
 #define ESC "\033"
 
 void help(){
-	iprintf("ls -[laA] [DIR]\n");
+	iprintf("ls [-laA] [DIRECTORY]\n");
 	iprintf("list all files in a directory\n");
 	iprintf("-A\nshow all files except . and ..\n");
-	iprintf("-a\nshow all files (including . and ..\n");
+	iprintf("-a\nshow all files (including . and ..)\n");
 	iprintf("-l\nshow one file/directory per line\n");
 }
 
-VERSION("beta v0.0.1")
+VERSION("v0.1.0")
 
 int column = 5;
 

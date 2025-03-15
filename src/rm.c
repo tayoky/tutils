@@ -7,13 +7,14 @@
 #include <stdlib.h>
 #include "stdopt.h"
 
-VERSION("beta 0.0.1")
+VERSION("0.1.0")
 
 int ret = 0;
 int recursive = 0;
 
 void help(){
-	iprintf("rm -[rf] FILES DIRECTORIES ...\n");
+	iprintf("rm [-rf] FILES DIRECTORIES ...\n");
+	iprintf("delete files\n");
 	iprintf("-r\ndelete directory and all content\n");
 	iprintf("-f\nforce delete\n");
 }
@@ -89,9 +90,15 @@ int main(int argc,char **argv){
 		break;
 	ARGEND
 	
+	int count = 0;
 	for(int i=1; i<argc; i++){
 		if(argv[i][0] == '-')continue;
+		count ++;
 		rm(argv[i]);
+	}
+	if(!count){
+		iprintf("rm : missing argument\n");
+		return 1;
 	}
 	
 	return ret ;
