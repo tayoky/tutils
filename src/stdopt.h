@@ -21,19 +21,21 @@ static char verbose_mode = 0;
 			version();\
 			return 0;\
 		}\
-		switch(argv[j][1]){ \
-			case 'h':\
-				help();\
-				return 0;\
-				break;\
-			case 'v':\
-				version();\
-				return 0;\
-				break;
+		for(int k=1;argv[j][k];k++){\
+			switch(argv[j][k]){ \
+				case 'h':\
+					help();\
+					return 0;\
+					break;\
+				case 'v':\
+					version();\
+					return 0;\
+					break;
 
-#define ARGEND 		default:\
-				fprintf(stderr,"-%c : invalid option (see -h)\n",argv[j][1]);\
-				return -1;\
+#define ARGEND 			default:\
+					fprintf(stderr,"-%c : invalid option (see --help)\n",argv[j][k]);\
+					return -1;\
+				}\
 			}\
 		}\
 	}
