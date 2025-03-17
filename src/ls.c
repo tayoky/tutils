@@ -8,11 +8,12 @@
 #define ESC "\033"
 
 void help(){
-	iprintf("ls [-laA] [DIRECTORY]\n");
+	iprintf("ls [-laAU] [DIRECTORY]\n");
 	iprintf("list all files in a directory\n");
 	iprintf("-A\nshow all files except . and ..\n");
 	iprintf("-a\nshow all files (including . and ..)\n");
 	iprintf("-l\nshow one file/directory per line\n");
+	iprintf("-U\nshow in directory order without sorting\n");
 }
 
 VERSION("v0.1.0")
@@ -47,6 +48,10 @@ void color(char *path){
 	}
 }
 
+int alpha_sort(const void *e1,const void *e2){
+	return strcmp(*(const char **)e1,*(const char **)e2);
+}
+
 int main(int argc,char **argv){
 	//are we wrinting to a tty ?
 	to_tty = isatty(STDOUT_FILENO);
@@ -61,6 +66,7 @@ int main(int argc,char **argv){
 	}
 
 	int all = 0;
+	int directory_order = 0;
 	ARGSTART
 	case 'A':
 		all = 1;
@@ -71,6 +77,9 @@ int main(int argc,char **argv){
 	case 'l':
 		//everythings on a separate line
 		column = 1;
+		break;
+	case 'U':
+		directory_order = 1;
 		break;
 	ARGEND
 	
@@ -118,7 +127,14 @@ int main(int argc,char **argv){
 
 		list_add(name);
 	}
-	
+
+#ifndef NO_QSORT
+	//sort time ?
+	if(!directory_order){
+		qsort(list,entry_count,sizeof(char *),alpha_sort);
+	}
+#endif
+
 	//determinates column sizes
 	int *column_size = malloc(column);
 	for(int i=0; i<column; i++){

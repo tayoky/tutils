@@ -28,6 +28,10 @@ for i in "$@"; do
 			CFLAGS="${i#*=}"
 			shift # past argument=value
 			;;
+		--no-qsort)
+			OPT="-DNO_QSORT ${OPT}"
+			shift
+			;;
 		-*|--*)
 			echo "Unknown option $i"
 			exit 1
@@ -62,3 +66,4 @@ echo "HOST=$HOST" >> config.mk
 echo "PREFIX=$PREFIX" >> config.mk
 echo "CC=$CC" >> config.mk
 echo "CFLAGS=$CFLAGS" >> config.mk
+echo "OPT=$OPT" >> config.mk

@@ -4,7 +4,7 @@ EXE = ${SRC:.c=}
 
 include config.mk
 
-CFLAGS += -DHOST="${HOST}"
+CFLAGS += -DHOST="${HOST}" ${OPT}
 
 all :  ${EXE}
 % : src/%.c
