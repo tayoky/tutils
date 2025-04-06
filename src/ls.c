@@ -16,10 +16,11 @@ void help(){
 	iprintf("-U\nshow in directory order without sorting\n");
 }
 
-VERSION("v0.1.0")
+VERSION("v0.1.1")
 
 int column = 5;
 int to_tty = 0;
+int l = 0;
 
 char **list = NULL;
 
@@ -34,17 +35,39 @@ void list_add(char *str){
 	list[entry_count-1] = str;
 }
 
-void color(char *path){
+void info(char *path){
 	struct stat info;
 	if(lstat(path,&info)){
 		iprintf("%s : %s\n",path,strerror(errno));
 		exit(1);
 	}
-	if(info.st_mode & S_IXUSR){
-		printf(ESC"[1;32m");
+
+	//show mode if needed
+	if(l){
+#define MODEC(mode,c) if(info.st_mode & mode )putchar(c); \
+	else putchar('-');
+		MODEC(S_IFDIR,'d');
+		MODEC(S_IRUSR,'r');
+		MODEC(S_IWUSR,'w');
+		MODEC(S_IXUSR,'x');
+		MODEC(S_IRGRP,'r');
+		MODEC(S_IWGRP,'w');
+		MODEC(S_IXGRP,'x');
+		MODEC(S_IROTH,'r');
+		MODEC(S_IWOTH,'w');
+		MODEC(S_IXOTH,'x');
+#undef MODEC
+		putchar(' ');
 	}
-	if(S_ISDIR(info.st_mode)){
-		printf(ESC"[1;34m");
+
+	//color only for tty
+	if(to_tty){
+		if(info.st_mode & S_IXUSR){
+			printf(ESC"[1;32m");
+		}
+		if(S_ISDIR(info.st_mode)){
+			printf(ESC"[1;34m");
+		}
 	}
 }
 
@@ -77,6 +100,7 @@ int main(int argc,char **argv){
 	case 'l':
 		//everythings on a separate line
 		column = 1;
+		l = 1;
 		break;
 	case 'U':
 		directory_order = 1;
@@ -137,6 +161,7 @@ int main(int argc,char **argv){
 
 	//determinates column sizes
 	int *column_size = malloc(column);
+	if(!l)
 	for(int i=0; i<column; i++){
 		int size = 0;
 		for(int j=i; j<entry_count; j+= column){
@@ -146,6 +171,7 @@ int main(int argc,char **argv){
 		}
 		column_size[i] = size;
 	}
+	else memset(column_size,0,column * sizeof(int));
 	
 	//print time !!
 	int column_index = 0;
@@ -156,8 +182,8 @@ int main(int argc,char **argv){
 		} else if (i){
 			printf(" ");
 		}
-		//color only for tty
-		if(to_tty)color(list[i]);
+		//print info first
+		info(list[i]);
 		printf("%*s",-column_size[column_index],list[i]);
 		if(to_tty)printf(ESC"[0m");
 		column_index++;
