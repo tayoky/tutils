@@ -12,6 +12,7 @@ mkdir
 clear
 unlink
 test
+tree
 
 #this is where test tmp files are
 tests/tmp/**
