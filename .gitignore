@@ -13,6 +13,7 @@ clear
 unlink
 test
 tree
+hex
 
 #this is where test tmp files are
 tests/tmp/**

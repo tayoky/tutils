@@ -36,3 +36,5 @@ list of all the current tools
 - clear
 - unlink
 - test
+- tree
+- hex
