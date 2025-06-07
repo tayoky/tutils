@@ -4,44 +4,57 @@
 #include <unistd.h>
 
 //simple test command
+int test(int *argc,char ***r_argv){
+	char **argv = *r_argv;
 
-int main(int argc,char **argv){
-	if(argc < 3){
-		//not engouth args
-		return 1;
-	}
-	if(argc > 4){
-		//too many args
+	if(*argc < 1){
 		return 1;
 	}
 
-	//first check for one operand test
-	if(argc == 3){
-		//check for a one char option
-		if(argv[1][0] != '-' || strlen(argv[1]) != 2){
+	//first check for parenthese
+	if(!strcmp(argv[0],"(")){
+		(*argc)--;
+		(*r_argv)++;
+		if(test(argc,r_argv)){
 			return 1;
 		}
+		//check close parenthese
+		if(*argc < 1 || strcmp(*r_argv[0],")")){
+			return 1;
+		}
+		(*argc)--;
+		(*r_argv)++;
+		return 0;
+	}
+
+	//then check for one operand test
+	if(argv[0][0] == '-' && strlen(argv[0]) == 2){
+		if(*argc < 2){
+			return 1;
+		}
+		(*argc)-=2;
+		(*r_argv)+=2;
 		//first check if it is a string op
-		switch (argv[1][1]){
+		switch (argv[0][1]){
 		case 'z':
 			//empty check
-			return strlen(argv[2])>0;
+			return strlen(argv[1])>0;
 		case 'n':
 			//not empty check
-			return strlen(argv[2])==0;
+			return strlen(argv[1])==0;
 		}
 
 		//it's a file op
 		//stat it
 		struct stat st;
-		int exist = stat(argv[2],&st) >= 0;
+		int exist = stat(argv[1],&st) >= 0;
 
 		//don't exist ? fail
 		if(!exist){
 			return 1;
 		}
 
-		switch(argv[1][1]){
+		switch(argv[0][1]){
 		case 'a':
 		case 'e':
 			//aready check if exist
@@ -91,14 +104,26 @@ int main(int argc,char **argv){
 	}
 
 	//check for three operand
-	if(!strcmp(argv[2],"=")){
-		return strcmp(argv[1],argv[2]) != 0;
+	if(*argc < 3){
+		return 1;
 	}
-	if(!strcmp(argv[2],"!=")){
-		return strcmp(argv[1],argv[2]) == 0;
+	(*argc)-=3;
+	(*r_argv)+=3;
+	if(!strcmp(argv[1],"=")){
+		return strcmp(argv[0],argv[2]) != 0;
+	}
+	if(!strcmp(argv[1],"!=")){
+		return strcmp(argv[0],argv[2]) == 0;
 	}
 
 	//other operand not supported
 	return 1;
+
+}
+
+int main(int argc,char **argv){
+	argc--;
+	argv++;
+	return test(&argc,&argv);
 }
 			
