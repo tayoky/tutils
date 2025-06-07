@@ -1,19 +1,5 @@
 #build
-ls
-cat
-pwd
-whoami
-echo
-false
-true
-touch
-rm
-mkdir
-clear
-unlink
-test
-tree
-hex
+bin
 
 #this is where test tmp files are
 tests/tmp/**
