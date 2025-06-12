@@ -14,8 +14,8 @@ VERSION("0.1.1")
 void help(){
 	iprintf("touch [-ca]\n");
 	iprintf("create files/update access and modify times\n");
-	iprintf("-a\nchange only access time\n");
-	iprintf("-c\ndon't create any file\n");
+	iprintf("-a : change only access time\n");
+	iprintf("-c : don't create any file\n");
 }
 
 #define DMODE S_IRUSR |S_IWUSR |S_IRGRP |S_IWGRP

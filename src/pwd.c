@@ -5,15 +5,12 @@
 
 void help(){
 	iprintf("pwd : -[LP]\n");
-	iprintf("\n");
-	iprintf("-L\n");
-	iprintf("show the $PWD variable\n");
-	iprintf("-P\n");
-	iprintf("show the pysical path without sysmlink\n");
-	iprintf("by default pwd behave like called with -L\n");
+	iprintf("-L : show the $PWD variable\n");
+	iprintf("-P : show the pysical path without sysmlink\n");
+	iprintf("by default, pwd behave like called with -L\n");
 }
 
-VERSION("beta v0.0.2");
+VERSION("v0.1.0");
 
 int phys = 0;
 

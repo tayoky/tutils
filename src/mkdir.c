@@ -17,8 +17,8 @@ VERSION("0.1.0")
 void help(){
 	iprintf("mkdir [-p] DIRECTORIES [-m] [MODE]\n");
 	iprintf("create direcories\n");
-	iprintf("-p\nmake parent directories if needed and ignore if any directory aready exist\n");
-	iprintf("-m\nprecise mode of created directories\n");
+	iprintf("-p : make parent directories if needed and ignore if any directory aready exist\n");
+	iprintf("-m : precise mode of created directories\n");
 }
 
 void make_dir(const char *path){

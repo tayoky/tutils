@@ -16,8 +16,8 @@ int force = 0;
 void help(){
 	iprintf("rm [-rf] FILES DIRECTORIES ...\n");
 	iprintf("delete files\n");
-	iprintf("-r\ndelete directory and all content\n");
-	iprintf("-f\nforce delete\n");
+	iprintf("-r : delete directory and all content\n");
+	iprintf("-f : force delete\n");
 }
 
 int rm(const char *path){

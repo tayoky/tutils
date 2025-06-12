@@ -10,10 +10,10 @@
 void help(){
 	iprintf("ls [-laAU] [DIRECTORY]\n");
 	iprintf("list all files in a directory\n");
-	iprintf("-A\nshow all files except . and ..\n");
-	iprintf("-a\nshow all files (including . and ..)\n");
-	iprintf("-l\nshow one file/directory per line\n");
-	iprintf("-U\nshow in directory order without sorting\n");
+	iprintf("-A : show all files except . and ..\n");
+	iprintf("-a : show all files (including . and ..)\n");
+	iprintf("-l : show one file/directory per line\n");
+	iprintf("-U : show in directory order without sorting\n");
 }
 
 VERSION("v0.1.1")
