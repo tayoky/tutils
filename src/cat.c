@@ -30,24 +30,19 @@ void cat(const char *path){
 		return;
 	}
 
-	//TODO : make it run fast ... really fast
-	//i need speed
-	for(;;){
-		int c = fgetc(file);
-		if(feof(file)){
-			break;
-		}
-		putchar(c);
+
+	char buffer[4096];
+	size_t size;
+	while((size = fread(buffer,1,sizeof(buffer),file))){
+		fwrite(buffer,size,1,stdout);
 	}
+
 
 	//don't close stdin
 	if(file != stdin){
 		fclose(file);
 	}
 }
-
-
-
 
 int main(int argc,char **argv){
 	//only default options
@@ -62,4 +57,3 @@ int main(int argc,char **argv){
 	}
 	return ret;
 }
-
