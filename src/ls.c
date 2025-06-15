@@ -121,7 +121,7 @@ int main(int argc,char **argv){
 
 	if(dir == NULL){
 		iprintf("%s : %s\n",dirpath,strerror(errno));
-		return -1;
+		return 1;
 	}
 
 	struct dirent *entry;

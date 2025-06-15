@@ -47,7 +47,7 @@ int main(int argc,char **argv){
 		count++;
 		int fd = open(argv[i],flags,DMODE);
 		if(fd < 0){
-			ret = -1;
+			ret = 1;
 			iprintf("%s : %s\n",argv[i],strerror(errno));
 			continue;
 		}

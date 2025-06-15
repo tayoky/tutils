@@ -30,13 +30,13 @@ int rm(const char *path){
 			return 0;
 		}
 		iprintf("%s : %s\n",path,strerror(errno));
-		ret = -1;
+		ret = 1;
 		return -1;
 	}
 	if(S_ISDIR(info.st_mode)){
 		if(!recursive){
 			iprintf("%s : %s\n",path,strerror(EISDIR));
-			ret = -1;
+			ret = 1;
 			return -1;
 		}
 
@@ -46,7 +46,7 @@ int rm(const char *path){
 			//weird error
 			//permission issue ?
 			iprintf("%s : %s\n",path,strerror(errno));
-			ret = -1;
+			ret = 1;
 			return -1;
 		}
 
@@ -73,7 +73,7 @@ int rm(const char *path){
 		//delete the directory
 		if(rmdir(path)){
 			iprintf("%s : %s\n",path,strerror(errno));
-			ret = -1;
+			ret = 1;
 			return -1;
 		}
 		return 0;
@@ -81,7 +81,7 @@ int rm(const char *path){
 
 	if(unlink(path)){
 		iprintf("%s : %s\n",path,strerror(errno));
-		ret = -1;
+		ret = 1;
 		return -1;
 	}
 	return 0;

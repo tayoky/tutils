@@ -13,7 +13,7 @@ int show(char *path,int depth){
 	DIR *dir = opendir(path);
 	if(!dir){
 		iprintf("%s : %s\n",path,strerror(errno));
-		ret = -1;
+		ret = 1;
 		return -1;
 	}
 

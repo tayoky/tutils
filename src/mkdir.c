@@ -51,7 +51,7 @@ void make_dir(const char *path){
 				continue;
 			}
 			iprintf("%s : %s\n",parents[i],strerror(errno));
-			ret = -1;
+			ret = 1;
 			return;
 		}
 	}
@@ -61,7 +61,7 @@ void make_dir(const char *path){
 			return;
 		}
 		iprintf("%s : %s\n",path,strerror(errno));
-		ret = -1;
+		ret = 1;
 		return;
 	}
 }
@@ -85,7 +85,7 @@ int main(int argc,char **argv){
 
 	if(!dir_count){
 		iprintf("mkdir : missing argument\n");
-		return -1;
+		return 1;
 	}
 	
 	return ret;

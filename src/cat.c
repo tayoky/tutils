@@ -26,7 +26,7 @@ void cat(const char *path){
 	//handle error
 	if(file == NULL){
 		iprintf("%s : %s\n",path,strerror(errno));
-		ret = -1;
+		ret = 1;
 		return;
 	}
 

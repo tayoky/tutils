@@ -34,7 +34,7 @@ static char verbose_mode = 0;
 
 #define ARGEND 			default:\
 					fprintf(stderr,"-%c : invalid option (see --help)\n",argv[j][k]);\
-					return -1;\
+					return 1;\
 				}\
 			}\
 		}\
