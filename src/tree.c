@@ -6,8 +6,13 @@
 #include <sys/stat.h>
 #include "stdopt.h"
 
+#define FLAG_ALL 0x80
+
+struct opt opts[] = {
+	OPT('a',NULL,FLAG_ALL),
+};
+
 int ret = 0;
-int hidden = 0;
 
 int show(char *path,int depth){
 	DIR *dir = opendir(path);
@@ -25,7 +30,7 @@ int show(char *path,int depth){
 		if((!strcmp(entry->d_name,".")) || (!strcmp(entry->d_name,".."))) continue;
 
 		//ignore hidden entry
-		if(entry->d_name[0] == '.' && !hidden)continue;
+		if(entry->d_name[0] == '.' && !(flags & FLAG_ALL))continue;
 
 		//print identation
 		for(int i=0; i<depth-1; i++){
@@ -66,14 +71,9 @@ void help(){
 	printf("-a : show hidden files and directories\n");
 }
 
-VERSION("v0.1.0")
 
 int main(int argc,char **argv){
-	ARGSTART
-	case 'a':
-		hidden = 1;
-		break;
-	ARGEND
+	parse_arg(argc,argv,opts,arraylen(opts));
 	
 	int count = 0;
 

@@ -7,8 +7,6 @@
 size_t col = 8;
 int color = 1;
 
-VERSION("v1.0.0")
-
 static void print_color(char c){
 	if(c){
 		if(isprint(c)){
@@ -76,8 +74,6 @@ void help(){
 }
 
 int main(int argc,char **argv){
-	ARGSTART
-	ARGEND
 	int ret = 0;
 	size_t count = 0;
 	for(int i=1;i<argc;i++){

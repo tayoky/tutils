@@ -3,7 +3,6 @@
 #include <errno.h>
 #include "stdopt.h"
 
-VERSION("0.1.9")
 
 int ret = 0;
 
@@ -44,10 +43,17 @@ void cat(const char *path){
 	}
 }
 
+struct opt opts[] = {
+	OPT('h',"--help",1),
+};
+
 int main(int argc,char **argv){
-	//only default options
-	ARGSTART
-	ARGEND
+	parse_arg(argc,argv,opts,arraylen(opts));
+	if(flags){
+		help();
+		return 0;
+	}
+
 	for(int i=1; i<argc;i++){
 		cat(argv[i]);
 	}

@@ -6,6 +6,17 @@
 #include <unistd.h>
 
 #define ESC "\033"
+#define FLAG_ALMOST  0x08
+#define FLAG_ALL     0x18
+#define FLAG_NO_SORT 0x20
+#define FLAG_LIST    0x40
+
+struct opt opts[] = {
+	OPT('a',"--all",FLAG_ALL),
+	OPT('A',"--almost-all",FLAG_ALMOST),
+	OPT('U',NULL,FLAG_NO_SORT),
+	OPT('l',"--list",FLAG_LIST),
+};
 
 void help(){
 	printf("ls [-laAU] [DIRECTORY]\n");
@@ -16,11 +27,9 @@ void help(){
 	printf("-U : show in directory order without sorting\n");
 }
 
-VERSION("v0.1.1")
 
 int column = 5;
 int to_tty = 0;
-int l = 0;
 
 char **list = NULL;
 
@@ -43,7 +52,7 @@ void info(char *path){
 	}
 
 	//show mode if needed
-	if(l){
+	if(flags & FLAG_LIST){
 #define MODEC(mode,c) if(info.st_mode & mode )putchar(c); \
 	else putchar('-');
 		MODEC(S_IFDIR,'d');
@@ -76,6 +85,12 @@ int alpha_sort(const void *e1,const void *e2){
 }
 
 int main(int argc,char **argv){
+	parse_arg(argc,argv,opts,arraylen(opts));
+
+	if(flags & FLAG_LIST){
+		column = 1;
+	}
+
 	//are we wrinting to a tty ?
 	to_tty = isatty(STDOUT_FILENO);
 	if(to_tty < 0){
@@ -88,24 +103,6 @@ int main(int argc,char **argv){
 		column = 1;
 	}
 
-	int all = 0;
-	int directory_order = 0;
-	ARGSTART
-	case 'A':
-		all = 1;
-		break;
-	case 'a':
-		all = 2;
-		break;
-	case 'l':
-		//everythings on a separate line
-		column = 1;
-		l = 1;
-		break;
-	case 'U':
-		directory_order = 1;
-		break;
-	ARGEND
 	
 	//get the dir to open
 	char *dirpath = ".";
@@ -135,12 +132,12 @@ int main(int argc,char **argv){
 		char *name = entry->d_name;
 
 		//check for hidden entry
-		if((!all) && name[0] == '.'){
+		if(!(flags & FLAG_ALMOST) && name[0] == '.'){
 			continue;
 		}
 
 		//check for . and ..
-		if(all < 2){
+		if(!(flags & FLAG_ALL)){
 			if(!strcmp(name,".")){
 				continue;
 			}
@@ -154,14 +151,14 @@ int main(int argc,char **argv){
 
 #ifndef NO_QSORT
 	//sort time ?
-	if(!directory_order){
+	if(!(flags & FLAG_NO_SORT)){
 		qsort(list,entry_count,sizeof(char *),alpha_sort);
 	}
 #endif
 
 	//determinates column sizes
 	int *column_size = malloc(column);
-	if(!l)
+	if(!(flags & FLAG_LIST))
 	for(int i=0; i<column; i++){
 		int size = 0;
 		for(int j=i; j<entry_count; j+= column){

@@ -6,37 +6,46 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-int create = 1;
-int change_modify = 1;
+#define FLAG_NO_CREATE 0x08
+#define FLAG_ACCESS    0x10
+#define FLAG_MODIFY    0x20
 
-VERSION("0.1.1")
+struct opt opts[] = {
+	OPT('a',NULL,FLAG_ACCESS),
+	OPT('m',NULL,FLAG_MODIFY),
+	OPT('c',"--no-create",FLAG_NO_CREATE),
+};
 
 void help(){
-	printf("touch [-ca]\n");
+	printf("touch [-ca] FILES...\n");
 	printf("create files/update access and modify times\n");
 	printf("-a : change only access time\n");
+	printf("-m : change only modification time\n");
 	printf("-c : don't create any file\n");
 }
 
-#define DMODE S_IRUSR |S_IWUSR |S_IRGRP |S_IWGRP
+#define DMODE S_IRUSR |S_IWUSR
 
 int main(int argc,char **argv){
-	ARGSTART
-	case 'c':
-		create = 0;
-		break;
-	case 'a':
-		change_modify = 0;
-		break;
-	ARGEND
+	parse_arg(argc,argv,opts,arraylen(opts));
+
+	if(!(flags & (FLAG_ACCESS | FLAG_MODIFY))){
+		flags |= FLAG_ACCESS | FLAG_MODIFY;
+	}
 
 	//make the flags
-	int flags = O_RDWR ;
-	if(change_modify){
-		flags = O_RDONLY;
+	int f;
+	if((flags & FLAG_ACCESS) && (flags & FLAG_MODIFY)){
+		f = O_RDWR;
+	} else {
+		if(flags & FLAG_ACCESS){
+			f = O_RDONLY;
+		} else {
+			f = O_WRONLY;
+		}
 	}
-	if(create){
-		flags |= O_CREAT;
+	if(!(flags & FLAG_NO_CREATE)){
+		f  |= O_CREAT;
 	}
 
 	int ret = 0;

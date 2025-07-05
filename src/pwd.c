@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include "stdopt.h"
 
+#define FLAG_P 0x08
+#define FLAG_L 0x10
+struct opt opts[] = {
+	OPT('P',NULL,FLAG_P),
+	OPT('L',NULL,FLAG_L),
+};
+
 void help(){
 	printf("pwd : -[LP]\n");
 	printf("-L : show the $PWD variable\n");
@@ -10,22 +17,12 @@ void help(){
 	printf("by default, pwd behave like called with -L\n");
 }
 
-VERSION("v0.1.0");
 
-int phys = 0;
 
 int main(int argc,char **argv){
+	parse_arg(argc,argv,opts,arraylen(opts));
 
-	ARGSTART
-	case 'P':
-		phys = 1;
-		break;
-	case 'L':
-		phys = 0;
-		break;
-	ARGEND
-
-	if(phys){
+	if(flags & FLAG_P){
 		char cwd[256];
 		getcwd(cwd,256);
 		printf("%s\n",cwd);

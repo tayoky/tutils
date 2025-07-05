@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <string.h>
 
-VERSION("0.1.0")
+
 
 void help(){
 	printf("unlink FILE\nor unlink OPTION\n");
@@ -20,11 +20,7 @@ int main(int argc,char **argv){
 	if(argc > 2){
 		iprintf("unlink : too much arguments\n");
 		return 1;
-	}
-	
-	//only default arguments
-	ARGSTART
-	ARGEND
+	}	
 
 	if(unlink(argv[1])){
 		iprintf("%s :%s\n",argv[1],strerror(errno));

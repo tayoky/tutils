@@ -6,16 +6,19 @@
 #include <errno.h>
 #include "stdopt.h"
 
-#define DMODE S_IRWXU | S_IRWXG 
-
-int parent = 0;
+#define FLAG_PARENT 0x08
 int ret = 0;
-mode_t mode = DMODE;
+mode_t mode = S_IRWXU;
+char *m = NULL;
 
-VERSION("0.1.0")
+struct opt opts[] = {
+	OPT('p',"--parent",FLAG_PARENT),
+	OPTV('m',"--mode",0,&m),
+};
+
 
 void help(){
-	printf("mkdir [-m MODE] [-p] DIRECTORIES\n");
+	printf("mkdir [-m MODE] [-p] DIRECTORIES ...\n");
 	printf("create direcories\n");
 	printf("-p : make parent directories if needed and ignore if any directory aready exist\n");
 	printf("-m : precise mode of created directories\n");
@@ -29,7 +32,7 @@ void make_dir(const char *path){
 	//if parent activated cut the path
 	char *parents[256];
 	int parents_count = 0;
-	if(parent)
+	if(flags & FLAG_PARENT)
 	for(int i=1; path[i]; i++){
 		if(path[i] == '/'){
 			//check if the next one is not a "/" or a "\0"
@@ -47,7 +50,7 @@ void make_dir(const char *path){
 	for(int i=0; i<parents_count; i++){
 		if(mkdir(parents[i],mode)){
 			//ignore aready exist error when parent mode
-			if(errno == EEXIST && parent){
+			if(errno == EEXIST && (flags & FLAG_PARENT)){
 				continue;
 			}
 			iprintf("%s : %s\n",parents[i],strerror(errno));
@@ -57,7 +60,7 @@ void make_dir(const char *path){
 	}
 
 	if(mkdir(path,mode)){
-		if(errno == EEXIST && parent){
+		if(errno == EEXIST && (flags & FLAG_PARENT)){
 			return;
 		}
 		iprintf("%s : %s\n",path,strerror(errno));
@@ -67,13 +70,10 @@ void make_dir(const char *path){
 }
 
 int main(int argc,char **argv){
-	ARGSTART
-	case 'p':
-		parent = 1;
-		break;
-	case 'm':
-		break;
-	ARGEND
+	parse_arg(argc,argv,opts,arraylen(opts));
+	if(m){
+		//TODO : parse m
+	}
 
 	int dir_count = 0;
 

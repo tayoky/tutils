@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "stdopt.h"
 
-VERSION("1.0.0")
 
 void help(){
 	printf("yes [STRING]\nor yes OPTION\n");
@@ -13,8 +12,6 @@ int main(int argc,char **argv){
 		iprintf("too much argument\n");
 		return 1;
 	}
-	ARGSTART
-	ARGEND
 
 	const char *str = "y";
 	if(argc == 2){

@@ -7,11 +7,15 @@
 #include <stdlib.h>
 #include "stdopt.h"
 
-VERSION("0.1.1")
+#define FLAG_RECURSIVE 0x08
+#define FLAG_FORCE     0x10
+
+struct opt opts[] = {
+	OPT('f',"--force",FLAG_FORCE),
+	OPT('r',"--recursive",FLAG_RECURSIVE),
+};
 
 int ret = 0;
-int recursive = 0;
-int force = 0;
 
 void help(){
 	printf("rm [-rf] FILES DIRECTORIES ...\n");
@@ -26,7 +30,7 @@ int rm(const char *path){
 	if(lstat(path,&info)){
 		//when force
 		//not existing is not a problem
-		if(force && errno == ENOENT){
+		if((flags & FLAG_FORCE) && errno == ENOENT){
 			return 0;
 		}
 		iprintf("%s : %s\n",path,strerror(errno));
@@ -34,13 +38,12 @@ int rm(const char *path){
 		return -1;
 	}
 	if(S_ISDIR(info.st_mode)){
-		if(!recursive){
+		if(!(flags & FLAG_RECURSIVE)){
 			iprintf("%s : %s\n",path,strerror(EISDIR));
 			ret = 1;
 			return -1;
 		}
 
-		//TODO : delete childreen here
 		DIR *dir = opendir(path);
 		if(dir == NULL){
 			//weird error
@@ -88,14 +91,7 @@ int rm(const char *path){
 }
 
 int main(int argc,char **argv){
-	ARGSTART
-	case 'r':
-		recursive = 1;
-		break;
-	case 'f':
-		force = 1;
-		break;
-	ARGEND
+	parse_arg(argc,argv,opts,arraylen(opts));
 	
 	int count = 0;
 	for(int i=1; i<argc; i++){

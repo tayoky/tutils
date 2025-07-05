@@ -1,4 +1,4 @@
-SRC = $(shell find src -name "*.c" | xargs -L 1 basename)
+SRC = $(shell find src -name "*.c" -not -name "stdopt.c" | xargs -L 1 basename)
 
 EXE = $(addprefix bin/,${SRC:.c=})
 
@@ -7,7 +7,7 @@ include config.mk
 CFLAGS += -DHOST="$(HOST)" $(OPT)
 
 all :  $(EXE)
-bin/% : src/%.c
+bin/% : src/%.c src/stdopt.c
 	@mkdir -p bin
 	@echo "[compiling $(shell basename $@)]"
 	@$(CC) $(CFLAGS) -o $@ $^
