@@ -15,10 +15,10 @@ mode_t mode = DMODE;
 VERSION("0.1.0")
 
 void help(){
-	iprintf("mkdir [-p] DIRECTORIES [-m] [MODE]\n");
-	iprintf("create direcories\n");
-	iprintf("-p : make parent directories if needed and ignore if any directory aready exist\n");
-	iprintf("-m : precise mode of created directories\n");
+	printf("mkdir [-m MODE] [-p] DIRECTORIES\n");
+	printf("create direcories\n");
+	printf("-p : make parent directories if needed and ignore if any directory aready exist\n");
+	printf("-m : precise mode of created directories\n");
 }
 
 void make_dir(const char *path){

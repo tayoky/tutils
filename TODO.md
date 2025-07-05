@@ -1,7 +1,7 @@
 # TODO
 this is the todo list :
 ## shell utils
-- [ ] echo
+- [x] echo
 - [x] pwd
 - [ ] basename
 - [ ] dirname
@@ -10,13 +10,13 @@ this is the todo list :
 - [ ] yes
 - [ ] sleep
 ## files utils
-- [ ] touch
+- [x] touch
 - [ ] mkdir
-- [ ] cag
+- [x] cat
 - [ ] ls
 - [ ] cp
 - [ ] mv
-- [ ] rm
+- [x] rm
 - [ ] rmdir
 - [ ] dd
 - [ ] head
@@ -28,8 +28,6 @@ this is the todo list :
 - [ ] chgrp
 - [ ] id
 ## environement management
-- [ ] mount
-- [ ] unmount
 - [ ] env
 - [ ] uname
 - [ ] tty

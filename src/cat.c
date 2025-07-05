@@ -8,10 +8,10 @@ VERSION("0.1.9")
 int ret = 0;
 
 void help(){
-	iprintf("cat [FILES] ...\n");
-	iprintf("show content of file or stdin\n");
-	iprintf("special file name \"-\" is equivalent to stdin\n");
-	iprintf("if no files is specified stdin is used by default\n");
+	printf("cat [FILES] ...\n");
+	printf("concatenate files and print to stdout\n");
+	printf("special file name \"-\" is equivalent to stdin\n");
+	printf("if no files is specified stdin is used by default\n");
 }
 
 void cat(const char *path){

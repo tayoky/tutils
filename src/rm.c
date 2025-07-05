@@ -14,10 +14,10 @@ int recursive = 0;
 int force = 0;
 
 void help(){
-	iprintf("rm [-rf] FILES DIRECTORIES ...\n");
-	iprintf("delete files\n");
-	iprintf("-r : delete directory and all content\n");
-	iprintf("-f : force delete\n");
+	printf("rm [-rf] FILES DIRECTORIES ...\n");
+	printf("delete files\n");
+	printf("-r : delete directory and all content\n");
+	printf("-f : force delete\n");
 }
 
 int rm(const char *path){

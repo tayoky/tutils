@@ -4,10 +4,10 @@
 #include "stdopt.h"
 
 void help(){
-	iprintf("pwd : -[LP]\n");
-	iprintf("-L : show the $PWD variable\n");
-	iprintf("-P : show the pysical path without sysmlink\n");
-	iprintf("by default, pwd behave like called with -L\n");
+	printf("pwd : -[LP]\n");
+	printf("-L : show the $PWD variable\n");
+	printf("-P : show the pysical path without sysmlink\n");
+	printf("by default, pwd behave like called with -L\n");
 }
 
 VERSION("v0.1.0");

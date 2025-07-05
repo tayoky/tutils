@@ -7,8 +7,8 @@
 VERSION("0.1.0")
 
 void help(){
-	iprintf("unlink FILE\nor unlink OPTION\n");
-	iprintf("unlink a symlink/hardlink or remove a file\n");
+	printf("unlink FILE\nor unlink OPTION\n");
+	printf("unlink a symlink/hardlink or remove a file\n");
 }
 
 

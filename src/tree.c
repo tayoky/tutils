@@ -61,9 +61,9 @@ int show(char *path,int depth){
 }
 
 void help(){
-	iprintf("tree [-a] [DIRECTORY]\n");
-	iprintf("recusively show content of directories\n");
-	iprintf("-a : show hidden files and direcotries\n");
+	printf("tree [-a] [DIRECTORY]\n");
+	printf("recusively show content of directories\n");
+	printf("-a : show hidden files and directories\n");
 }
 
 VERSION("v0.1.0")
