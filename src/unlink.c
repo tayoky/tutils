@@ -4,15 +4,12 @@
 #include <errno.h>
 #include <string.h>
 
-
-
-void help(){
-	printf("unlink FILE\nor unlink OPTION\n");
-	printf("unlink a symlink/hardlink or remove a file\n");
-}
+const char *usage = "unlink FILE\nor unlink OPTION\n"
+"unlink a symlink/hardlink or remove a file\n";
 
 
 int main(int argc,char **argv){
+	parse_arg(argc,argv,NULL,0);
 	if(argc < 2){
 		iprintf("unlink : missing argument\n");
 		return 1;

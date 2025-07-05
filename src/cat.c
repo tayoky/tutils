@@ -3,15 +3,15 @@
 #include <errno.h>
 #include "stdopt.h"
 
+struct opt opts[] = {
+};
 
 int ret = 0;
 
-void help(){
-	printf("cat [FILES] ...\n");
-	printf("concatenate files and print to stdout\n");
-	printf("special file name \"-\" is equivalent to stdin\n");
-	printf("if no files is specified stdin is used by default\n");
-}
+const char *usage = "cat [FILES] ...\n"
+"concatenate files and print to stdout\n"
+"special file name \"-\" is equivalent to stdin\n"
+"if no files is specified stdin is used by default\n";
 
 void cat(const char *path){
 	FILE *file;
@@ -43,16 +43,8 @@ void cat(const char *path){
 	}
 }
 
-struct opt opts[] = {
-	OPT('h',"--help",1),
-};
-
 int main(int argc,char **argv){
 	int i = parse_arg(argc,argv,opts,arraylen(opts));
-	if(flags){
-		help();
-		return 0;
-	}
 
 	for(;i<argc;i++){
 		cat(argv[i]);

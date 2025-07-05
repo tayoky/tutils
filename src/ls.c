@@ -12,20 +12,14 @@
 #define FLAG_LIST    0x40
 
 struct opt opts[] = {
-	OPT('a',"--all",FLAG_ALL),
-	OPT('A',"--almost-all",FLAG_ALMOST),
-	OPT('U',NULL,FLAG_NO_SORT),
-	OPT('l',"--list",FLAG_LIST),
+	OPT('a',"--all",FLAG_ALL,"show all files except . and .."),
+	OPT('A',"--almost-all",FLAG_ALMOST,"show all files (including . and ..)"),
+	OPT('U',NULL,FLAG_NO_SORT,"show in directory order without sorting"),
+	OPT('l',"--list",FLAG_LIST,"show one file/directory per line"),
 };
 
-void help(){
-	printf("ls [-laAU] [DIRECTORY]\n");
-	printf("list all files in a directory\n");
-	printf("-A : show all files except . and ..\n");
-	printf("-a : show all files (including . and ..)\n");
-	printf("-l : show one file/directory per line\n");
-	printf("-U : show in directory order without sorting\n");
-}
+const char *usage = "ls [-laAU] [DIRECTORY]\n"
+"list files in a directory\n";
 
 
 int column = 5;

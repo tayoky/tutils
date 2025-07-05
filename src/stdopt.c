@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include "stdopt.h"
 
 int flags;
+extern const char *usage;
 
 void error(const char *fmt,...){
 	va_list args;
@@ -12,6 +14,51 @@ void error(const char *fmt,...){
 	fputc('\n',stderr);
 }
 
+void version(){
+	printf("tutils 0.5.0\n");
+	printf("see https://github.com/tayoky/tutils for last version\n");
+	printf("wrote by tayoky\n");
+}
+
+static void help(struct opt *opts,size_t opts_count){
+	//first find size for left col
+	int size = 0;
+	for(int i=0; i<opts_count; i++){
+		size_t cur = 0;
+		if(opts[i].str){
+			cur += strlen(opts[i].str) + 1;
+		}
+		if(opts[i].c){
+			cur += 2;
+		}
+		if(size < cur)size = cur;
+	}
+
+	printf("usage : %s",usage);
+	for(int i=0; i<opts_count; i++){
+		size_t cur = 0;
+		if(opts[i].str){
+			cur += strlen(opts[i].str) + 1;
+		}
+		if(opts[i].c){
+			cur += 2;
+		}
+		if(opts[i].c){
+			printf("-%c ",opts[i].c);
+		}
+		if(opts[i].str){
+			printf("%s ",opts[i].str);
+		}
+
+		//align
+		while(cur < size){
+			putchar(' ');
+			cur++;
+		}
+		printf(": %s\n",opts[i].desc);
+	}
+}
+
 int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 	flags = 0;
 	int i;
@@ -19,6 +66,15 @@ int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 		if(argv[i][0] != '-')break;
 		if(argv[i][1] == '-'){
 			//it's a long option
+			//special case for --help and --version
+			if(!strcmp("--help",argv[i])){
+				help(opt,opt_count);
+				exit(0);
+			}
+			if(!strcmp("--version",argv[i])){
+				version();
+				exit(0);
+			}
 			for(int j=0; j<opt_count; j++){
 				if(opt[j].str && !strcmp(argv[i],opt[j].str)){
 					flags |= opt[j].flags;

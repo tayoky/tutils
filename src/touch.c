@@ -11,18 +11,13 @@
 #define FLAG_MODIFY    0x20
 
 struct opt opts[] = {
-	OPT('a',NULL,FLAG_ACCESS),
-	OPT('m',NULL,FLAG_MODIFY),
-	OPT('c',"--no-create",FLAG_NO_CREATE),
+	OPT('a',NULL,FLAG_ACCESS,"only change acces time"),
+	OPT('m',NULL,FLAG_MODIFY,"only change modify time"),
+	OPT('c',"--no-create",FLAG_NO_CREATE,"don't create any file"),
 };
 
-void help(){
-	printf("touch [-ca] FILES...\n");
-	printf("create files/update access and modify times\n");
-	printf("-a : change only access time\n");
-	printf("-m : change only modification time\n");
-	printf("-c : don't create any file\n");
-}
+const char *usage = "touch [-cam] FILES...\n"
+"create files/update access and modification times\n";
 
 #define DMODE S_IRUSR |S_IWUSR
 

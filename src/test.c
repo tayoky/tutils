@@ -3,6 +3,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+const char *usage = "test [ARG1] OPTION [ARG2]\n"
+      "test a condition\n";
+
 //simple test command
 int test(int *argc,char ***r_argv){
 	char **argv = *r_argv;

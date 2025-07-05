@@ -11,18 +11,14 @@
 #define FLAG_FORCE     0x10
 
 struct opt opts[] = {
-	OPT('f',"--force",FLAG_FORCE),
-	OPT('r',"--recursive",FLAG_RECURSIVE),
+	OPT('f',"--force",FLAG_FORCE,"force delete"),
+	OPT('r',"--recursive",FLAG_RECURSIVE,"delete directories and their content"),
 };
 
 int ret = 0;
 
-void help(){
-	printf("rm [-rf] FILES DIRECTORIES ...\n");
-	printf("delete files\n");
-	printf("-r : delete directory and all content\n");
-	printf("-f : force delete\n");
-}
+const char *usage = "rm [-rf] FILES DIRECTORIES ...\n"
+"delete files\n";
 
 int rm(const char *path){
 	//get info on it

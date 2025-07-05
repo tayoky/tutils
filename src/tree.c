@@ -9,8 +9,11 @@
 #define FLAG_ALL 0x80
 
 struct opt opts[] = {
-	OPT('a',NULL,FLAG_ALL),
+	OPT('a',NULL,FLAG_ALL,"show hidden files and directories"),
 };
+
+const char *usage = "tree [-a] [DIRECTORY]\n"
+"recursively show content of directories\n";
 
 int ret = 0;
 
@@ -64,13 +67,6 @@ int show(char *path,int depth){
 
 	return 0;
 }
-
-void help(){
-	printf("tree [-a] [DIRECTORY]\n");
-	printf("recusively show content of directories\n");
-	printf("-a : show hidden files and directories\n");
-}
-
 
 int main(int argc,char **argv){
 	parse_arg(argc,argv,opts,arraylen(opts));

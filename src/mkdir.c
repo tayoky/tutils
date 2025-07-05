@@ -12,17 +12,13 @@ mode_t mode = S_IRWXU;
 char *m = NULL;
 
 struct opt opts[] = {
-	OPT('p',"--parent",FLAG_PARENT),
-	OPTV('m',"--mode",0,&m),
+	OPT('p',"--parent",FLAG_PARENT,"make parent directories if needed and ignore if any directory aready exist"),
+	OPTV('m',"--mode",0,&m,"change mode of the news directories"),
 };
 
 
-void help(){
-	printf("mkdir [-m MODE] [-p] DIRECTORIES ...\n");
-	printf("create direcories\n");
-	printf("-p : make parent directories if needed and ignore if any directory aready exist\n");
-	printf("-m : precise mode of created directories\n");
-}
+const char *usage = "mkdir [-m MODE] [-p] DIRECTORIES ...\n"
+"create direcories\n";
 
 void make_dir(const char *path){
 	//simple check to avoid segfault

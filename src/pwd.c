@@ -6,16 +6,14 @@
 #define FLAG_P 0x08
 #define FLAG_L 0x10
 struct opt opts[] = {
-	OPT('P',NULL,FLAG_P),
-	OPT('L',NULL,FLAG_L),
+	OPT('P',NULL,FLAG_P,"show the $PWD variable"),
+	OPT('L',NULL,FLAG_L,"show the pysical path without sysmlink"),
 };
 
-void help(){
-	printf("pwd : -[LP]\n");
-	printf("-L : show the $PWD variable\n");
-	printf("-P : show the pysical path without sysmlink\n");
-	printf("by default, pwd behave like called with -L\n");
-}
+const char *usage = "pwd [-L]\n"
+"or pwd -P\n"
+"print the working directory\n"
+"by default pwd behave like called with -L\n";
 
 
 

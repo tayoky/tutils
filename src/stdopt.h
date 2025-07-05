@@ -19,14 +19,15 @@ struct opt {
 	char *str;
 	int flags;
 	char **value;
+	char *desc;
 };
 
 extern int flags;
 
 int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count);
 
-#define OPT(pc,pstr,pflag) {.c = pc,.str = pstr,.flags = pflag}
-#define OPTV(pc,pstr,pflag,val) {.c = pc,.str = pstr,.flags = pflag,.value = val}
+#define OPT(pc,pstr,pflag,d) {.c = pc,.str = pstr,.flags = pflag,.desc = d}
+#define OPTV(pc,pstr,pflag,val,d) {.c = pc,.str = pstr,.flags = pflag,.value = val,.desc = d}
 
 
 #endif

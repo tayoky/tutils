@@ -4,6 +4,13 @@
 
 #define ESC "\033"
 
+struct opt opts[] = {
+};
+
+const char *usage = "hex FILES\n"
+"do an hexadecimal dump of files\n";
+
+
 size_t col = 8;
 int color = 1;
 
@@ -68,12 +75,8 @@ static int hex_dump(char *path){
 	return 0;
 }
 
-void help(){
-	iprintf("hex FILES\n");
-	iprintf("do an hexadecimal dump of files\n");
-}
-
 int main(int argc,char **argv){
+	parse_arg(argc,argv,opts,arraylen(opts));
 	int ret = 0;
 	size_t count = 0;
 	for(int i=1;i<argc;i++){
