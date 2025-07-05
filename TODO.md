@@ -11,7 +11,7 @@ this is the todo list :
 - [ ] sleep
 ## files utils
 - [x] touch
-- [ ] mkdir
+- [x] mkdir
 - [x] cat
 - [ ] ls
 - [ ] cp
@@ -24,10 +24,9 @@ this is the todo list :
 ## user/perm management
 - [ ] whoami
 - [ ] chmod
-- [ ] chown
+- [x] chown
 - [ ] chgrp
 - [ ] id
 ## environement management
 - [ ] env
-- [ ] uname
 - [ ] tty
