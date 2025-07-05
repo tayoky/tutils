@@ -48,17 +48,17 @@ struct opt opts[] = {
 };
 
 int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
+	int i = parse_arg(argc,argv,opts,arraylen(opts));
 	if(flags){
 		help();
 		return 0;
 	}
 
-	for(int i=1; i<argc;i++){
+	for(;i<argc;i++){
 		cat(argv[i]);
 	}
 	//if nothing stdin by default
-	if(argc - 1 <= 0){
+	if(argc - i <= 0){
 		cat("-");
 	}
 	return ret;

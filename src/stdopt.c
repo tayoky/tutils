@@ -12,9 +12,10 @@ void error(const char *fmt,...){
 	fputc('\n',stderr);
 }
 
-void parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
+int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 	flags = 0;
-	for(int i=1; i<argc;i++){
+	int i;
+	for(i=1; i<argc;i++){
 		if(argv[i][0] != '-')break;
 		if(argv[i][1] == '-'){
 			//it's a long option
@@ -51,4 +52,6 @@ finish_short:
 finish:
 		continue;
 	}
+
+	return i;
 }

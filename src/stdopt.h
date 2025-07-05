@@ -23,7 +23,7 @@ struct opt {
 
 extern int flags;
 
-void parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count);
+int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count);
 
 #define OPT(pc,pstr,pflag) {.c = pc,.str = pstr,.flags = pflag}
 #define OPTV(pc,pstr,pflag,val) {.c = pc,.str = pstr,.flags = pflag,.value = val}

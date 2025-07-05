@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-builtin-rules
+
 SRC = $(shell find src -name "*.c" -not -name "stdopt.c" | xargs -L 1 basename)
 
 EXE = $(addprefix bin/,${SRC:.c=})
@@ -10,7 +12,7 @@ all :  $(EXE)
 bin/% : build/%.o build/stdopt.o
 	@mkdir -p bin
 	@echo "[linking $(shell basename $@)]"
-	@$(CC) -o $@ $^ $(LDFLAGS)
+	@$(CC) -o $@ $^
 
 build/%.o : src/%.c
 	@echo "[compiling $^]"
@@ -18,7 +20,7 @@ build/%.o : src/%.c
 	@$(CC) $(CFLAGS) -o $@ -c $^
 
 clean :
-	rm -f bin build
+	rm -fr bin build
 
 install : $(EXE)
 	@mkdir -p $(PREFIX)/bin
@@ -27,4 +29,5 @@ install : $(EXE)
 config.mk :
 	$(error "run ./configure before running make")
 
-.PHONY : all install clean bin/%
+.PHONY : all clean install bin/%
+.PRECIOUS : build/%.o
