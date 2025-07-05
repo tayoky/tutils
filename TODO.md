@@ -7,7 +7,7 @@ this is the todo list :
 - [ ] dirname
 - [x] true
 - [x] flase
-- [ ] yes
+- [x] yes
 - [ ] sleep
 ## files utils
 - [x] touch

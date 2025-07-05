@@ -27,7 +27,7 @@ static char verbose_mode = 0;
 					help();\
 					return 0;\
 					break;\
-				case 'v':\
+				case 'V':\
 					version();\
 					return 0;\
 					break;
