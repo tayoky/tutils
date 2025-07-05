@@ -7,14 +7,24 @@ include config.mk
 CFLAGS += -DHOST="$(HOST)" $(OPT)
 
 all :  $(EXE)
-bin/% : src/%.c src/stdopt.c
+bin/% : build/%.o build/stdopt.o
 	@mkdir -p bin
-	@echo "[compiling $(shell basename $@)]"
-	@$(CC) $(CFLAGS) -o $@ $^
+	@echo "[linking $(shell basename $@)]"
+	@$(CC) -o $@ $^ $(LDFLAGS)
+
+build/%.o : src/%.c
+	@echo "[compiling $^]"
+	@mkdir -p $(shell dirname $@)
+	@$(CC) $(CFLAGS) -o $@ -c $^
+
 clean :
-	rm -f $(EXE)
+	rm -f bin build
+
 install : $(EXE)
 	@mkdir -p $(PREFIX)/bin
 	cp $(EXE) $(PREFIX)/bin
+
 config.mk :
 	$(error "run ./configure before running make")
+
+.PHONY : all install clean bin/%

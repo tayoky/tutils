@@ -1,5 +1,6 @@
 #build
 bin
+build
 
 #this is where test tmp files are
 tests/tmp/**
