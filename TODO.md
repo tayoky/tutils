@@ -8,7 +8,7 @@ this is the todo list :
 - [x] true
 - [x] flase
 - [x] yes
-- [ ] sleep
+- [x] sleep
 ## files utils
 - [x] touch
 - [x] mkdir
