@@ -29,7 +29,7 @@ static void help(struct opt *opts,size_t opts_count){
 			cur += strlen(opts[i].str) + 1;
 		}
 		if(opts[i].c){
-			cur += 2;
+			cur += 3;
 		}
 		if(size < cur)size = cur;
 	}
@@ -41,7 +41,7 @@ static void help(struct opt *opts,size_t opts_count){
 			cur += strlen(opts[i].str) + 1;
 		}
 		if(opts[i].c){
-			cur += 2;
+			cur += 3;
 		}
 		if(opts[i].c){
 			printf("-%c ",opts[i].c);

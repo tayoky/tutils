@@ -23,6 +23,7 @@ this is the todo list :
 - [ ] truncate
 - [x] tree
 - [x] hex
+- [x] stat
 ## user/perm management
 - [ ] whoami
 - [ ] chmod
