@@ -13,14 +13,16 @@ this is the todo list :
 - [x] touch
 - [x] mkdir
 - [x] cat
-- [ ] ls
+- [x] ls
 - [ ] cp
 - [ ] mv
 - [x] rm
 - [ ] rmdir
 - [ ] dd
-- [ ] head
+- [x] head
 - [ ] truncate
+- [x] tree
+- [x] hex
 ## user/perm management
 - [ ] whoami
 - [ ] chmod

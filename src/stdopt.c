@@ -81,6 +81,7 @@ int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 					if(opt[j].value){
 						if(i == argc-1){
 							error("expected argument after '%s'",argv[i]);
+							exit(1);
 						}
 						i++;
 						*opt[j].value = argv[i];
@@ -90,20 +91,33 @@ int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 
 			}
 			error("unknow option '%s' (see --help)",argv[i]);
+			exit(1);
 		} else {
 			//it's a short options
+			int skip_next = 0;
 			for(int l=1; argv[i][l]; l++){
 				for(int j=0; j<opt_count; j++){
 					if(opt[j].c == argv[i][l]){
 						flags |= opt[j].flags;
-						goto finish_short;
+						if(opt[j].value){
+							if(i == argc-1){
+								error("expected argument after '%c'",argv[i][l]);
+								exit(1);
+							}
+							*opt[j].value = argv[i+1];
+							skip_next = 1;
+						}
+					
+	goto finish_short;
 					}
 
 				}
 				error("unknow option '-%c' (see --help)",argv[i][l]);
+				exit(1);
 finish_short:
 				continue;
 			}
+			if(skip_next)i++;
 		}
 finish:
 		continue;
