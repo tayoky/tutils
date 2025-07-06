@@ -3,8 +3,8 @@ this is the todo list :
 ## shell utils
 - [x] echo
 - [x] pwd
-- [ ] basename
-- [ ] dirname
+- [x] basename
+- [x] dirname
 - [x] true
 - [x] flase
 - [x] yes
