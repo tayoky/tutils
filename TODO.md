@@ -26,10 +26,11 @@ this is the todo list :
 - [x] stat
 ## user/perm management
 - [ ] whoami
-- [ ] chmod
-- [x] chown
+- [x] chmod (missing options)
+- [x] chown (missing options)
 - [ ] chgrp
 - [ ] id
+- [ ] groups
 ## environement management
 - [ ] env
 - [ ] tty
