@@ -7,13 +7,13 @@
 
 #define ESC "\033"
 #define FLAG_ALMOST  0x08
-#define FLAG_ALL     0x18
+#define FLAG_ALL     0x10
 #define FLAG_NO_SORT 0x20
 #define FLAG_LIST    0x40
 
 struct opt opts[] = {
-	OPT('a',"--all",FLAG_ALL,"show all files except . and .."),
-	OPT('A',"--almost-all",FLAG_ALMOST,"show all files (including . and ..)"),
+	OPT('a',"--all",FLAG_ALL | FLAG_ALMOST,"show all files (including . and ..)"),
+	OPT('A',"--almost-all",FLAG_ALMOST,"show all files except . and .."),
 	OPT('U',NULL,FLAG_NO_SORT,"show in directory order without sorting"),
 	OPT('l',"--list",FLAG_LIST,"show one file/directory per line"),
 };
