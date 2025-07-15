@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 #include <ctype.h>
 #include "stdopt.h"
 
@@ -8,16 +9,17 @@
 #define FLAG_ENDS   0x10
 #define FLAG_NUMBER 0x20
 #define FLAG_NOPRNT 0x40
+#define FLAG_BYTE   0x80
 
 struct opt opts[] = {
-	OPT('A',"--show-all",FLAG_NOPRNT | FLAG_ENDS | FLAG_TABS,"equivalent to -vET"),
-	OPT('e',NULL,FLAG_NOPRNT | FLAG_ENDS,"equivalent to -vE"),
-	OPT('E',"--show-ends",FLAG_ENDS,"display $ at end of each line"),
-	OPT('n',"--number",FLAG_NUMBER,"number each line"),
-	OPT('t',NULL,FLAG_NOPRNT | FLAG_TABS,"equivalent to -vT"),
-	OPT('T',"--show-tabs",FLAG_TABS,"display tabs characters as ^I"),
-	OPT('u',NULL,0,"ignored (just kept here for posix)"),
-	OPT('v',"--show-noprinting",FLAG_NOPRNT,"display non printable characters with ^ notation (except for NL and TAB)"),
+	OPT('A',"--show-all",FLAG_NOPRNT | FLAG_ENDS | FLAG_TABS | FLAG_BYTE,"equivalent to -vET"),
+	OPT('e',NULL,FLAG_NOPRNT | FLAG_ENDS | FLAG_BYTE,"equivalent to -vE"),
+	OPT('E',"--show-ends",FLAG_ENDS | FLAG_BYTE,"display $ at end of each line"),
+	OPT('n',"--number",FLAG_NUMBER | FLAG_BYTE,"number each line"),
+	OPT('t',NULL,FLAG_NOPRNT | FLAG_TABS | FLAG_BYTE,"equivalent to -vT"),
+	OPT('T',"--show-tabs",FLAG_TABS | FLAG_BYTE,"display tabs characters as ^I"),
+	OPT('u',NULL,FLAG_BYTE,"one byte at time (slow)"),
+	OPT('v',"--show-noprinting",FLAG_NOPRNT | FLAG_BYTE,"display non printable characters with ^ notation (except for NL and TAB)"),
 };
 
 int ret;
@@ -43,6 +45,7 @@ void cat(const char *path){
 		return;
 	}
 
+	if(flags & FLAG_BYTE){
 	int c;
 	int prev = EOF;
 	int line = 0;
@@ -64,6 +67,13 @@ void cat(const char *path){
 			putchar(c);
 		}
 		prev = c;
+	}
+	} else {
+		char buffer[4096];
+		size_t size;
+		while((size = read(fileno(file),buffer,sizeof(buffer)))){
+			write(STDOUT_FILENO,buffer,size);
+		}
 	}
 
 
