@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <pwd.h>
 
 #define ESC "\033"
 #define FLAG_ALMOST  0x08
@@ -47,9 +48,15 @@ void info(char *path){
 
 	//show mode if needed
 	if(flags & FLAG_LIST){
+		if(S_ISLNK(info.st_mode)){
+			putchar('l');
+		} else if(S_ISDIR(info.st_mode)){
+			putchar('d');
+		} else {
+			putchar('-');
+		}
 #define MODEC(mode,c) if(info.st_mode & mode )putchar(c); \
 	else putchar('-');
-		MODEC(S_IFDIR,'d');
 		MODEC(S_IRUSR,'r');
 		MODEC(S_IWUSR,'w');
 		MODEC(S_IXUSR,'x');
@@ -61,15 +68,30 @@ void info(char *path){
 		MODEC(S_IXOTH,'x');
 #undef MODEC
 		putchar(' ');
-	}
 
+		//owner name
+		struct passwd *pwd = getpwuid(info.st_uid);
+		if(pwd){
+			printf("%s ",pwd->pw_name);
+		} else {
+#ifdef __stanix__
+			printf("%ld ",info.st_uid);
+#else
+			printf("%d ",info.st_uid);
+#endif
+		}
+	
+		printf("%4ld ",info.st_size);
+	}
+	
 	//color only for tty
 	if(to_tty){
-		if(info.st_mode & S_IXUSR){
-			printf(ESC"[1;32m");
-		}
-		if(S_ISDIR(info.st_mode)){
+		if(S_ISLNK(info.st_mode)){
+			printf(ESC"[1;36m");
+		} else if(S_ISDIR(info.st_mode)){
 			printf(ESC"[1;34m");
+		} else if(info.st_mode & S_IXUSR){
+			printf(ESC"[1;32m");
 		}
 	}
 }
