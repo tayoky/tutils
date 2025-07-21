@@ -1,6 +1,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <time.h>
+#include <pwd.h>
 #include "stdopt.h"
 
 //identifier might vary accros oses
@@ -117,6 +118,7 @@ void do_stat(const char *path){
 			break;
 		case 'G':
 			//TODO group name
+			printf(GI,st.st_gid);
 			break;
 		case 'h':
 			printf("%u",st.st_nlink);
@@ -149,9 +151,13 @@ void do_stat(const char *path){
 		case 'u':
 			printf(UI,st.st_uid);
 			break;
-		case 'U':
-			//TODO owner name
-			printf(UI,st.st_uid);
+		case 'U':;
+			struct passwd *pwd = getpwuid(st.st_uid);
+			if(pwd){
+				printf("%s",pwd->pw_name);
+			} else {
+				printf(UI,st.st_uid);
+			}
 			break;
 		case 'w':
 			putchar('-');
