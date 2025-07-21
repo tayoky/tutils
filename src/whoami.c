@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <unistd.h>
+#include <pwd.h>
 #include "stdopt.h"
 
 const char *usage = "whoami [OPTION]\n"
@@ -7,12 +8,11 @@ const char *usage = "whoami [OPTION]\n"
 
 int main(int argc,char **argv){
 	parse_arg(argc,argv,NULL,0);
-
-	char *username = getenv("USER");
-	if(username == NULL){
-		fprintf(stderr,"whoami : $USER environement variable not set\n");
+	struct passwd *pwd = getpwuid(geteuid());
+	if(pwd){
+		puts(pwd->pw_name);
+	} else {
+		puts("unknow");
 		return 1;
 	}
-	printf("%s\n",username);
-	return 0;
 }
