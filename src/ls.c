@@ -2,9 +2,12 @@
 #include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
+#ifdef __unix__
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <pwd.h>
+#endif
 
 #define ESC "\033"
 #define FLAG_ALMOST  0x08
@@ -23,12 +26,11 @@ const char *usage = "ls [-laAU] [DIRECTORY]\n"
 "list files in a directory\n";
 
 
-int column = 5;
 int to_tty = 0;
 
 char **list = NULL;
 
-int entry_count;
+size_t entry_count;
 
 void list_add(char *str){
 	if(!list){
@@ -43,7 +45,9 @@ void info(char *path){
 	struct stat info;
 	if(lstat(path,&info)){
 		iprintf("%s : %s\n",path,strerror(errno));
-		exit(1);
+		if(flags &FLAG_LIST){
+			printf("?????????? ");
+		}
 	}
 
 	//show mode if needed
@@ -88,6 +92,8 @@ void info(char *path){
 	if(to_tty){
 		if(S_ISLNK(info.st_mode)){
 			printf(ESC"[1;36m");
+		} else if(S_ISCHR(info.st_mode)){
+			printf(ESC"[1;33m");
 		} else if(S_ISDIR(info.st_mode)){
 			printf(ESC"[1;34m");
 		} else if(info.st_mode & S_IXUSR){
@@ -101,22 +107,12 @@ int alpha_sort(const void *e1,const void *e2){
 }
 
 int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
-
-	if(flags & FLAG_LIST){
-		column = 1;
-	}
+	parse_arg(argc,argv,opts,arraylen(opts));	
 
 	//are we wrinting to a tty ?
 	to_tty = isatty(STDOUT_FILENO);
 	if(to_tty < 0){
 		to_tty = 0;
-	}
-
-	//when writing to a not tty
-	//only one output per line
-	if(!to_tty){
-		column = 1;
 	}
 
 	
@@ -172,36 +168,35 @@ int main(int argc,char **argv){
 	}
 #endif
 
-	//determinates column sizes
-	int *column_size = malloc(column);
-	if(!(flags & FLAG_LIST))
-	for(int i=0; i<column; i++){
-		int size = 0;
-		for(int j=i; j<entry_count; j+= column){
-			if(strlen(list[j]) > size){
-				size = strlen(list[j]);
+	//find cell_size and cell per line
+	size_t cell_size = 1;
+	size_t cell_per_line = 1;
+	if(to_tty && !(flags & FLAG_LIST)){
+		for(size_t i=0; i<entry_count; i++){
+			if(strlen(list[i]) + 1 > cell_size){
+				cell_size = strlen(list[i]) + 1;
 			}
 		}
-		column_size[i] = size;
-	}
-	else memset(column_size,0,column * sizeof(int));
-	
-	//print time !!
-	int column_index = 0;
-	for(int i=0; i<entry_count; i++){
-		if(column_index >= column){
-			column_index = 0;
-			printf("\n");
-		} else if (i){
-			printf(" ");
+#ifdef __unix__
+		struct winsize win;
+		if(ioctl(STDOUT_FILENO,TIOCGWINSZ,&win) < 0){
+			perror("ioctl");
+		} else {
+			cell_per_line = win.ws_col / cell_size;
 		}
+#endif
+	}
+
+
+	//print time !!
+	for(size_t i=0; i<entry_count; i++){
 		//print info first
 		info(list[i]);
-		printf("%*s",-column_size[column_index],list[i]);
+		printf("%s",list[i]);
+		for(size_t j=strlen(list[i]); j<cell_size; j++)putchar(' ');
 		if(to_tty)printf(ESC"[0m");
-		column_index++;
+		if(i % cell_per_line == cell_per_line - 1 || i + 1 == entry_count)putchar('\n');
 	}
-	printf("\n");
 
 	closedir(dir);
 }
