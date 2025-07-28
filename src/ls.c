@@ -1,4 +1,5 @@
 #include "stdopt.h"
+#include "grid.h"
 #include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -36,62 +37,89 @@ struct ent {
 	int unknow;
 };
 
-void print_entry(struct ent *entry,size_t owner_size){
-	//show mode if needed
+void print_entry(struct ent *entry,char **array){
+	//show info if needed
 	if(flags & FLAG_LIST){
-		if(entry->unknow){
-			putchar('?');
-		} else if(S_ISLNK(entry->meta.st_mode)){
-			putchar('l');
-		} else if(S_ISDIR(entry->meta.st_mode)){
-			putchar('d');
-		} else if(S_ISCHR(entry->meta.st_mode)){
-			putchar('c');
-		} else if(S_ISBLK(entry->meta.st_mode)){
-			putchar('b');
-		} else if(S_ISFIFO(entry->meta.st_mode)){
-			putchar('p');
-		} else {
-			putchar('-');
-		}
-		char mode[10];
+		char mode[11];
 		memset(mode,entry->unknow ? '?' : '-',sizeof(mode));
 		mode[sizeof(mode)-1] = '\0';
-		if(entry->meta.st_mode & S_IRUSR)mode[0] = 'r';
-		if(entry->meta.st_mode & S_IWUSR)mode[1] = 'w';
-		if(entry->meta.st_mode & S_IXUSR)mode[2] = 'x';
-		if(entry->meta.st_mode & S_IRGRP)mode[3] = 'r';
-		if(entry->meta.st_mode & S_IWGRP)mode[4] = 'w';
-		if(entry->meta.st_mode & S_IXGRP)mode[5] = 'x';
-		if(entry->meta.st_mode & S_IROTH)mode[6] = 'r';
-		if(entry->meta.st_mode & S_IWOTH)mode[7] = 'w';
-		if(entry->meta.st_mode & S_IXOTH)mode[8] = 'x';
+		if(entry->unknow){
+			mode[0] = '?';
+		} else if(S_ISLNK(entry->meta.st_mode)){
+			mode[0] = 'l';
+		} else if(S_ISDIR(entry->meta.st_mode)){
+			mode[0] = 'd';
+		} else if(S_ISCHR(entry->meta.st_mode)){
+			mode[0] = 'c';
+		} else if(S_ISBLK(entry->meta.st_mode)){
+			mode[0] = 'b';
+		} else if(S_ISFIFO(entry->meta.st_mode)){
+			mode[0] = 'p';
+		} else {
+			mode[0] = '-';
+		}
+		if(entry->meta.st_mode & S_IRUSR)mode[1] = 'r';
+		if(entry->meta.st_mode & S_IWUSR)mode[2] = 'w';
+		if(entry->meta.st_mode & S_IXUSR)mode[3] = 'x';
+		if(entry->meta.st_mode & S_IRGRP)mode[4] = 'r';
+		if(entry->meta.st_mode & S_IWGRP)mode[5] = 'w';
+		if(entry->meta.st_mode & S_IXGRP)mode[6] = 'x';
+		if(entry->meta.st_mode & S_IROTH)mode[7] = 'r';
+		if(entry->meta.st_mode & S_IWOTH)mode[8] = 'w';
+		if(entry->meta.st_mode & S_IXOTH)mode[9] = 'x';
 
-		if(entry->meta.st_mode & S_ISUID)mode[2] = entry->meta.st_mode & S_IXUSR ? 's' : 'S';
-		if(entry->meta.st_mode & S_ISGID)mode[5] = entry->meta.st_mode & S_IXGRP ? 's' : 'S';
-		printf("%s ",mode);
+		if(entry->meta.st_mode & S_ISUID)mode[3] = entry->meta.st_mode & S_IXUSR ? 's' : 'S';
+		if(entry->meta.st_mode & S_ISGID)mode[6] = entry->meta.st_mode & S_IXGRP ? 's' : 'S';
+		*(array++) = strdup(mode);
 
-		printf("%s",entry->owner);
-		for(size_t i=strlen(entry->owner); i<owner_size; i++)putchar(' ');
-		printf("%4ld ",entry->meta.st_size);
+		*(array++) = strdup(entry->owner);
+		*(array)   = malloc(30);
+		sprintf(*(array++),"%ld",entry->meta.st_size);
 	}
 	
 	//color only for tty
+	char *name;
 	if(to_tty){
+		name = malloc(strlen(entry->name) + 20);
 		if(S_ISLNK(entry->meta.st_mode)){
-			printf(ESC"[1;36m");
+			strcpy(name,ESC"[1;36m");
 		} else if(S_ISCHR(entry->meta.st_mode)){
-			printf(ESC"[1;33m");
+			strcpy(name,ESC"[1;33m");
 		} else if(S_ISDIR(entry->meta.st_mode)){
-			printf(ESC"[1;34m");
+			strcpy(name,ESC"[1;34m");
 		} else if(entry->meta.st_mode & S_IXUSR){
-			printf(ESC"[1;32m");
+			strcpy(name,ESC"[1;32m");
+		} else {
+			strcpy(name,"");
 		}
+	} else {
+		name = malloc(strlen(entry->name) + 1);
+		name[0] = '\0';
 	}
-	printf("%s",entry->name);
-	if(to_tty)printf(ESC"[0m");
+	strcat(name,entry->name);
+	if(to_tty)strcat(name,ESC"[0m");
+	*(array) = name;
 }
 
+
+void print_entries(struct ent *entry,size_t count){
+	size_t per_ent = flags & FLAG_LIST ? 4 : 1;
+	size_t array_count = per_ent * count;
+	char **array = calloc(array_count,sizeof(char *));
+	for(size_t i=0; i<count; i++){
+		print_entry(&entry[i],&array[i*per_ent]);
+	}
+	if(per_ent == 1 && to_tty){
+		grid_print_auto(array,array_count);
+	} else {
+		grid_print(array,array_count,per_ent);
+	}
+	for(size_t i=0; i<array_count; i++){
+		free(array[i]);
+	}
+	free(array);
+}
+	
 int ent_sort(const void *e1,const void *e2){
 	const struct ent *ent1 = e1;
 	const struct ent *ent2 = e2;
@@ -176,39 +204,8 @@ void ls(const char *path){
 	}
 #endif
 
-	//find cell_size and cell per line
-	size_t cell_size = 0;
-	size_t cell_per_line = 1;
-	if(to_tty && !(flags & FLAG_LIST)){
-		for(size_t i=0; i<entries_count; i++){
-			if(strlen(entries[i].name) > cell_size){
-				cell_size = strlen(entries[i].name);
-			}
-		}
-		cell_size++;
-		struct winsize win;
-		if(ioctl(STDOUT_FILENO,TIOCGWINSZ,&win) < 0){
-			perror("ioctl");
-		} else {
-			cell_per_line = win.ws_col / cell_size;
-		}
-	}
-
-	size_t owner_size = 0;
-	for(size_t i=0; i<entries_count; i++){
-		if(strlen(entries[i].owner) > owner_size){
-			owner_size = strlen(entries[i].owner);
-		}
-	}
-	owner_size++;
-
-
 	//print time !!
-	for(size_t i=0; i<entries_count; i++){
-		print_entry(&entries[i],owner_size);
-		for(size_t j=strlen(entries[i].name); j<cell_size; j++)putchar(' ');
-		if(i % cell_per_line == cell_per_line - 1 || i + 1 == entries_count)putchar('\n');
-	}
+	print_entries(entries,entries_count);
 
 	closedir(dir);
 }
