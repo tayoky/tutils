@@ -31,31 +31,43 @@ struct ent {
 	char *name;
 	char *path;
 	struct stat meta;
+	int unknow;
 };
 
 void print_ent(struct ent *entry){
 	//show mode if needed
 	if(flags & FLAG_LIST){
-		if(S_ISLNK(entry->meta.st_mode)){
+		if(entry->unknow){
+			putchar('?');
+		} else if(S_ISLNK(entry->meta.st_mode)){
 			putchar('l');
 		} else if(S_ISDIR(entry->meta.st_mode)){
 			putchar('d');
+		} else if(S_ISCHR(entry->meta.st_mode)){
+			putchar('c');
+		} else if(S_ISBLK(entry->meta.st_mode)){
+			putchar('b');
+		} else if(S_ISFIFO(entry->meta.st_mode)){
+			putchar('p');
 		} else {
 			putchar('-');
 		}
-#define MODEC(mode,c) if(entry->meta.st_mode & mode )putchar(c); \
-	else putchar('-');
-		MODEC(S_IRUSR,'r');
-		MODEC(S_IWUSR,'w');
-		MODEC(S_IXUSR,'x');
-		MODEC(S_IRGRP,'r');
-		MODEC(S_IWGRP,'w');
-		MODEC(S_IXGRP,'x');
-		MODEC(S_IROTH,'r');
-		MODEC(S_IWOTH,'w');
-		MODEC(S_IXOTH,'x');
-#undef MODEC
-		putchar(' ');
+		char mode[10];
+		memset(mode,entry->unknow ? '?' : '-',sizeof(mode));
+		mode[sizeof(mode)-1] = '\0';
+		if(entry->meta.st_mode & S_IRUSR)mode[0] = 'r';
+		if(entry->meta.st_mode & S_IWUSR)mode[1] = 'w';
+		if(entry->meta.st_mode & S_IXUSR)mode[2] = 'x';
+		if(entry->meta.st_mode & S_IRGRP)mode[3] = 'r';
+		if(entry->meta.st_mode & S_IWGRP)mode[4] = 'w';
+		if(entry->meta.st_mode & S_IXGRP)mode[5] = 'x';
+		if(entry->meta.st_mode & S_IROTH)mode[6] = 'r';
+		if(entry->meta.st_mode & S_IWOTH)mode[7] = 'w';
+		if(entry->meta.st_mode & S_IXOTH)mode[8] = 'x';
+
+		if(entry->meta.st_mode & S_ISUID)mode[2] = entry->meta.st_mode & S_IXUSR ? 's' : 'S';
+		if(entry->meta.st_mode & S_ISGID)mode[5] = entry->meta.st_mode & S_IXGRP ? 's' : 'S';
+		printf("%s ",mode);
 
 		//owner name
 		struct passwd *pwd = getpwuid(entry->meta.st_uid);
@@ -101,6 +113,7 @@ void mkent(struct ent *entry,const char *name,const char *path){
 	entry->path = strdup(path);
 	if(lstat(path,&entry->meta) < 0){
 		perror(path);
+		entry->unknow = 1;
 	}
 }
 
@@ -200,8 +213,15 @@ int main(int argc,char **argv){
 	if(i >= argc){
 		ls(".");
 	} else {
+		int header = i + 1 < argc;
 		for(;i<argc;i++){
+			if(header){
+				printf("%s:\n",argv[i]);
+			}
 			ls(argv[i]);
+			if(header && i + 1 < argc){
+				putchar('\n');
+			}
 		}
 	}
 	return ret;
