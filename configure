@@ -24,7 +24,7 @@ for i in "$@"; do
 			PREFIX="${i#*=}"
 			shift # past argument=value
 			;;
-		--with-CFLAGS=*)
+		--with-CFLAGS=*|--cflags=*)
 			CFLAGS="${i#*=}"
 			shift # past argument=value
 			;;

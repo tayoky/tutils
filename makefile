@@ -12,7 +12,7 @@ all :  $(EXE)
 bin/% : build/%.o build/stdopt.o
 	@mkdir -p bin
 	@echo "[linking $(shell basename $@)]"
-	@$(CC) -o $@ $^
+	@$(CC) $(CFLAGS) -o $@ $^
 
 build/%.o : src/%.c
 	@echo "[compiling $^]"

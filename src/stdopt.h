@@ -14,6 +14,14 @@
 #undef arraylen
 #define arraylen(array) (sizeof(array) / sizeof(*array))
 
+#ifdef __stanix__
+#define UID "%ld"
+#define GID "%ld"
+#else
+#define UID "%d"
+#define GID "%d"
+#endif
+
 struct opt {
 	char c;
 	char *str;
