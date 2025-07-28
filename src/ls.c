@@ -30,11 +30,13 @@ int ret;
 struct ent {
 	char *name;
 	char *path;
+	char *owner;
+	char *group;
 	struct stat meta;
 	int unknow;
 };
 
-void print_ent(struct ent *entry){
+void print_entry(struct ent *entry,size_t owner_size){
 	//show mode if needed
 	if(flags & FLAG_LIST){
 		if(entry->unknow){
@@ -69,18 +71,8 @@ void print_ent(struct ent *entry){
 		if(entry->meta.st_mode & S_ISGID)mode[5] = entry->meta.st_mode & S_IXGRP ? 's' : 'S';
 		printf("%s ",mode);
 
-		//owner name
-		struct passwd *pwd = getpwuid(entry->meta.st_uid);
-		if(pwd){
-			printf("%s ",pwd->pw_name);
-		} else {
-#ifdef __stanix__
-			printf("%ld ",entry->meta.st_uid);
-#else
-			printf("%d ",entry->meta.st_uid);
-#endif
-		}
-	
+		printf("%s",entry->owner);
+		for(size_t i=strlen(entry->owner); i<owner_size; i++)putchar(' ');
 		printf("%4ld ",entry->meta.st_size);
 	}
 	
@@ -113,7 +105,21 @@ void mkent(struct ent *entry,const char *name,const char *path){
 	entry->path = strdup(path);
 	if(lstat(path,&entry->meta) < 0){
 		perror(path);
+		entry->owner = strdup("?");
 		entry->unknow = 1;
+		return;
+	}
+	//owner name
+	struct passwd *pwd = getpwuid(entry->meta.st_uid);
+	if(pwd){
+		entry->owner = strdup(pwd->pw_name);
+	} else {
+		entry->owner = malloc(32);
+#ifdef __stanix__
+		sprintf(entry->owner,"%ld",entry->meta.st_uid);
+#else
+		sprintf(entry->owner,"%d ",entry->meta.st_uid);
+#endif
 	}
 }
 
@@ -171,14 +177,15 @@ void ls(const char *path){
 #endif
 
 	//find cell_size and cell per line
-	size_t cell_size = 1;
+	size_t cell_size = 0;
 	size_t cell_per_line = 1;
 	if(to_tty && !(flags & FLAG_LIST)){
 		for(size_t i=0; i<entries_count; i++){
-			if(strlen(entries[i].name) + 1 > cell_size){
-				cell_size = strlen(entries[i].name) + 1;
+			if(strlen(entries[i].name) > cell_size){
+				cell_size = strlen(entries[i].name);
 			}
 		}
+		cell_size++;
 		struct winsize win;
 		if(ioctl(STDOUT_FILENO,TIOCGWINSZ,&win) < 0){
 			perror("ioctl");
@@ -187,10 +194,18 @@ void ls(const char *path){
 		}
 	}
 
+	size_t owner_size = 0;
+	for(size_t i=0; i<entries_count; i++){
+		if(strlen(entries[i].owner) > owner_size){
+			owner_size = strlen(entries[i].owner);
+		}
+	}
+	owner_size++;
+
 
 	//print time !!
 	for(size_t i=0; i<entries_count; i++){
-		print_ent(&entries[i]);
+		print_entry(&entries[i],owner_size);
 		for(size_t j=strlen(entries[i].name); j<cell_size; j++)putchar(' ');
 		if(i % cell_per_line == cell_per_line - 1 || i + 1 == entries_count)putchar('\n');
 	}
