@@ -9,19 +9,29 @@
 #include <pwd.h>
 
 #define ESC "\033"
+#define FLAG_REVERSE 0x01
+#define FLAG_SORT_SZ 0x02
+#define FLAG_SORT_TM 0x04
 #define FLAG_ALMOST  0x08
 #define FLAG_ALL     0x10
 #define FLAG_NO_SORT 0x20
 #define FLAG_LIST    0x40
+#define FLAG_CTIME   0x80
+#define FLAG_ATIME   0x100
 
 struct opt opts[] = {
 	OPT('a',"--all",FLAG_ALL | FLAG_ALMOST,"show all files (including . and ..)"),
 	OPT('A',"--almost-all",FLAG_ALMOST,"show all files except . and .."),
 	OPT('U',NULL,FLAG_NO_SORT,"show in directory order without sorting"),
-	OPT('l',"--list",FLAG_LIST,"show one file/directory per line"),
+	OPT('l',"--list",FLAG_LIST,"show more information about files in a list mode"),
+	OPT('r',"--reverse",FLAG_REVERSE,"reverse order while sorting"),
+	OPT('S',NULL,FLAG_SORT_SZ,"sort by file size, biggest fist"),
+	OPT('t',NULL,FLAG_SORT_TM,"sort by time, newest fist"),
+	OPT('c',NULL,FLAG_CTIME,"use change time instead of modify time and automaticly short by time if -l is not specified"),
+	OPT('u',NULL,FLAG_ATIME,"use acces time instead of modify time and automaticly short by time if -l is not specified"),
 };
 
-const char *usage = "ls [-laAU] [DIRECTORY]\n"
+const char *usage = "ls [-laAUrStuc] [DIRECTORY]\n"
 "list files in a directory\n";
 
 
@@ -35,6 +45,7 @@ struct ent {
 	char *group;
 	struct stat meta;
 	int unknow;
+	time_t time;
 };
 
 void print_entry(struct ent *entry,char **array){
@@ -123,7 +134,21 @@ void print_entries(struct ent *entry,size_t count){
 int ent_sort(const void *e1,const void *e2){
 	const struct ent *ent1 = e1;
 	const struct ent *ent2 = e2;
-	int ret = strcmp(ent1->name,ent2->name);
+	int ret;
+	if(flags & FLAG_SORT_SZ){
+		if(ent1->meta.st_size > ent2->meta.st_size)ret = -1;
+		else if(ent1->meta.st_size < ent2->meta.st_size)ret = 1;
+		else ret = 0;
+	} else if(flags & FLAG_SORT_TM){
+		if(ent1->time > ent2->time)ret = -1;
+		else if(ent1->time < ent2->time)ret = 1;
+		else ret = 0;
+	} else {
+		ret = strcmp(ent1->name,ent2->name);
+	}
+	if(flags & FLAG_REVERSE){
+		ret = -ret;
+	}
 	return ret;
 }
 
@@ -136,6 +161,13 @@ void mkent(struct ent *entry,const char *name,const char *path){
 		entry->owner = strdup("?");
 		entry->unknow = 1;
 		return;
+	}
+	if(flags & FLAG_CTIME){
+		entry->time = entry->meta.st_ctime;
+	} else if(flags & FLAG_ATIME){
+		entry->time = entry->meta.st_atime;
+	} else {
+		entry->time = entry->meta.st_mtime;
 	}
 	//owner name
 	struct passwd *pwd = getpwuid(entry->meta.st_uid);
@@ -212,7 +244,11 @@ void ls(const char *path){
 
 
 int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));	
+	int i = parse_arg(argc,argv,opts,arraylen(opts));
+
+	if((flags & FLAG_CTIME) || (flags & FLAG_ATIME) && !(flags & FLAG_LIST)){
+		flags |= FLAG_SORT_TM;
+	}
 
 	//are we wrinting to a tty ?
 	to_tty = isatty(STDOUT_FILENO);
