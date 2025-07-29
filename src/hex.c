@@ -18,6 +18,8 @@ static void print_color(char c){
 	if(c){
 		if(isprint(c)){
 			printf(ESC"[1;32m");
+		} else if(iscntrl(c)){
+			printf(ESC"[1;33m");
 		} else {
 			printf(ESC"[1;31m");
 		}
@@ -26,13 +28,13 @@ static void print_color(char c){
 	}
 }
 
-static void print_line(char *line,size_t size){
-	for(int i=0;i<size;i++){
+static void print_line(unsigned char *line,size_t size){
+	for(size_t i=0;i<size;i++){
 		print_color(line[i]);
-			printf("%02X ",line[i]);
+		printf("%02X ",line[i]);
 	}
 
-	for(int i=0;i<size;i++){
+	for(size_t i=0;i<size;i++){
 		print_color(line[i]);
 		if(isprint(line[i])){
 			putchar(line[i]);
@@ -51,8 +53,8 @@ static int hex_dump(char *path){
 		return 1;
 	}
 
-	char buf[256];
-	char line[256];
+	unsigned char buf[256];
+	unsigned char line[256];
 	size_t size;
 	size_t line_len=0;
 	while((size = fread(buf,1,sizeof(buf),file))){
