@@ -22,7 +22,7 @@ const char *usage = "touch [-cam] FILES...\n"
 #define DMODE S_IRUSR |S_IWUSR
 
 int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
+	int i = parse_arg(argc,argv,opts,arraylen(opts));
 
 	if(!(flags & (FLAG_ACCESS | FLAG_MODIFY))){
 		flags |= FLAG_ACCESS | FLAG_MODIFY;
@@ -44,24 +44,22 @@ int main(int argc,char **argv){
 	}
 
 	int ret = 0;
-	int count = 0;
+	if(i == argc){
+		error("missing argument");
+		return 1;
+	}
 
-	for(int i=1; i<argc; i++){
+	for(; i<argc; i++){
 		if(argv[i][0] == '-')continue;
-		count++;
-		int fd = open(argv[i],flags,DMODE);
+		int fd = open(argv[i],f,DMODE);
 		if(fd < 0){
 			ret = 1;
-			iprintf("%s : %s\n",argv[i],strerror(errno));
+			perror(argv[i]);
 			continue;
 		}
 		close(fd);
 	}
 
-	if(!count){
-		iprintf("touch : missing argument\n");
-		return 1;
-	}
 		
 	return ret;
 }
