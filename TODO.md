@@ -9,6 +9,7 @@ this is the todo list :
 - [x] flase
 - [x] yes
 - [x] sleep
+- [x] test/[ (missing options)
 ## files utils
 - [x] touch
 - [x] mkdir
@@ -20,16 +21,19 @@ this is the todo list :
 - [ ] rmdir
 - [ ] dd
 - [x] head
+- [ ] tail
+- [ ] grep
+- [ ] find
 - [ ] truncate
 - [x] tree
 - [x] hex
 - [x] stat
 ## user/perm management
-- [ ] whoami
-- [x] chmod (missing options)
+- [x] whoami
+- [x] chmod (missing options + need rewrite)
 - [x] chown (missing options)
 - [ ] chgrp
-- [ ] id
+- [x] id    (no groups support)
 - [ ] groups
 ## environement management
 - [ ] env

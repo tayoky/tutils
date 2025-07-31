@@ -38,3 +38,6 @@ list of all the current tools
 - test
 - tree
 - hex
+- chown
+- chmod
+- head

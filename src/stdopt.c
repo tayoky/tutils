@@ -1,10 +1,25 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <pwd.h>
 #include "stdopt.h"
 
 int flags;
 extern const char *usage;
+
+
+uid_t str2uid(const char *str){
+	char *end;
+	uid_t ret = (uid_t)strtol(str,&end,10);
+	if(end == str){
+		struct passwd *pwd = getpwnam(str);
+		if(!pwd){
+			return -1;
+		}
+		ret = pwd->pw_uid;
+	}
+	return ret;
+}
 
 void error(const char *fmt,...){
 	va_list args;

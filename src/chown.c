@@ -17,10 +17,6 @@ struct opt opts[] = {
 const char *usage = "chown [OPTIONS]... OWNER[:GROUP] FILES...\n"
 "change owner of files\n";
 
-uid_t str2uid(const char *str){
-	return atoi(str);
-}
-
 int ch(uid_t owner,gid_t group,const char *path){
 	struct stat st;
 	if(lstat(path,&st) < 0){

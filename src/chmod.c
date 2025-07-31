@@ -27,10 +27,6 @@ const char *usage = "chown [OPTIONS]... MODE[,MODE]... FILES...\n"
 "multiples MODE can be given separated by comma\n"
 "change mode of files\n";
 
-uid_t str2uid(const char *str){
-	return atoi(str);
-}
-
 int ch(mode_t set,mode_t add,mode_t sub,const char *path){
 	struct stat st;
 	if(stat(path,&st) < 0){
