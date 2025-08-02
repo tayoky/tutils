@@ -94,7 +94,7 @@ void print_entry(struct ent *entry,char **array){
 		name = malloc(strlen(entry->name) + 20);
 		if(S_ISLNK(entry->meta.st_mode)){
 			strcpy(name,ESC"[1;36m");
-		} else if(S_ISCHR(entry->meta.st_mode)){
+		} else if(S_ISCHR(entry->meta.st_mode) || S_ISBLK(entry->meta.st_mode)){
 			strcpy(name,ESC"[1;33m");
 		} else if(S_ISDIR(entry->meta.st_mode)){
 			strcpy(name,ESC"[1;34m");
