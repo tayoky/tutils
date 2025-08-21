@@ -11,16 +11,16 @@ const char *usage = "unlink FILE\nor unlink OPTION\n"
 int main(int argc,char **argv){
 	parse_arg(argc,argv,NULL,0);
 	if(argc < 2){
-		iprintf("unlink : missing argument\n");
+		error("missing argument");
 		return 1;
 	}
 	if(argc > 2){
-		iprintf("unlink : too much arguments\n");
+		error("too much argument");
 		return 1;
 	}	
 
 	if(unlink(argv[1])){
-		iprintf("%s :%s\n",argv[1],strerror(errno));
+		perror(argv[1]);
 		return 1;
 	}
 	return 0;

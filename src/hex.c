@@ -90,7 +90,7 @@ int main(int argc,char **argv){
 	}
 
 	if(!count){
-		iprintf("no file specified\n");
+		error("missing argument");
 	}
 	return ret;
 }

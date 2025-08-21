@@ -6,7 +6,7 @@
 
 int flags;
 extern const char *usage;
-
+const char *progname;
 
 uid_t str2uid(const char *str){
 	char *end;
@@ -24,6 +24,7 @@ uid_t str2uid(const char *str){
 void error(const char *fmt,...){
 	va_list args;
 	va_start(args,fmt);
+	fprintf(stderr,"%s : ",progname ? progname : "tutils");
 	vfprintf(stderr,fmt,args);
 	va_end(args);
 	fputc('\n',stderr);
@@ -77,6 +78,12 @@ static void help(struct opt *opts,size_t opts_count){
 int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 	flags = 0;
 	int i;
+	progname = argv[0] ? strrchr(argv[0],'/') : NULL;
+	if(progname){
+		progname++;
+	} else {
+		progname = argv[0];
+	}
 	for(i=1; i<argc;i++){
 		if(argv[i][0] != '-')break;
 		if(argv[i][1] == '-'){

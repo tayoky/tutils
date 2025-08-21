@@ -187,7 +187,7 @@ void ls(const char *path){
 	DIR *dir = opendir(path);
 
 	if(dir == NULL){
-		iprintf("%s : %s\n",path,strerror(errno));
+		perror(path);
 		ret = 1;
 		return ;
 	}

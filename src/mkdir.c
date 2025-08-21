@@ -49,7 +49,7 @@ void make_dir(const char *path){
 			if(errno == EEXIST && (flags & FLAG_PARENT)){
 				continue;
 			}
-			iprintf("%s : %s\n",parents[i],strerror(errno));
+			perror(parents[i]);
 			ret = 1;
 			return;
 		}
@@ -59,7 +59,7 @@ void make_dir(const char *path){
 		if(errno == EEXIST && (flags & FLAG_PARENT)){
 			return;
 		}
-		iprintf("%s : %s\n",path,strerror(errno));
+		perror(path);
 		ret = 1;
 		return;
 	}
@@ -80,7 +80,7 @@ int main(int argc,char **argv){
 	}
 
 	if(!dir_count){
-		iprintf("mkdir : missing argument\n");
+		error("missing argument");
 		return 1;
 	}
 	

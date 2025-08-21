@@ -20,7 +20,7 @@ int ret = 0;
 int show(char *path,int depth){
 	DIR *dir = opendir(path);
 	if(!dir){
-		iprintf("%s : %s\n",path,strerror(errno));
+		perror(path);
 		ret = 1;
 		return -1;
 	}

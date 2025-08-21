@@ -3,13 +3,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 //simple library for options
-
-
-//simple macro used for things like --help or error
-
-#define iprintf(...) fprintf(stderr,__VA_ARGS__)
 
 #undef arraylen
 #define arraylen(array) (sizeof(array) / sizeof(*array))
@@ -39,4 +35,6 @@ uid_t str2uid(const char *str);
 #define OPTV(pc,pstr,pflag,val,d) {.c = pc,.str = pstr,.flags = pflag,.value = val,.desc = d}
 
 void error(const char *fmt,...);
+
+#define perror(str) error("%s : %s",str,strerror(errno));
 #endif

@@ -29,13 +29,14 @@ int rm(const char *path){
 		if((flags & FLAG_FORCE) && errno == ENOENT){
 			return 0;
 		}
-		iprintf("%s : %s\n",path,strerror(errno));
+		perror(path);
 		ret = 1;
 		return -1;
 	}
 	if(S_ISDIR(info.st_mode)){
 		if(!(flags & FLAG_RECURSIVE)){
-			iprintf("%s : %s\n",path,strerror(EISDIR));
+			errno = EISDIR;
+			perror(path);
 			ret = 1;
 			return -1;
 		}
@@ -44,7 +45,7 @@ int rm(const char *path){
 		if(dir == NULL){
 			//weird error
 			//permission issue ?
-			iprintf("%s : %s\n",path,strerror(errno));
+			perror(path);
 			ret = 1;
 			return -1;
 		}
@@ -71,7 +72,7 @@ int rm(const char *path){
 
 		//delete the directory
 		if(rmdir(path)){
-			iprintf("%s : %s\n",path,strerror(errno));
+			perror(path);
 			ret = 1;
 			return -1;
 		}
@@ -79,7 +80,7 @@ int rm(const char *path){
 	}
 
 	if(unlink(path)){
-		iprintf("%s : %s\n",path,strerror(errno));
+		perror(path);
 		ret = 1;
 		return -1;
 	}
@@ -96,7 +97,7 @@ int main(int argc,char **argv){
 		rm(argv[i]);
 	}
 	if(!count){
-		iprintf("rm : missing argument\n");
+		error("missing argument");
 		return 1;
 	}
 	
