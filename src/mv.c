@@ -1,5 +1,6 @@
 #include <sys/stat.h>
 #include <stdio.h>
+#include <libgen.h>
 #include "stdopt.h"
 
 //TODO : thi implementation need overwriting protection
@@ -88,10 +89,12 @@ int main(int argc,char **argv){
 	for(; i<argc-1; i++){
 		//start by finding the dest path
 		char dst[strlen(argv[i]) + strlen(dest) + 2];
+		char src[strlen(argv[i]) + 1];
+		strcpy(src,argv[i]);
 		if(flags & FLAG_TARGET_FILE){
 			strcpy(dst,dest);
 		} else {
-			sprintf(dst,"%s/%s",dest,argv[i]);
+			sprintf(dst,"%s/%s",dest,basename(src));
 		}
 		move(argv[i],dst);
 	}
