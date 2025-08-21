@@ -1,4 +1,6 @@
 #include <sys/stat.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <libgen.h>
 #include "stdopt.h"
@@ -7,10 +9,14 @@
 
 #define FLAG_TARGET_DIR  0x01
 #define FLAG_TARGET_FILE 0x02
+#define FLAG_FORCE       0x04
+#define FLAG_INTERACTIVE 0x08
 
 struct opt opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destionation file (NOTE : can only move one file with this option"),
+	OPT('i',"--interactive",FLAG_INTERACTIVE,"alaways ask before overwriting old file"),
+	OPT('f',"--force",FLAG_FORCE,"alaways overwrite old file without asking"),
 };
 
 const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
@@ -20,6 +26,32 @@ const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
 int ret = 0;
 
 int move(const char *src,const char *dest){
+	struct stat src_st;
+	if(stat(src,&src_st) < 0 && lstat(src,&src_st) < 0){
+		perror(src);
+		ret = 1;
+		return -1;
+	}
+	struct stat dest_st;
+	if(stat(dest,&dest_st) >= 0){
+		if(S_ISDIR(src_st.st_mode) != S_ISDIR(dest_st.st_mode)){
+			//can't overwrite file with dir and "vice-versa"
+			errno = S_ISDIR(dest_st.st_mode) ? EISDIR : ENOTDIR;
+			perror(dest);
+			ret = 1;
+			return -1;
+		}
+		//prompt before overwriting if needed
+		if(!(flags & FLAG_FORCE) && ((flags & FLAG_INTERACTIVE) || (0/*TODO : can't write*/ && isatty(STDIN_FILENO) == 1))){
+			fprintf(stderr,"mv : overwrite '%s' ? [y/N] : ",dest);
+			char buf[4096];
+			fgets(buf,sizeof(buf),stdin);
+			if(strcasecmp(buf,"y") && strcasecmp(buf,"yes")){
+				ret = 1;
+				return -1;
+			}
+		}
+	}
 	if(rename(src,dest) < 0){
 		perror(src);
 		ret = 1;
