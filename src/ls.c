@@ -18,6 +18,7 @@
 #define FLAG_LIST    0x40
 #define FLAG_CTIME   0x80
 #define FLAG_ATIME   0x100
+#define FLAG_HUMAN   0x200
 
 struct opt opts[] = {
 	OPT('a',"--all",FLAG_ALL | FLAG_ALMOST,"show all files (including . and ..)"),
@@ -29,6 +30,7 @@ struct opt opts[] = {
 	OPT('t',NULL,FLAG_SORT_TM,"sort by time, newest fist"),
 	OPT('c',NULL,FLAG_CTIME,"use change time instead of modify time and automaticly short by time if -l is not specified"),
 	OPT('u',NULL,FLAG_ATIME,"use acces time instead of modify time and automaticly short by time if -l is not specified"),
+	OPT('h',"--human",FLAG_HUMAN,"print size in human readable format (eg 234M, 3G, ..)"),
 };
 
 const char *usage = "ls [-laAUrStuc] [DIRECTORY]\n"
@@ -85,7 +87,24 @@ void print_entry(struct ent *entry,char **array){
 
 		*(array++) = strdup(entry->owner);
 		*(array)   = malloc(30);
-		sprintf(*(array++),"%ld",entry->meta.st_size);
+		if(flags & FLAG_HUMAN){
+			static char units[] = "KMGT";
+			char unit = '\0';
+			size_t size = entry->meta.st_size;
+			int frac = 0;
+			for(size_t i=0; i<strlen(units) && size >= 1024; i++){
+				frac = ((size * 10 + 512) / 1024) % 10;
+				size /= 1024;
+				unit = units[i];
+			}
+			if(unit){
+				sprintf(*(array++),"%zu.%d%c",size,frac,unit);
+			} else {
+				sprintf(*(array++),"%zu",entry->meta.st_size);
+			}
+		} else {
+			sprintf(*(array++),"%zu",entry->meta.st_size);
+		}
 	}
 	
 	//color only for tty
