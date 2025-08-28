@@ -23,9 +23,9 @@ struct opt opts[] = {
 	OPT('r',"--recursive",FLAG_RECURSIVE,"copy directories and their content"),
 };
 
-const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
-"or mv OPTION\n"
-"move files and directories\n";
+const char *usage = "cp [OPTIONS] SOURCE... DESTINATION\n"
+"or cp OPTION\n"
+"copy files and directories\n";
 
 int ret = 0;
 

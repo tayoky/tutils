@@ -3,9 +3,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <libgen.h>
+#include <dirent.h>
+#include <fcntl.h>
 #include "stdopt.h"
 
-//TODO : thi implementation need overwriting protection
+//TODO : this implementation need implicit . support
 
 #define FLAG_TARGET_DIR  0x01
 #define FLAG_TARGET_FILE 0x02
@@ -15,48 +17,69 @@
 struct opt opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
-	OPT('i',"--interactive",FLAG_INTERACTIVE,"alaways ask before overwriting old file"),
-	OPT('f',"--force",FLAG_FORCE,"alaways overwrite old file without asking"),
+	OPT('i',"--interactive",FLAG_INTERACTIVE,"ask before overwriting old file"),
+	OPT('f',"--force",FLAG_FORCE,"unlink destinations files if already exist"),
 };
 
-const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
-"or mv OPTION\n"
-"move files and directories\n";
+const char *usage = "ln [OPTIONS] SOURCE... DESTINATION\n"
+"or ln OPTION\n"
+"create hard link\n";
 
 int ret = 0;
 
-int move(const char *src,const char *dest){
+int ln(const char *src,const char *dest){
 	struct stat src_st;
 	if(stat(src,&src_st) < 0 && lstat(src,&src_st) < 0){
 		perror(src);
 		ret = 1;
 		return -1;
 	}
+
+	if(S_ISDIR(src_st.st_mode)){
+		errno = EISDIR;
+		perror(src);
+		ret = 1;
+		return -1;
+	}
+
 	struct stat dest_st;
 	if(stat(dest,&dest_st) >= 0){
-		if(S_ISDIR(src_st.st_mode) != S_ISDIR(dest_st.st_mode)){
-			//can't overwrite file with dir and "vice-versa"
-			errno = S_ISDIR(dest_st.st_mode) ? EISDIR : ENOTDIR;
+		if(S_ISDIR(src_st.st_mode)){
+			//can't overwrite dir
+			errno = EISDIR;
 			perror(dest);
 			ret = 1;
 			return -1;
 		}
 		//prompt before overwriting if needed
-		if(!(flags & FLAG_FORCE) && ((flags & FLAG_INTERACTIVE) || (0/*TODO : can't write*/ && isatty(STDIN_FILENO) == 1))){
-			fprintf(stderr,"mv : overwrite '%s' ? [y/N] : ",dest);
+		if(flags & FLAG_INTERACTIVE){
+			fprintf(stderr,"ln : overwrite '%s' ? [y/N] : ",dest);
 			char buf[4096];
 			fgets(buf,sizeof(buf),stdin);
 			if(strcasecmp(buf,"y") && strcasecmp(buf,"yes")){
 				ret = 1;
 				return -1;
 			}
+		} else if(flags & FLAG_FORCE){
+			if(unlink(dest) < 0){
+				perror(dest);
+				ret = 1;
+				return -1;
+			}
+		} else {
+			errno = EEXIST;
+			perror(dest);
+			ret = 1;
+			return -1;
 		}
 	}
-	if(rename(src,dest) < 0){
-		perror(src);
+
+	if(link(src,dest) < 0){
+		perror(dest);
 		ret = 1;
 		return -1;
 	}
+
 	return 0;
 }
 
@@ -114,7 +137,7 @@ int main(int argc,char **argv){
 		}
 	}
 	if(i < argc - 2 && (flags & FLAG_TARGET_FILE)){
-		error("can only copy one file with -T");
+		error("can only link one file with -T");
 		return 1;
 	}
 
@@ -128,7 +151,7 @@ int main(int argc,char **argv){
 		} else {
 			sprintf(dst,"%s/%s",dest,basename(src));
 		}
-		move(argv[i],dst);
+		ln(argv[i],dst);
 	}
 
 	return ret;
