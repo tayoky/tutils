@@ -15,8 +15,8 @@ this is the todo list :
 - [x] mkdir
 - [x] cat
 - [x] ls
-- [ ] cp
-- [ ] mv
+- [x] cp (missing options)
+- [x] mv (missing options)
 - [x] rm
 - [ ] rmdir
 - [ ] dd
@@ -30,7 +30,7 @@ this is the todo list :
 - [x] stat
 ## user/perm management
 - [x] whoami
-- [x] chmod (missing options + need rewrite)
+- [x] chmod (missing options)
 - [x] chown (missing options)
 - [ ] chgrp
 - [x] id    (no groups support)
