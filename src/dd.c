@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdint.h>
 #include "stdopt.h"
 
 //TODO : this impmementation is missing xflag cbs conv and count
