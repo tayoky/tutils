@@ -12,7 +12,7 @@ all :  $(EXE)
 bin/% : build/%.o build/stdopt.o build/grid.o
 	@mkdir -p bin
 	@echo "[linking $(shell basename $@)]"
-	@$(CC) $(CFLAGS) -o $@ $^ ../tlibc/build/src/stdlib/qsort.o
+	@$(CC) $(CFLAGS) -o $@ $^
 
 build/%.o : src/%.c
 	@echo "[compiling $^]"
