@@ -18,6 +18,7 @@ const char *usage = "dd [OPERANDS]\n"
 "operand are of the form OPERAND=VALUE ...\n"
 "valid operand are\n"
 "bs=BYTES  : use input and output blocks of size BYTES (overide ibs and obs)\n"
+"conv=CONV : precise convert option separated by comma\n"
 "count=N   : copy only up to N input block\n"
 "ibs=BYTES : use input blocks of size BYTES\n"
 "if=FILE   : read from FILE instead of stdin\n"
@@ -113,6 +114,7 @@ int main(int argc,char **argv){
 	size_t iseek = 0;
 	size_t oseek = 0;
 	size_t count = SIZE_MAX;
+	int oflags = O_WRONLY | O_TRUNC | O_CREAT;
 
 	for(int i=1; i<argc; i++){
 		if(!strchr(argv[i],'=')){
@@ -131,6 +133,29 @@ int main(int argc,char **argv){
 		}
 		if(OP("count")){
 			count = str2int(value);
+			continue;
+		}
+		if(OP("conv")){
+			size_t conv_count=1;
+			char *ptr = value;
+			while(strchr(ptr,',')){
+				conv_count++;
+				ptr = strchr(ptr,',');
+				*ptr = '\0';
+				ptr++;
+			}
+			ptr = value;
+			while(conv_count-- > 0){
+				if(!strcmp(ptr,"notrunc")){
+					oflags &= ~O_TRUNC;
+				} else if(!strcmp(ptr,"excl")){
+					oflags |= O_EXCL;
+				} else {
+					error("invalid conv option '%s'",ptr);
+					return 1;
+				}
+				ptr += strlen(ptr) + 1;
+			}
 			continue;
 		}
 		if(OP("ibs")){
@@ -169,12 +194,20 @@ int main(int argc,char **argv){
 
 	if(in_name){
 		in = open(in_name,O_RDONLY);
+		if(in < 0){
+			perror(in_name);
+			return 1;
+		}
 	} else {
 		in = STDIN_FILENO;
 	}
 
 	if(out_name){
-		out = open(out_name,O_WRONLY);
+		out = open(out_name,oflags,0777);
+		if(out < 0){
+			perror(out_name);
+			return 1;
+		}
 	} else {
 		out = STDOUT_FILENO;
 	}
