@@ -12,7 +12,20 @@
 #define max(a,b) (a > b ? a : b)
 
 const char *usage = "dd [OPERANDS]\n"
-"or dd OPTION\n";
+"or dd OPTION\n"
+"copy and convert files\n"
+"by default dd read stdin and output to stdout with 512 bytes blocks\n"
+"operand are of the form OPERAND=VALUE ...\n"
+"valid operand are\n"
+"bs=BYTES  : use input and output blocks of size BYTES (overide ibs and obs)\n"
+"count=N   : copy only up to N input block\n"
+"ibs=BYTES : use input blocks of size BYTES\n"
+"if=FILE   : read from FILE instead of stdin\n"
+"obs=BYTES : use output blocks of size BYTES\n"
+"of=FILE   : write to FILE instead of stdin\n"
+"skip=N (or iseek=N) : skip N input block\n"
+"seek=N (or oseek=N) : skip N output block\n";
+
 
 static size_t str2int(const char *str){
 	char *end;
@@ -99,6 +112,7 @@ int main(int argc,char **argv){
 	size_t obs = 512;
 	size_t iseek = 0;
 	size_t oseek = 0;
+	size_t count = SIZE_MAX;
 
 	for(int i=1; i<argc; i++){
 		if(!strchr(argv[i],'=')){
@@ -113,6 +127,10 @@ int main(int argc,char **argv){
 		if(OP("bs")){
 			ibs = obs = str2int(value);
 			if(!obs)error("invalid number '%s'",value);
+			continue;
+		}
+		if(OP("count")){
+			count = str2int(value);
 			continue;
 		}
 		if(OP("ibs")){
@@ -172,8 +190,12 @@ int main(int argc,char **argv){
 		return 1;
 	}
 
+	size_t total_w = 0;
+	size_t total_r = 0;
+	int ret = 0;
 	for(;;){
-		size_t content = read_by_blocks(in,buf,bs,ibs);	
+		size_t content = read_by_blocks(in,buf,min(bs,ibs * count),ibs);
+		total_r += content;
 		int eof = content < bs;
 
 		char *wbuf = buf;
@@ -181,19 +203,27 @@ int main(int argc,char **argv){
 			ssize_t w = write(out,wbuf,min(content,obs));
 			if(w < 0){
 				perror("write");
-				return 1;
+				ret = 1;
+				goto end;
 			}
 			if(!w){
 				//uh ???
 				error("suspicious write fail (write returned 0)");
-				return 1;
+				ret = 1;
+				goto end;
 			}
+			total_w += w;
 			content -= w;
 			wbuf += w;
 		}
+		count -= bs / ibs;
 		if(eof)break;
 	}
 
+end:
+	printf("%zd+%zd records in\n",total_r/ibs,total_r%ibs);
+	printf("%zd+%zd records out\n",total_w/obs,total_w%obs);
+	printf("%zd bytes copied\n",min(total_r,total_w));
 	free(buf);
 	if(in != STDIN_FILENO)close(in);
 	if(out != STDOUT_FILENO)close(out);
