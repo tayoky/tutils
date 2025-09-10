@@ -13,12 +13,16 @@
 #define FLAG_TARGET_FILE 0x02
 #define FLAG_FORCE       0x04
 #define FLAG_INTERACTIVE 0x08
+#define FLAG_SYMLINK     0x10
+#define FLAG_RELATIVE    0x20
 
 struct opt opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
 	OPT('i',"--interactive",FLAG_INTERACTIVE,"ask before overwriting old file"),
 	OPT('f',"--force",FLAG_FORCE,"unlink destinations files if already exist"),
+	OPT('s',"--symbolic",FLAG_SYMLINK,"create symbolic link instead of hardlink"),
+	OPT('r',"--relative",FLAG_RELATIVE,"make symbolic link relative to their location"),
 };
 
 const char *usage = "ln [OPTIONS] SOURCE... DESTINATION\n"
@@ -35,7 +39,8 @@ int ln(const char *src,const char *dest){
 		return -1;
 	}
 
-	if(S_ISDIR(src_st.st_mode)){
+	//can't make hardlink to dir
+	if(S_ISDIR(src_st.st_mode) && !(flags & FLAG_SYMLINK)){
 		errno = EISDIR;
 		perror(src);
 		ret = 1;
@@ -43,7 +48,7 @@ int ln(const char *src,const char *dest){
 	}
 
 	struct stat dest_st;
-	if(stat(dest,&dest_st) >= 0){
+	if(lstat(dest,&dest_st) >= 0){
 		if(S_ISDIR(src_st.st_mode)){
 			//can't overwrite dir
 			errno = EISDIR;
@@ -60,24 +65,35 @@ int ln(const char *src,const char *dest){
 				ret = 1;
 				return -1;
 			}
-		} else if(flags & FLAG_FORCE){
-			if(unlink(dest) < 0){
-				perror(dest);
-				ret = 1;
-				return -1;
-			}
-		} else {
+		} else if(!(flags & FLAG_FORCE)){
 			errno = EEXIST;
+			perror(dest);
+			ret = 1;
+			return -1;
+		}
+		if(remove(dest) < 0){
 			perror(dest);
 			ret = 1;
 			return -1;
 		}
 	}
 
-	if(link(src,dest) < 0){
-		perror(dest);
-		ret = 1;
-		return -1;
+	if(flags & FLAG_SYMLINK){
+		//TODO : relative path support
+		char *target = realpath(src,NULL);
+		if(symlink(target,dest) < 0){
+			free(target);
+			perror(dest);
+			ret = 1;
+			return -1;
+		}
+		free(target);
+	} else {
+		if(link(src,dest) < 0){
+			perror(dest);
+			ret = 1;
+			return -1;
+		}
 	}
 
 	return 0;
