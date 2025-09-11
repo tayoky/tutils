@@ -1,13 +1,23 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "stdopt.h"
 
 #define ESC "\033"
+#define FLAG_SEEK   0x01
+#define FLAG_LENGHT 0x02
+
+char *seek_str;
+char *lenght_str;
+size_t seek_value;
+size_t lenght_value;
 
 struct opt opts[] = {
+	OPTV('s',"--seek",FLAG_SEEK,&seek_str,"seek to a specfied location before dumping"),
+	OPTV('l',"--lenght",FLAG_LENGHT,&lenght_str,"dump up to LENGHT byte"),
 };
 
-const char *usage = "hex FILES\n"
+const char *usage = "hex [OPTIONS] FILES\n"
 "do an hexadecimal dump of files\n";
 
 
@@ -31,7 +41,10 @@ static void print_color(char c){
 static void print_line(unsigned char *line,size_t size){
 	for(size_t i=0;i<size;i++){
 		print_color(line[i]);
-		printf("%02X ",line[i]);
+		printf("%02hhX ",line[i]);
+	}
+	for(size_t i=size;i<col;i++){
+		printf("   ");
 	}
 
 	for(size_t i=0;i<size;i++){
@@ -53,11 +66,19 @@ static int hex_dump(char *path){
 		return 1;
 	}
 
+	if(flags & FLAG_SEEK){
+		fseek(file,seek_value,SEEK_SET);
+	}
+
 	unsigned char buf[256];
 	unsigned char line[256];
 	size_t size;
 	size_t line_len=0;
+	size_t total = 0;
 	while((size = fread(buf,1,sizeof(buf),file))){
+		if((flags & FLAG_LENGHT) && total >= lenght_value)break;
+		if((flags & FLAG_LENGHT) && size > lenght_value - total)size = lenght_value - total;
+		total += size;
 		for(size_t i=0;i<size;i++){
 			line[line_len] = buf[i];
 			line_len++;
@@ -72,25 +93,39 @@ static int hex_dump(char *path){
 		print_line(line,line_len);
 	}
 
+	printf(ESC"[0m");
 
 	fclose(file);
 	return 0;
 }
 
 int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
+	int i = parse_arg(argc,argv,opts,arraylen(opts));
+	if(i == argc){
+		error("missing argument");
+		return 1;
+	}
+	if(flags & FLAG_SEEK){
+		char *end;
+		seek_value = strtol(seek_str,&end,0);
+		if(end == seek_str){
+			error("invalid value '%s'",seek_str);
+			return 1;
+		}
+	}
+	if(flags & FLAG_LENGHT){
+		char *end;
+		lenght_value = strtol(lenght_str,&end,0);
+		if(end == lenght_str){
+			error("invalid value '%s'",lenght_str);
+			return 1;
+		}
+	}
 	int ret = 0;
-	size_t count = 0;
-	for(int i=1;i<argc;i++){
-		if(argv[i][0] == '-')continue;
-		count++;
+	for(;i<argc;i++){
 		if(hex_dump(argv[i])){
 			ret = 1;
 		}
-	}
-
-	if(!count){
-		error("missing argument");
 	}
 	return ret;
 }
