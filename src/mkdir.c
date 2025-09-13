@@ -6,7 +6,9 @@
 #include <errno.h>
 #include "stdopt.h"
 
-#define FLAG_PARENT 0x08
+#define FLAG_VERBOSE 0x04
+#define FLAG_PARENT  0x08
+
 int ret = 0;
 mode_t mode = S_IRWXU;
 char *m = NULL;
@@ -14,11 +16,12 @@ char *m = NULL;
 struct opt opts[] = {
 	OPT('p',"--parent",FLAG_PARENT,"make parent directories if needed and ignore if any directory aready exist"),
 	OPTV('m',"--mode",0,&m,"change mode of the news directories"),
+	OPT('v',"--verbose",FLAG_VERBOSE,"print a message for each created directory"),
 };
 
 
 const char *usage = "mkdir [-m MODE] [-p] DIRECTORIES ...\n"
-"create direcories\n";
+"create directories\n";
 
 void make_dir(const char *path){
 	//simple check to avoid segfault
@@ -44,7 +47,7 @@ void make_dir(const char *path){
 
 	//make the parents first
 	for(int i=0; i<parents_count; i++){
-		if(mkdir(parents[i],mode)){
+		if(mkdir(parents[i],mode) < 0){
 			//ignore aready exist error when parent mode
 			if(errno == EEXIST && (flags & FLAG_PARENT)){
 				continue;
@@ -52,6 +55,8 @@ void make_dir(const char *path){
 			perror(parents[i]);
 			ret = 1;
 			return;
+		} else {
+			printf("mkdir : created directory '%s'\n",parents[i]);
 		}
 	}
 
@@ -63,6 +68,7 @@ void make_dir(const char *path){
 		ret = 1;
 		return;
 	}
+		printf("mkdir : created directory '%s'\n",path);
 }
 
 int main(int argc,char **argv){
