@@ -6,7 +6,7 @@ this is the todo list :
 - [x] basename
 - [x] dirname
 - [x] true
-- [x] flase
+- [x] false
 - [x] yes
 - [x] sleep
 - [x] test/[ (missing options)
@@ -28,6 +28,7 @@ this is the todo list :
 - [x] tree
 - [x] hex
 - [x] stat
+- [x] readlink
 ## user/perm management
 - [x] whoami
 - [x] chmod (missing options)
