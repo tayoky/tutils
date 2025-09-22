@@ -20,7 +20,7 @@ struct opt opts[] = {
 };
 
 
-const char *usage = "mkdir [-m MODE] [-p] DIRECTORIES ...\n"
+const char *usage = "mkdir [-m MODE] [-pv] DIRECTORIES ...\n"
 "create directories\n";
 
 void make_dir(const char *path){
@@ -56,7 +56,7 @@ void make_dir(const char *path){
 			ret = 1;
 			return;
 		} else {
-			printf("mkdir : created directory '%s'\n",parents[i]);
+			if(flags & FLAG_VERBOSE)printf("mkdir : created directory '%s'\n",parents[i]);
 		}
 	}
 
@@ -68,13 +68,18 @@ void make_dir(const char *path){
 		ret = 1;
 		return;
 	}
-		printf("mkdir : created directory '%s'\n",path);
+	if(flags & FLAG_VERBOSE)printf("mkdir : created directory '%s'\n",path);
 }
 
 int main(int argc,char **argv){
 	parse_arg(argc,argv,opts,arraylen(opts));
 	if(m){
-		//TODO : parse m
+		//TODO : parse m in others format
+		char *end;
+		mode = strtol(m,&end,8);
+		if(end == m){
+			error("invalid mode '%s'\n",m);
+		}
 	}
 
 	int dir_count = 0;
