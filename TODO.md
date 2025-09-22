@@ -19,7 +19,7 @@ this is the todo list :
 - [x] mv (missing options)
 - [x] rm
 - [ ] rmdir
-- [ ] dd
+- [x] dd
 - [x] head
 - [ ] tail
 - [ ] grep
