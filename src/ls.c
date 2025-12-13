@@ -68,6 +68,8 @@ void print_entry(struct ent *entry,char **array){
 			mode[0] = 'b';
 		} else if(S_ISFIFO(entry->meta.st_mode)){
 			mode[0] = 'p';
+		} else if(S_ISSOCK(entry->meta.st_mode)){
+			mode[0] = 's';
 		} else {
 			mode[0] = '-';
 		}
@@ -117,6 +119,8 @@ void print_entry(struct ent *entry,char **array){
 			strcpy(name,ESC"[1;33m");
 		} else if(S_ISDIR(entry->meta.st_mode)){
 			strcpy(name,ESC"[1;34m");
+		} else if(S_ISSOCK(entry->meta.st_mode)){
+			strcpy(name,ESC"[1;35m");
 		} else if(entry->meta.st_mode & S_IXUSR){
 			strcpy(name,ESC"[1;32m");
 		} else {
