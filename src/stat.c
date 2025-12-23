@@ -1,4 +1,5 @@
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <stdio.h>
 #include <time.h>
 #include <pwd.h>
@@ -21,8 +22,8 @@
 
 char *fmt = "  File : %n\n"
 "Size   : %s  Blocks : %b  IO Block : %B  %F\n"
-"Device : xxx,xxx  Inode : %i  Links : %h\n"
-"Access : xxx  Uid : %U(%u)  Gid : %G(%g)\n"
+"Device : %Hd,%Ld  Inode : %i  Links : %h\n"
+"Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
 "Access : %x\n"
 "Modify : %y\n"
 "Change : %z\n"
@@ -95,6 +96,9 @@ void do_stat(const char *path){
 		case '%':
 			putchar('%');
 			break;
+		case 'a':
+			printf("%#o",st.st_mode & 07777);
+			break;
 		case 'b':
 			printf("%ld",st.st_blocks);
 			break;
@@ -147,7 +151,12 @@ void do_stat(const char *path){
 		case 'R':
 			printf("%lx",st.st_rdev);
 			break;
-		//TODO T/t
+		case 't':
+			printf("%x",major(st.st_rdev));
+			break;
+		case 'T':
+			printf("%x",minor(st.st_rdev));
+			break;
 		case 'u':
 			printf(UI,st.st_uid);
 			break;
@@ -183,7 +192,36 @@ void do_stat(const char *path){
 		case 'Z':
 			printf("%ld",st.st_ctime);
 			break;
-		//TODO : Hx and lx
+		case 'H':
+			f++;
+			switch (*f) {
+			case 'd':
+				printf("%d",major(st.st_dev));
+				break;
+			case 'r':
+				printf("%d",major(st.st_rdev));
+				break;
+			default:
+				putchar('H');
+				putchar(*f);
+				break;
+			}
+			break;
+		case 'L':
+			f++;
+			switch (*f) {
+			case 'd':
+				printf("%d",minor(st.st_dev));
+				break;
+			case 'r':
+				printf("%d",minor(st.st_rdev));
+				break;
+			default:
+				putchar('L');
+				putchar(*f);
+				break;
+			}
+			break;
 		}
 		break;
 	default:
