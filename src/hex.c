@@ -13,8 +13,8 @@ size_t seek_value;
 size_t lenght_value;
 
 struct opt opts[] = {
-	OPTV('s',"--seek",FLAG_SEEK,&seek_str,"seek to a specfied location before dumping"),
-	OPTV('l',"--lenght",FLAG_LENGHT,&lenght_str,"dump up to LENGHT byte"),
+	OPTV('s',"--seek",FLAG_SEEK,&seek_str,"seek to a specified location before dumping"),
+	OPTV('l',"--length",FLAG_LENGHT,&lenght_str,"dump up to LENGTH byte"),
 };
 
 const char *usage = "hex [OPTIONS] FILES\n"

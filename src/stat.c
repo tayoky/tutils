@@ -32,7 +32,7 @@ char *fmt = "  File : %n\n"
 int ret;
 
 struct opt opts[] = {
-	OPT('L',"--dereference",FLAG_LINK,"folow links"),
+	OPT('L',"--dereference",FLAG_LINK,"follow links"),
 	OPT('f',"--file-system",FLAG_FS,"display file system info instead of file info"),
 	OPT(0,"--cached",0,"ignored"),
 	OPTV('c',"--format",FLAG_FORMAT,&fmt,"use specified format instead of the default"),

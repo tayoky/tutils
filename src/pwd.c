@@ -7,7 +7,7 @@
 #define FLAG_L 0x10
 struct opt opts[] = {
 	OPT('P',NULL,FLAG_P,"show the $PWD variable"),
-	OPT('L',NULL,FLAG_L,"show the pysical path without sysmlink"),
+	OPT('L',NULL,FLAG_L,"show the physical path without sysmlink"),
 };
 
 const char *usage = "pwd [-L]\n"

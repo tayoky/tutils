@@ -14,8 +14,8 @@ mode_t mode = S_IRWXU;
 char *m = NULL;
 
 struct opt opts[] = {
-	OPT('p',"--parent",FLAG_PARENT,"make parent directories if needed and ignore if any directory aready exist"),
-	OPTV('m',"--mode",0,&m,"change mode of the news directories"),
+	OPT('p',"--parent",FLAG_PARENT,"make parent directories if needed and ignore if any directory already exist"),
+	OPTV('m',"--mode",0,&m,"change mode of the newly created directories"),
 	OPT('v',"--verbose",FLAG_VERBOSE,"print a message for each created directory"),
 };
 

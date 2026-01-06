@@ -1,8 +1,6 @@
 #include "stdopt.h"
 #include <stdio.h>
 #include <unistd.h>
-#include <errno.h>
-#include <string.h>
 
 const char *usage = "unlink FILE\nor unlink OPTION\n"
 "unlink a symlink/hardlink or remove a file\n";
@@ -15,7 +13,7 @@ int main(int argc,char **argv){
 		return 1;
 	}
 	if(argc > 2){
-		error("too much argument");
+		error("too much arguments");
 		return 1;
 	}	
 

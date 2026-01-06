@@ -8,7 +8,7 @@
 char *suffix;
 
 struct opt opts[] = {
-	OPT('a',"--multiples",FLAG_MULTIPLE,"support multiples NAME in one command"),
+	OPT('a',"--multiple",FLAG_MULTIPLE,"support multiple NAMEs in one command"),
 	OPTV('s',"--suffix",FLAG_SUFFIX | FLAG_MULTIPLE,&suffix,"remove a trailing SUFFIX from file path, implies -a"),
 };
 

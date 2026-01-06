@@ -1,5 +1,4 @@
 #include <sys/stat.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <libgen.h>

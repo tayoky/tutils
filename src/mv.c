@@ -15,8 +15,8 @@
 struct opt opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
-	OPT('i',"--interactive",FLAG_INTERACTIVE,"alaways ask before overwriting old file"),
-	OPT('f',"--force",FLAG_FORCE,"alaways overwrite old file without asking"),
+	OPT('i',"--interactive",FLAG_INTERACTIVE,"always ask before overwriting old file"),
+	OPT('f',"--force",FLAG_FORCE,"always overwrite old file without asking"),
 };
 
 const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
