@@ -1,5 +1,4 @@
 #include <sys/stat.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <libgen.h>
@@ -71,7 +70,8 @@ int main(int argc,char **argv){
 
 	if((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)){
 		//FIXME : this error message don't look professional
-		error("can't provide -T and -t at the same time");
+		//error("can't provide -T and -t at the same time");
+		error("cannot provide both -T and -t simultaneously");
 	}
 
 	char *dest = argv[argc-1];
