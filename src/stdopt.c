@@ -84,24 +84,28 @@ int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 	} else {
 		progname = argv[0];
 	}
-	for(i=1; i<argc;i++){
-		if(argv[i][0] != '-')break;
-		if(argv[i][1] == '-'){
+	for (i=1; i<argc;i++) {
+		if (argv[i][0] != '-') break;
+		if (argv[i][1] == '-') {
 			//it's a long option
-			//special case for --help and --version
-			if(!strcmp("--help",argv[i])){
+			//special case for --, --help and --version
+			if (!strcmp("--", argv[i])) {
+				i++;
+				break;
+			}
+			if (!strcmp("--help",argv[i])) {
 				help(opt,opt_count);
 				exit(0);
 			}
-			if(!strcmp("--version",argv[i])){
+			if (!strcmp("--version",argv[i])) {
 				version();
 				exit(0);
 			}
-			for(int j=0; j<opt_count; j++){
-				if(opt[j].str && !strcmp(argv[i],opt[j].str)){
+			for (int j=0; j<opt_count; j++) {
+				if (opt[j].str && !strcmp(argv[i],opt[j].str)) {
 					flags |= opt[j].flags;
-					if(opt[j].value){
-						if(i == argc-1){
+					if (opt[j].value) {
+						if (i == argc-1) {
 							error("expected argument after '%s'",argv[i]);
 							exit(1);
 						}
@@ -117,12 +121,12 @@ int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 		} else {
 			//it's a short options
 			int skip_next = 0;
-			for(int l=1; argv[i][l]; l++){
-				for(int j=0; j<opt_count; j++){
-					if(opt[j].c == argv[i][l]){
+			for (int l=1; argv[i][l]; l++) {
+				for (int j=0; j<opt_count; j++) {
+					if (opt[j].c == argv[i][l]) {
 						flags |= opt[j].flags;
-						if(opt[j].value){
-							if(i == argc-1){
+						if(opt[j].value) {
+							if (i == argc-1) {
 								error("expected argument after '%c'",argv[i][l]);
 								exit(1);
 							}
@@ -139,7 +143,7 @@ int parse_arg(int argc,char **argv,struct opt *opt,size_t opt_count){
 finish_short:
 				continue;
 			}
-			if(skip_next)i++;
+			if (skip_next) i++;
 		}
 finish:
 		continue;

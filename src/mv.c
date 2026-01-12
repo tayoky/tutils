@@ -1,11 +1,10 @@
 #include <sys/stat.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <libgen.h>
 #include "stdopt.h"
 
-//TODO : thi implementation need overwriting protection
+//TODO : this implementation need overwriting protection
 
 #define FLAG_TARGET_DIR  0x01
 #define FLAG_TARGET_FILE 0x02
@@ -15,8 +14,8 @@
 struct opt opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
-	OPT('i',"--interactive",FLAG_INTERACTIVE,"alaways ask before overwriting old file"),
-	OPT('f',"--force",FLAG_FORCE,"alaways overwrite old file without asking"),
+	OPT('i',"--interactive",FLAG_INTERACTIVE,"always ask before overwriting old file"),
+	OPT('f',"--force",FLAG_FORCE,"always overwrite old file without asking"),
 };
 
 const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
@@ -70,8 +69,7 @@ int main(int argc,char **argv){
 	}
 
 	if((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)){
-		//FIXME : this error message don't look professional
-		error("can't provide -T and -t at the same time");
+		error("cannot provide -T and -t simultaneously");
 	}
 
 	char *dest = argv[argc-1];

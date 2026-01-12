@@ -5,7 +5,7 @@
 #include <pwd.h>
 #include "stdopt.h"
 
-//identifier might vary accros oses
+// identifier might vary accros OSes
 #ifdef __stanix__
 #define UI "%lu"
 #define GI "%lu"
@@ -14,15 +14,26 @@
 #define GI "%u"
 #endif
 
-#define FLAG_LINK   0x08 //folow links
+#define FLAG_LINK   0x08 // follow links
 #define FLAG_FS     0x10
 #define FLAG_FORMAT 0x20
 #define FLAG_PRINTF 0x40
 #define FLAG_TERSE  0x80
 
-char *fmt = "  File : %n\n"
+char *fmt = NULL;
+
+char *default_fmt = "  File : %n\n"
 "Size   : %s  Blocks : %b  IO Block : %B  %F\n"
 "Device : %Hd,%Ld  Inode : %i  Links : %h\n"
+"Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
+"Access : %x\n"
+"Modify : %y\n"
+"Change : %z\n"
+"Birth  : %w\n";
+
+char *dev_fmt = "  File : %n\n"
+"Size   : %s  Blocks : %b  IO Block : %B  %F\n"
+"Device : %Hd,%Ld  Inode : %i  Links : %h  Device type : %Hr,%Lr\n"
 "Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
 "Access : %x\n"
 "Modify : %y\n"
@@ -32,7 +43,7 @@ char *fmt = "  File : %n\n"
 int ret;
 
 struct opt opts[] = {
-	OPT('L',"--dereference",FLAG_LINK,"folow links"),
+	OPT('L',"--dereference",FLAG_LINK,"follow links"),
 	OPT('f',"--file-system",FLAG_FS,"display file system info instead of file info"),
 	OPT(0,"--cached",0,"ignored"),
 	OPTV('c',"--format",FLAG_FORMAT,&fmt,"use specified format instead of the default"),
@@ -64,6 +75,15 @@ void do_stat(const char *path){
 	}
 
 	char *f = fmt;
+
+	if (!f) {
+		if (S_ISCHR(st.st_mode) || S_ISBLK(st.st_mode)) {
+			f = dev_fmt;
+		} else {
+			f = default_fmt;
+		}
+	}
+
 	while(*f){
 	switch(*f){
 	case '\\':

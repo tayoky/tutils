@@ -15,7 +15,7 @@ int main(int argc,char **argv){
 		return 1;
 	}
 	if(argc > 2){
-		error("too much argument");
+		error("too many arguments");
 		return 1;
 	}	
 

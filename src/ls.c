@@ -33,7 +33,7 @@ struct opt opts[] = {
 	OPT('h',"--human",FLAG_HUMAN,"print size in human readable format (eg 234M, 3G, ..)"),
 };
 
-const char *usage = "ls [-laAUrStuc] [DIRECTORY]\n"
+const char *usage = "ls [-laAUrStuch] [DIRECTORY]\n"
 "list files in a directory\n";
 
 
