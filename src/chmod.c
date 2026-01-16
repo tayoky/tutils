@@ -4,17 +4,17 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <ctype.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_RECURSIVE 0x08
 
-int ret;
+static int ret;
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('R',"--recursive",FLAG_RECURSIVE,"operate on files and directories recursively"),
 };
 
-const char *usage = "chown [OPTIONS]... MODE[,MODE]... FILES...\n"
+CMD(chmod, "chmod [OPTIONS]... MODE[,MODE]... FILES...\n"
 "where MODE is [ugoa][-+=][perm...]\n"
 "where perm is zero or more characters from rwxst\n"
 "r for read\n"
@@ -23,9 +23,10 @@ const char *usage = "chown [OPTIONS]... MODE[,MODE]... FILES...\n"
 "s for setuid or/and setgid bit\n"
 "t for sticky bit (or restriction bit on directories\n"
 "multiples MODE can be given separated by comma\n"
-"change mode of files\n";
+"change mode of files\n",
+opts);
 
-int ch(const char *mode,const char *path){
+static int ch(const char *mode,const char *path){
 	struct stat st;
 	if(stat(path,&st) < 0){
 		ret = 1;
@@ -138,19 +139,15 @@ finish_m:
 	return 0;
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-	
-	if(i + 1 >= argc){
+static int chmod_main(int argc,char **argv){
+	if(argc < 2){
 		error("missing argument");
 		return 1;
 	}
-	i++;
 	ret = 0;
 
-	while(i < argc){
-		ch(argv[1],argv[i]);
-		i++;
+	for(int i=1; i<argc; i++){	
+		ch(argv[0],argv[i]);
 	}
 	return ret;
 }

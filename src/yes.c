@@ -1,13 +1,10 @@
 #include <stdio.h>
-#include "stdopt.h"
+#include <tutils.h>
 
+CMD_NOPT(yes, "yes [STRING]\nor yes OPTION\n"
+"repeatedly print a string to stdout\n");
 
-const char *usage = "yes [STRING]\nor yes OPTION\n"
-"repeatedly print a string to stdout\n";
-
-int main(int argc,char **argv){
-	parse_arg(argc,argv,NULL,0);
-
+static int yes_main(int argc,char **argv){
 	for(;;){
 		if(argc > 1){
 			for(int i=1;i<argc;i++){

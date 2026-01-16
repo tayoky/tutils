@@ -4,14 +4,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 //TODO : this impmementation is missing xflag cbs conv and count
 
 #define min(a,b) (a < b ? a : b)
 #define max(a,b) (a > b ? a : b)
 
-const char *usage = "dd [OPERANDS]\n"
+CMD_NOPT(dd, "dd [OPERANDS]\n"
 "or dd OPTION\n"
 "copy and convert files\n"
 "by default dd read stdin and output to stdout with 512 bytes blocks\n"
@@ -25,7 +25,7 @@ const char *usage = "dd [OPERANDS]\n"
 "obs=BYTES : use output blocks of size BYTES\n"
 "of=FILE   : write to FILE instead of stdin\n"
 "skip=N (or iseek=N) : skip N input block\n"
-"seek=N (or oseek=N) : skip N output block\n";
+"seek=N (or oseek=N) : skip N output block\n");
 
 
 static size_t str2int(const char *str){
@@ -104,9 +104,7 @@ static size_t read_by_blocks(int fd,char *buf,size_t count,size_t bs){
 	return total;
 }
 
-int main(int argc,char **argv){
-	parse_arg(argc,argv,NULL,0);
-
+static int dd_main(int argc, char **argv){
 	char *in_name  = NULL;
 	char *out_name = NULL;
 	size_t ibs = 512;
@@ -116,7 +114,7 @@ int main(int argc,char **argv){
 	size_t count = SIZE_MAX;
 	int oflags = O_WRONLY | O_TRUNC | O_CREAT;
 
-	for(int i=1; i<argc; i++){
+	for(int i=0; i<argc; i++){
 		if(!strchr(argv[i],'=')){
 			error("invalid operand '%s'",argv[i]);
 			return 1;

@@ -1,5 +1,9 @@
-const char *usage = "true\n";
+#include <tutils.h>
 
-int main(){
+CMD_NOPT(true, NULL);
+
+static int true_main(int argc, char **argv){
+	(void)argc;
+	(void)argv;
 	return 0;
 }

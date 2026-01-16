@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_TABS   0x08
 #define FLAG_ENDS   0x10
@@ -11,7 +11,7 @@
 #define FLAG_NOPRNT 0x40
 #define FLAG_BYTE   0x80
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('A',"--show-all",FLAG_NOPRNT | FLAG_ENDS | FLAG_TABS | FLAG_BYTE,"equivalent to -vET"),
 	OPT('e',NULL,FLAG_NOPRNT | FLAG_ENDS | FLAG_BYTE,"equivalent to -vE"),
 	OPT('E',"--show-ends",FLAG_ENDS | FLAG_BYTE,"display $ at end of each line"),
@@ -22,14 +22,15 @@ struct opt opts[] = {
 	OPT('v',"--show-noprinting",FLAG_NOPRNT | FLAG_BYTE,"display non printable characters with ^ notation (except for NL and TAB)"),
 };
 
-int ret;
+static int ret;
 
-const char *usage = "cat [FILES] ...\n"
+CMD(cat, "cat [FILES] ...\n"
 "concatenate files and print to stdout\n"
 "special file name \"-\" is equivalent to stdin\n"
-"if no files is specified stdin is used by default\n";
+"if no files is specified stdin is used by default\n",
+opts);
 
-void cat(const char *path){
+static void cat(const char *path){
 	FILE *file;
 	//"-" is stdin
 	if(!strcmp(path,"-")){
@@ -84,14 +85,13 @@ void cat(const char *path){
 	}
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
+static int cat_main(int argc,char **argv){
 	ret = 0;
 	//if nothing stdin by default
-	if(argc ==  i){
+	if(argc < 1){
 		cat("-");
 	} else {
-		for(;i<argc;i++){
+		for(int i=0;i<argc;i++){
 			cat(argv[i]);
 		}
 	}

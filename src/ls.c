@@ -1,5 +1,5 @@
-#include "stdopt.h"
-#include "grid.h"
+#include <tutils.h>
+#include <grid.h>
 #include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -20,7 +20,7 @@
 #define FLAG_ATIME   0x100
 #define FLAG_HUMAN   0x200
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('a',"--all",FLAG_ALL | FLAG_ALMOST,"show all files (including . and ..)"),
 	OPT('A',"--almost-all",FLAG_ALMOST,"show all files except . and .."),
 	OPT('U',NULL,FLAG_NO_SORT,"show in directory order without sorting"),
@@ -33,12 +33,12 @@ struct opt opts[] = {
 	OPT('h',"--human",FLAG_HUMAN,"print size in human readable format (eg 234M, 3G, ..)"),
 };
 
-const char *usage = "ls [-laAUrStuch] [DIRECTORY]\n"
-"list files in a directory\n";
+CMD(ls, "ls [-laAUrStuch] [DIRECTORY]\n"
+"list files in a directory\n", opts);
 
 
-int to_tty = 0;
-int ret;
+static int to_tty = 0;
+static int ret;
 
 struct ent {
 	char *name;
@@ -206,7 +206,7 @@ void mkent(struct ent *entry,const char *name,const char *path){
 	}
 }
 
-void ls(const char *path){
+static void ls(const char *path){
 	DIR *dir = opendir(path);
 
 	if(dir == NULL){
@@ -266,14 +266,12 @@ void ls(const char *path){
 }
 
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-
+static int ls_main(int argc, char **argv){
 	if((flags & FLAG_CTIME) || (flags & FLAG_ATIME) && !(flags & FLAG_LIST)){
 		flags |= FLAG_SORT_TM;
 	}
 
-	//are we wrinting to a tty ?
+	// are we wrinting to a tty ?
 	to_tty = isatty(STDOUT_FILENO);
 	if(to_tty < 0){
 		to_tty = 0;
@@ -281,16 +279,16 @@ int main(int argc,char **argv){
 
 	ret = 0;
 
-	if(i >= argc){
+	if(argc < 1){
 		ls(".");
 	} else {
-		int header = i + 1 < argc;
-		for(;i<argc;i++){
-			if(header){
+		int have_header = 1 < argc;
+		for(int i=0;i<argc;i++){
+			if(have_header){
 				printf("%s:\n",argv[i]);
 			}
 			ls(argv[i]);
-			if(header && i + 1 < argc){
+			if(have_header && i + 1 < argc){
 				putchar('\n');
 			}
 		}

@@ -1,24 +1,24 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 
-struct opt opts[] = {
+static opt_t opts[] = {
 };
 
-const char *usage = "readlink [OPTIONS] FILES...\n"
-"print value of symbolic link\n";
+CMD(readlink, "readlink [OPTIONS] FILES...\n"
+"print value of symbolic link\n",
+opts);
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-	if(argc == i){
+static int readlink_main(int argc,char **argv){
+	if(argc < 1){
 		error("missing argument");
 		return 1;
 	}
 	int ret = 0;
 	char buf[PATH_MAX + 1];
-	for(;i<argc;i++){
+	for(int i=0;i<argc;i++){
 		ssize_t size = readlink(argv[i],buf,sizeof(buf)-1);
 		if(size < 0){
 			ret = 1;

@@ -2,21 +2,22 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_RECURSIVE 0x08
 #define FLAG_CHGRP     0x10
 
-int ret;
+static int ret;
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('R',"--recursive",FLAG_RECURSIVE,"operate on files and directories recursively"),
 };
 
-const char *usage = "chown [OPTIONS]... OWNER[:GROUP] FILES...\n"
-"change owner of files\n";
+CMD(chown, "chown [OPTIONS]... OWNER[:GROUP] FILES...\n"
+"change owner of files\n",
+opts);
 
-int ch(uid_t owner,gid_t group,const char *path){
+static int ch(uid_t owner,gid_t group,const char *path){
 	struct stat st;
 	if(lstat(path,&st) < 0){
 		ret = 1;
@@ -58,34 +59,30 @@ int ch(uid_t owner,gid_t group,const char *path){
 	return 0;
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
+static int chown_main(int argc,char **argv){
 	
-	if(i >= argc){
+	if(argc < 1){
 		error("no owner specfied");
 		return 1;
-	} else if(i + 1 >= argc){
+	} else if(argc < 2){
 		error("no files specfied");
 		return 1;
 	}
 
 	uid_t owner;
 	gid_t group;
-	if(strchr(argv[i],':')){
+	if(strchr(argv[0],':')){
 		flags |= FLAG_CHGRP;
-		group = str2uid(strchr(argv[i],':')+1);
-		*strchr(argv[i],':') = '\0';
+		group = str2uid(strchr(argv[0],':')+1);
+		*strchr(argv[0],':') = '\0';
 	}
 
-	owner = str2uid(argv[i]);
-
-	i++;
+	owner = str2uid(argv[0]);
 
 	ret = 0;
 
-	while(i < argc){
+	for(int i=1; i < argc; i++){
 		ch(owner,group,argv[i]);
-		i++;
 	}
 	return ret;
 }

@@ -1,18 +1,49 @@
 MAKEFLAGS += --no-builtin-rules
 
-SRC = $(shell find src -name "*.c" -not -name "stdopt.c" -not -name "grid.c" | xargs -L 1 basename)
-
-EXE = $(addprefix bin/,${SRC:.c=})
+SRC = $(shell find src -name "*.c")
+OBJ = $(SRC:src/%.c=build/%.o)
+EXE = tutils
+CMDS = basename \
+	cat \
+	chmod \
+	chown \
+	clear \
+	cp \
+	dd \
+	dirname \
+	echo \
+	false \
+	head \
+	hex \
+	id \
+	ln \
+	ls \
+	mkdir \
+	mv \
+	pwd \
+	readlink \
+	rm \
+	sleep \
+	stat \
+	test \
+	touch \
+	true \
+	unlink \
+	whoami \
+	yes
 
 include config.mk
 
-CFLAGS += -DHOST="$(HOST)" $(OPT)
+CFLAGS += -DHOST="$(HOST)" $(OPT) -Iinclude
 
-all :  $(EXE)
-bin/% : build/%.o build/stdopt.o build/grid.o
-	@mkdir -p bin
+all :  build/$(EXE)
+
+build/$(EXE) : $(OBJ)
 	@echo "[linking $(shell basename $@)]"
 	@$(CC) $(CFLAGS) -o $@ $^
+
+# TODO : bring back one exe per cmd mode
+build/% : build/%.o build/main.o build/utils.o build/grid.o
 
 build/%.o : src/%.c
 	@echo "[compiling $^]"
@@ -22,9 +53,10 @@ build/%.o : src/%.c
 clean :
 	rm -fr bin build
 
-install : $(EXE)
-	@mkdir -p $(PREFIX)/bin
-	cp $(EXE) $(PREFIX)/bin
+install : all
+	@mkdir -p "$(PREFIX)/bin"
+	cp "build/$(EXE)" "$(PREFIX)/bin"
+	$(foreach CMD, $(CMDS), rm "$(PREFIX)/bin/$(CMD)"; ln -s "$(EXE)" "$(PREFIX)/bin/$(CMD)" ;)
 
 config.mk :
 	$(error "run ./configure before running make")

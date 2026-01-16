@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <libgen.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 //TODO : this implementation need overwriting protection
 
@@ -11,20 +11,21 @@
 #define FLAG_FORCE       0x04
 #define FLAG_INTERACTIVE 0x08
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
 	OPT('i',"--interactive",FLAG_INTERACTIVE,"always ask before overwriting old file"),
 	OPT('f',"--force",FLAG_FORCE,"always overwrite old file without asking"),
 };
 
-const char *usage = "mv [OPTIONS] SOURCE... DESTINATION\n"
+CMD(mv, "mv [OPTIONS] SOURCE... DESTINATION\n"
 "or mv OPTION\n"
-"move files and directories\n";
+"move files and directories\n",
+opts);
 
-int ret = 0;
+static int ret = 0;
 
-int move(const char *src,const char *dest){
+static int move(const char *src,const char *dest){
 	struct stat src_st;
 	if(stat(src,&src_st) < 0 && lstat(src,&src_st) < 0){
 		perror(src);
@@ -60,10 +61,8 @@ int move(const char *src,const char *dest){
 }
 
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-
-	if(i + 2 > argc){
+static int mv_main(int argc,char **argv){
+	if(argc < 2){
 		error("missing argument");
 		return 1;
 	}
@@ -77,7 +76,7 @@ int main(int argc,char **argv){
 	//automatic
 	if(!(flags & FLAG_TARGET_DIR) && !(flags & FLAG_TARGET_FILE)){
 		//let figure out ourself
-		if(i < argc - 2 || dest[strlen(dest)-1] == '/'){
+		if(argc > 2 || dest[strlen(dest)-1] == '/'){
 			flags |= FLAG_TARGET_DIR;
 		} else {
 			struct stat st;
@@ -111,12 +110,12 @@ int main(int argc,char **argv){
 			return 1;
 		}
 	}
-	if(i < argc - 2 && (flags & FLAG_TARGET_FILE)){
+	if(argc > 2 && (flags & FLAG_TARGET_FILE)){
 		error("can only copy one file with -T");
 		return 1;
 	}
 
-	for(; i<argc-1; i++){
+	for(int i=0; i<argc-1; i++){
 		//start by finding the dest path
 		char dst[strlen(argv[i]) + strlen(dest) + 2];
 		char src[strlen(argv[i]) + 1];

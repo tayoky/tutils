@@ -3,16 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <pwd.h>
-#include "stdopt.h"
-
-// identifier might vary accros OSes
-#ifdef __stanix__
-#define UI "%lu"
-#define GI "%lu"
-#else
-#define UI "%u"
-#define GI "%u"
-#endif
+#include <tutils.h>
 
 #define FLAG_LINK   0x08 // follow links
 #define FLAG_FS     0x10
@@ -20,9 +11,9 @@
 #define FLAG_PRINTF 0x40
 #define FLAG_TERSE  0x80
 
-char *fmt = NULL;
+static char *fmt = NULL;
 
-char *default_fmt = "  File : %n\n"
+static char *default_fmt = "  File : %n\n"
 "Size   : %s  Blocks : %b  IO Block : %B  %F\n"
 "Device : %Hd,%Ld  Inode : %i  Links : %h\n"
 "Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
@@ -31,7 +22,7 @@ char *default_fmt = "  File : %n\n"
 "Change : %z\n"
 "Birth  : %w\n";
 
-char *dev_fmt = "  File : %n\n"
+static char *dev_fmt = "  File : %n\n"
 "Size   : %s  Blocks : %b  IO Block : %B  %F\n"
 "Device : %Hd,%Ld  Inode : %i  Links : %h  Device type : %Hr,%Lr\n"
 "Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
@@ -40,9 +31,9 @@ char *dev_fmt = "  File : %n\n"
 "Change : %z\n"
 "Birth  : %w\n";
 
-int ret;
+static int ret;
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('L',"--dereference",FLAG_LINK,"follow links"),
 	OPT('f',"--file-system",FLAG_FS,"display file system info instead of file info"),
 	OPT(0,"--cached",0,"ignored"),
@@ -51,16 +42,17 @@ struct opt opts[] = {
 	OPT('t',"--terse",FLAG_TERSE,"print info in terse form"),
 };
 
-const char *usage = "stat [OPTIONS]... FILE...\n"
-"display file or file system information\n";
+CMD(stat, "stat [OPTIONS]... FILE...\n"
+"display file or file system information\n",
+opts);
 
-void print_time(time_t t){
+static void print_time(time_t t){
 	char *str = ctime(&t);
 	*strrchr(str,'\n') = '\0';
 	printf("%s",str);
 }
 
-void do_stat(const char *path){
+static void do_stat(const char *path){
 	struct stat st;
 	int r;
 	if(flags & FLAG_LINK){
@@ -138,11 +130,11 @@ void do_stat(const char *path){
 			//TODO : file type
 			break;
 		case 'g':
-			printf(GI,st.st_gid);
+			printf(FGID,st.st_gid);
 			break;
 		case 'G':
 			//TODO group name
-			printf(GI,st.st_gid);
+			printf(FGID,st.st_gid);
 			break;
 		case 'h':
 			printf("%u",st.st_nlink);
@@ -178,14 +170,14 @@ void do_stat(const char *path){
 			printf("%x",minor(st.st_rdev));
 			break;
 		case 'u':
-			printf(UI,st.st_uid);
+			printf(FUID,st.st_uid);
 			break;
 		case 'U':;
 			struct passwd *pwd = getpwuid(st.st_uid);
 			if(pwd){
 				printf("%s",pwd->pw_name);
 			} else {
-				printf(UI,st.st_uid);
+				printf(FUID,st.st_uid);
 			}
 			break;
 		case 'w':
@@ -256,10 +248,8 @@ void do_stat(const char *path){
 	}
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-
-	if(i == argc){
+static int stat_main(int argc, char **argv){
+	if(argc < 0){
 		error("missing argument");
 		return 1;
 	}
@@ -269,7 +259,7 @@ int main(int argc,char **argv){
 	}
 
 	ret = 0;
-	for(;i < argc; i++){
+	for(int i=0;i < argc; i++){
 		do_stat(argv[i]);
 	}
 	return ret;

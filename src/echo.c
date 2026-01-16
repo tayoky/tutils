@@ -1,16 +1,15 @@
 #include <stdio.h>
-#include "stdopt.h"
+#include <tutils.h>
 
-struct opt opts[] = {
+static opt_t opts[] = {
 };
 
-const char *usage = "echo [STRING] ...\n"
-"print strings to stdout followed by a newline\n";
+CMD(echo, "echo [STRING] ...\n"
+"print strings to stdout followed by a newline\n",
+opts);
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-
-	for(; i<argc; i++){
+static int echo_main(int argc,char **argv){
+	for(int i=0; i<argc; i++){
 		if (printf("%s ",argv[i]) < 0) {
 			perror("write");
 			return 1;

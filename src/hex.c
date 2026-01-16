@@ -1,28 +1,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define ESC "\033"
 #define FLAG_SEEK   0x01
 #define FLAG_LENGHT 0x02
 
-char *seek_str;
-char *lenght_str;
-size_t seek_value;
-size_t lenght_value;
+static char *seek_str;
+static char *lenght_str;
+static size_t seek_value;
+static size_t lenght_value;
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPTV('s',"--seek",FLAG_SEEK,&seek_str,"seek to a specified location before dumping"),
 	OPTV('l',"--length",FLAG_LENGHT,&lenght_str,"dump up to LENGTH byte"),
 };
 
-const char *usage = "hex [OPTIONS] FILES\n"
-"do an hexadecimal dump of files\n";
+CMD(hex, "hex [OPTIONS] FILES\n"
+"do an hexadecimal dump of files\n",
+opts);
 
-
-size_t col = 8;
-int color = 1;
+static size_t col = 8;
+static int color = 1;
 
 static void print_color(char c){
 	if(c){
@@ -99,9 +99,8 @@ static int hex_dump(char *path){
 	return 0;
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-	if(i == argc){
+static int hex_main(int argc,char **argv){
+	if(argc < 1){
 		error("missing argument");
 		return 1;
 	}
@@ -122,7 +121,7 @@ int main(int argc,char **argv){
 		}
 	}
 	int ret = 0;
-	for(;i<argc;i++){
+	for(int i=0;i<argc;i++){
 		if(hex_dump(argv[i])){
 			ret = 1;
 		}

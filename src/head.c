@@ -1,29 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_LINES 0x08
 #define FLAG_BYTES 0x10
 #define FLAG_QUIET 0x20
 
-char *lines;
-char *bytes;
-int ret;
-long line;
-long byte;
+static char *lines;
+static char *bytes;
+static int ret;
+static long line;
+static long byte;
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPTV('n',"--lines",FLAG_LINES,&lines,"print the first NUM lines instead of 10 lines"),
 	OPTV('c',"--bytes",FLAG_BYTES,&bytes,"the number of bytes to copy from the start"),
 	OPT('q',"--quiet",FLAG_QUIET,"never print filename header"),
 };
 
-const char *usage = "head [OPTIONS]... [FILES]...\n"
+CMD(head, "head [OPTIONS]... [FILES]...\n"
 "print the first 10 lines of a file\n"
 "the special filename '-' is treat as stdin\n"
-"if no files is specified, '-' is used by default\n";
+"if no files is specified, '-' is used by default\n",
+opts);
 
-void head(const char *path){
+static void head(const char *path){
 	FILE *file;
 	if(!strcmp(path,"-")){
 		file = stdin;
@@ -76,11 +77,9 @@ finish:
 	fclose(file);
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-
+static int head_main(int argc,char **argv){
 	//activate quiet mode for 0 or 1 file
-	if(argc - i <= 1){
+	if(argc < 2){
 		flags |= FLAG_QUIET;
 	}
 
@@ -104,12 +103,11 @@ int main(int argc,char **argv){
 	}
 
 	ret = 0;
-	if(i == argc){
+	if(argc < 1){
 		head("-");
 	} else {
-		while(i < argc){
+		for(int i=0; i < argc; i++){
 			head(argv[i]);
-			i++;
 		}
 	}
 

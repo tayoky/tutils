@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pwd.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_GROUPS 0x01
 #define FLAG_GROUP  0x02
@@ -9,9 +9,9 @@
 #define FLAG_REAL   0x08
 #define FLAG_NAME   0x10
 
-int ret;
+static int ret;
 
-struct opt options[] = {
+static opt_t opts[] = {
 	OPT('u',"--user"  ,FLAG_USER  ,"print only effective user id"),
 	OPT('g',"--group" ,FLAG_GROUP ,"print only effective group id"),
 	OPT('G',"--groups",FLAG_GROUPS,"print only real, effective and supplementary groups id"),
@@ -19,10 +19,12 @@ struct opt options[] = {
 	OPT('n',"--name"  ,FLAG_NAME  ,"print the name (string) instead of an id (integer)"),
 };
 
-const char *usage = "print user identity\n";
+CMD(id,"id [OPTIONS] [USER]...\n"
+"print user identity\n",
+opts);
 
 //TODO : support for suplementary groups + groups name
-void print_info(uid_t uid){
+static void print_info(uid_t uid){
 	struct passwd *pwd = getpwuid(uid);
 	if(!pwd){
 		perror("getpwuid");
@@ -33,24 +35,23 @@ void print_info(uid_t uid){
 		if(flags & FLAG_NAME){
 			printf("%s\n",pwd->pw_name);
 		} else {
-			printf(UID"\n",pwd->pw_uid);
+			printf(FUID"\n",pwd->pw_uid);
 		}
 	} else if(flags & FLAG_GROUP){
-		printf(GID"\n",pwd->pw_gid);
+		printf(FGID"\n",pwd->pw_gid);
 	} else if(flags & FLAG_GROUPS){
 		printf("unsupported\n");
 	} else {
-		printf("uid="UID"(%s) gid="GID"("GID")\n",pwd->pw_uid,pwd->pw_name,pwd->pw_gid,pwd->pw_gid);
+		printf("uid="FUID"(%s) gid="FGID"("FGID")\n",pwd->pw_uid,pwd->pw_name,pwd->pw_gid,pwd->pw_gid);
 	}
 }
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,options,arraylen(options));
+static int id_main(int argc, char **argv){
 	ret = 0;
-	if(i >= argc){
+	if(argc < 1){
 		print_info(flags & FLAG_REAL ? getuid() : geteuid());
 	} else {
-		for(;i < argc; i++){
+		for(int i=0;i < argc; i++){
 			print_info(str2uid(argv[i]));
 		}
 	}

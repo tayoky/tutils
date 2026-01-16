@@ -5,22 +5,23 @@
 #include <errno.h>
 #include <dirent.h>
 #include <stdlib.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_RECURSIVE 0x08
 #define FLAG_FORCE     0x10
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('f',"--force",FLAG_FORCE,"force delete"),
 	OPT('r',"--recursive",FLAG_RECURSIVE,"delete directories and their content"),
 };
 
-int ret = 0;
+static int ret = 0;
 
-const char *usage = "rm [-rf] FILES DIRECTORIES ...\n"
-"delete files\n";
+CMD(rm, "rm [-rf] FILES DIRECTORIES ...\n"
+"delete files\n",
+opts);
 
-int rm(const char *path){
+static int rm(const char *path){
 	//get info on it
 	struct stat info;
 	if(lstat(path,&info)){
@@ -87,18 +88,13 @@ int rm(const char *path){
 	return 0;
 }
 
-int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
-	
-	int count = 0;
-	for(int i=1; i<argc; i++){
-		if(argv[i][0] == '-')continue;
-		count ++;
-		rm(argv[i]);
-	}
-	if(!count){
+static int rm_main(int argc,char **argv){
+	if(argc < 1){
 		error("missing argument");
 		return 1;
+	}
+	for(int i=0; i<argc; i++){
+		rm(argv[i]);
 	}
 	
 	return ret ;

@@ -2,9 +2,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "stdopt.h"
+#include <tutils.h>
 
-const char *usage = "sleep DURATION...\n"
+CMD_NOPT(sleep, "sleep DURATION...\n"
 "or sleep OPTION\n"
 "where DURATION is an integer that can be folowed by a suffix to choice the unit\n"
 "s for second\n"
@@ -13,18 +13,16 @@ const char *usage = "sleep DURATION...\n"
 "d for day\n"
 "if no suffix is provided assume seconds\n"
 "sleep will pause for the provided duration\n"
-"if multiples durations are provided sleep will pause for their sum\n";
+"if multiples durations are provided sleep will pause for their sum\n");
 
-int main(int argc,char **argv){
-	parse_arg(argc,argv,NULL,0);
-
-	if(argc < 2){
+static int sleep_main(int argc,char **argv){
+	if(argc < 1){
 		error("missing argument");
 		return 1;
 	}
 
 	long dur = 0;
-	for(int i=1; i<argc; i++){
+	for(int i=0; i<argc; i++){
 		if(argv[i][0] == '\0'){
 			error("numeric argument required");
 			return 1;

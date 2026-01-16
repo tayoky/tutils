@@ -1,25 +1,22 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_P 0x08
 #define FLAG_L 0x10
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('P',NULL,FLAG_P,"show the $PWD variable"),
 	OPT('L',NULL,FLAG_L,"show the physical path without sysmlink"),
 };
 
-const char *usage = "pwd [-L]\n"
+CMD(pwd, "pwd [-L]\n"
 "or pwd -P\n"
 "print the working directory\n"
-"by default pwd behave like called with -L\n";
+"by default pwd behave like called with -L\n",
+opts);
 
-
-
-int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
-
+static int pwd_main(int argc,char **argv){
 	if(flags & FLAG_P){
 		char cwd[256];
 		getcwd(cwd,256);

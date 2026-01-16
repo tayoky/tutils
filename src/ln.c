@@ -5,7 +5,7 @@
 #include <libgen.h>
 #include <dirent.h>
 #include <fcntl.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 //TODO : this implementation need implicit . support
 
@@ -16,7 +16,7 @@
 #define FLAG_SYMLINK     0x10
 #define FLAG_RELATIVE    0x20
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
 	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
 	OPT('i',"--interactive",FLAG_INTERACTIVE,"ask before overwriting old file"),
@@ -25,13 +25,14 @@ struct opt opts[] = {
 	OPT('r',"--relative",FLAG_RELATIVE,"make symbolic link relative to their location"),
 };
 
-const char *usage = "ln [OPTIONS] SOURCE... DESTINATION\n"
+CMD(ln, "ln [OPTIONS] SOURCE... DESTINATION\n"
 "or ln OPTION\n"
-"create hard link\n";
+"create hard link\n",
+opts);
 
-int ret = 0;
+static int ret = 0;
 
-int ln(const char *src,const char *dest){
+static int ln(const char *src,const char *dest){
 	struct stat src_st;
 	if(stat(src,&src_st) < 0 && lstat(src,&src_st) < 0){
 		perror(src);
@@ -100,10 +101,8 @@ int ln(const char *src,const char *dest){
 }
 
 
-int main(int argc,char **argv){
-	int i = parse_arg(argc,argv,opts,arraylen(opts));
-
-	if(i + 2 > argc){
+static int ln_main(int argc,char **argv){
+	if(argc < 2){
 		error("missing argument");
 		return 1;
 	}
@@ -118,7 +117,7 @@ int main(int argc,char **argv){
 	//automatic
 	if(!(flags & FLAG_TARGET_DIR) && !(flags & FLAG_TARGET_FILE)){
 		//let figure out ourself
-		if(i < argc - 2 || dest[strlen(dest)-1] == '/'){
+		if(argc > 2 || dest[strlen(dest)-1] == '/'){
 			flags |= FLAG_TARGET_DIR;
 		} else {
 			struct stat st;
@@ -152,12 +151,12 @@ int main(int argc,char **argv){
 			return 1;
 		}
 	}
-	if(i < argc - 2 && (flags & FLAG_TARGET_FILE)){
+	if(argc > 2 && (flags & FLAG_TARGET_FILE)){
 		error("can only link one file with -T");
 		return 1;
 	}
 
-	for(; i<argc-1; i++){
+	for(int i=0; i<argc-1; i++){
 		//start by finding the dest path
 		char dst[strlen(argv[i]) + strlen(dest) + 2];
 		char src[strlen(argv[i]) + 1];

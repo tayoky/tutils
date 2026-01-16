@@ -2,9 +2,10 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <tutils.h>
 
-const char *usage = "test [ARG1] OPTION [ARG2]\n"
-      "test a condition\n";
+CMD_NOPT(test, "test [ARG1] OPTION [ARG2]\n"
+      "test a condition\n");
 
 //simple test command
 int test(int *argc,char ***r_argv){
@@ -124,9 +125,6 @@ int test(int *argc,char ***r_argv){
 
 }
 
-int main(int argc,char **argv){
-	argc--;
-	argv++;
+static int test_main(int argc,char **argv){
 	return test(&argc,&argv);
-}
-			
+}	

@@ -4,20 +4,21 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define FLAG_ALL 0x80
 
-struct opt opts[] = {
+static opt_t opts[] = {
 	OPT('a',NULL,FLAG_ALL,"show hidden files and directories"),
 };
 
-const char *usage = "tree [-a] [DIRECTORY]\n"
-"recursively show content of directories\n";
+CMD(tree, "tree [-a] [DIRECTORY]\n"
+"recursively show content of directories\n",
+opts);
 
-int ret = 0;
+static int ret = 0;
 
-int show(char *path,int depth){
+static int show(char *path,int depth){
 	DIR *dir = opendir(path);
 	if(!dir){
 		perror(path);
@@ -68,23 +69,17 @@ int show(char *path,int depth){
 	return 0;
 }
 
-int main(int argc,char **argv){
-	parse_arg(argc,argv,opts,arraylen(opts));
-	
-	int count = 0;
-
-	for(int i=1; i<argc; i++){
-		if(argv[i][0] != '-'){
+static int tree_main(int argc,char **argv){
+	if (argc < 1) {
+		printf(".\n");
+		show(".",1);
+	} else {
+		for(int i=0; i<argc; i++){
 			printf("%s\n",argv[i]);
 			show(argv[i],1);
-			count++;
 		}
 	}
 
-	if(!count){
-		printf(".\n");
-		show(".",1);
-	}
 
 	return ret;
 }

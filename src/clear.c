@@ -1,13 +1,14 @@
 #include <stdio.h>
-#include "stdopt.h"
+#include <tutils.h>
 
 #define ESC "\033"
 
-const char *usage = "clear [OPTION]\n"
-"clear screen\n";
+CMD_NOPT(clear, "clear [OPTION]\n"
+"clear screen\n");
 
-int main(int argc,char **argv){
-	parse_arg(argc,argv,NULL,0);
+static int clear_main(int argc,char **argv){
+	(void)argc;
+	(void)argv;
 	printf(ESC"[2J");
 	printf(ESC"[H");
 	return 0;
