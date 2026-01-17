@@ -30,6 +30,7 @@ CMDS = basename \
 	true \
 	unlink \
 	whoami \
+	wc \
 	yes
 
 include config.mk

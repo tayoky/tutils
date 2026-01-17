@@ -27,6 +27,7 @@
 	X(touch) \
 	X(true) \
 	X(unlink) \
+	X(wc) \
 	X(whoami) \
 	X(yes) \
 

@@ -29,6 +29,7 @@ this is the todo list :
 - [x] hex
 - [x] stat
 - [x] readlink
+- [x] wc
 ## user/perm management
 - [x] whoami
 - [x] chmod (missing options)
