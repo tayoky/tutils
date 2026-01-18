@@ -106,6 +106,8 @@ static int wc_main(int argc, char **argv) {
 	if (argc < 1) {
 		grid = malloc(sizeof(char*) * entries_per_line());
 		wc("-");
+		// do not print the name
+		grid_print(grid, entries_per_line() - 1, entries_per_line() - 1);
 	} else {
 		grid = malloc(sizeof(char*) * entries_per_line() * argc);
 		for (int i=0; i<argc; i++) {
@@ -114,7 +116,7 @@ static int wc_main(int argc, char **argv) {
 		if (argc > 1) {
 			add_stat(&total);
 		}
+		grid_print(grid, entries_per_line() * lines_count, entries_per_line());
 	}
-	grid_print(grid, entries_per_line() * lines_count, entries_per_line());
 	return ret;
 }
