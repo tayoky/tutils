@@ -7,6 +7,12 @@
 CMD_NOPT(test, "test [ARG1] OPTION [ARG2]\n"
       "test a condition\n");
 
+// [ is just an alias
+command_t bracket_cmd = {
+	.name = "[",
+	.main = test_main,
+};
+
 //simple test command
 int test(int *argc,char ***r_argv){
 	char **argv = *r_argv;
@@ -126,5 +132,12 @@ int test(int *argc,char ***r_argv){
 }
 
 static int test_main(int argc,char **argv){
+	if (!strcmp(progname, "[")) {
+		if (argc < 1 || strcmp(argv[argc-1], "]")) {
+			error("no matching ']'");
+			return 1;
+		}
+		argc--;
+	}
 	return test(&argc,&argv);
 }	

@@ -3,7 +3,8 @@ MAKEFLAGS += --no-builtin-rules
 SRC = $(shell find src -name "*.c")
 OBJ = $(SRC:src/%.c=build/%.o)
 EXE = tutils
-CMDS = basename \
+CMDS = [ \
+	basename \
 	cat \
 	chmod \
 	chown \
@@ -13,6 +14,7 @@ CMDS = basename \
 	dirname \
 	echo \
 	false \
+	find \
 	head \
 	hex \
 	id \
@@ -57,7 +59,7 @@ clean :
 install : all
 	@mkdir -p "$(PREFIX)/bin"
 	cp "build/$(EXE)" "$(PREFIX)/bin"
-	$(foreach CMD, $(CMDS), rm "$(PREFIX)/bin/$(CMD)"; ln -s "$(EXE)" "$(PREFIX)/bin/$(CMD)" ;)
+	$(foreach CMD, $(CMDS), rm -f "$(PREFIX)/bin/$(CMD)"; ln -s "$(EXE)" "$(PREFIX)/bin/$(CMD)" ;)
 
 config.mk :
 	$(error "run ./configure before running make")

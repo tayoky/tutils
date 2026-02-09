@@ -1,6 +1,7 @@
 #include <tutils.h>
 
 #define CMD_LIST \
+	X(bracket)\
 	X(basename) \
 	X(cat) \
 	X(chmod) \
@@ -11,6 +12,7 @@
 	X(dirname) \
 	X(echo) \
 	X(false) \
+	X(find) \
 	X(head) \
 	X(hex) \
 	X(id) \
