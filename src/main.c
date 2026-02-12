@@ -110,10 +110,16 @@ int parse_arg(int argc, char **argv, command_t *cmd){
 				}
 
 			}
+			if (cmd->options_count == 0) {
+				break;
+			}
 			error("unknow option '%s' (see --help)",argv[i]);
 			exit(1);
 		} else {
 			//it's a short options
+			if (cmd->options_count == 0) {
+				break;
+			}
 			int skip_next = 0;
 			for (int l=1; argv[i][l]; l++) {
 				for (int j=0; j<cmd->options_count; j++) {
