@@ -47,6 +47,7 @@ uid_t str2uid(const char *str);
 	command_t _name ## _cmd = {.name = #_name, .usage = _usage, .options = NULL, .options_count = 0, .main = _name ## _main}
 
 void error(const char *fmt,...);
+int glob_match(const char *glob, const char *str);
 
 #define perror(str) error("%s : %s",str,strerror(errno));
 

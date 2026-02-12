@@ -1,6 +1,8 @@
+#include <sys/stat.h>
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <tutils.h>
 
@@ -9,6 +11,7 @@ CMD_NOPT(find, "find [PATH...] [EXPR...]\n"
 "find files\n");
 
 static char **ptr;
+static int ret = 0;
 
 typedef struct node {
 	int type;
@@ -43,6 +46,12 @@ typedef struct node {
 #define NODE_NOT     21
 #define NODE_AND     22
 #define NODE_OR      23
+
+typedef struct file {
+	const char *path;
+	const char *name;
+	struct stat st;
+} file_t;
 
 static node_t *parse_or_list(void);
 
@@ -232,9 +241,76 @@ static node_t *parse_or_list(void) {
 	return left;
 }
 
+// return 1 if true else 0
+static int check_node(file_t *file, node_t *node) {
+	switch (node->type) {
+	case NODE_NOT:
+		return !check_node(file, node->left);
+	case NODE_AND:
+		if (!check_node(file, node->left)) return 0;
+		return check_node(file, node->right);
+	case NODE_OR:
+		if (check_node(file, node->left)) return 1;
+		return check_node(file, node->right);
+	case NODE_NAME:
+		return glob_match(node->str, file->name);
+	case NODE_PATH:
+		return glob_match(node->str, file->path);
+	case NODE_PRINT:
+		puts(file->path);
+		return 1;
+	default:
+		error("TODO : unimplemented node");
+		ret = 1;
+		return 0;
+	}
+}
+
+static char *get_basename(const char *path) {
+	// this should work with all basename
+	char *first_dup = strdup(path);
+	char *result = strdup(basename(path));
+	free(first_dup);
+	return result;
+}
+
 static int do_find(const char *path, node_t *node) {
-	// TODO
-	error("TODO : implement find");
+	file_t file = {
+		.path = path,
+		.name = get_basename(path),
+	};
+	if (stat(path, &file.st) < 0) {
+		perror(path);
+		ret = 1;
+		return -1;
+	}
+	check_node(&file, node);
+
+	if (!S_ISDIR(file.st.st_mode)) {
+		return 0;
+	}
+
+	// if is a dir need to be recursive
+	DIR *dir = opendir(path);
+	if (!dir) {
+		return 0;
+	}
+	struct dirent *entry;
+	while ((entry = readdir(dir))) {
+		// ignore "." and ".."
+		if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) {
+			continue;
+		}
+		char full_path[strlen(path) + strlen(entry->d_name) + 2];
+		if (path[0] && path[strlen(path)-1] == '/') {
+			// aready has trailling "/"
+			sprintf(full_path, "%s%s", path, entry->d_name);
+		} else {
+			sprintf(full_path, "%s/%s", path, entry->d_name);
+		}
+		do_find(full_path, node);
+	}
+	closedir(dir);
 	return 0;
 }
 
@@ -260,5 +336,5 @@ static int find_main(int argc, char **argv) {
 		do_find(".", root);
 	}
 	free_node(root);
-	return 0;
+	return ret;
 }
