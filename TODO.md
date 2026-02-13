@@ -18,12 +18,12 @@ this is the todo list :
 - [x] cp (missing options)
 - [x] mv (missing options)
 - [x] rm
-- [ ] rmdir
+- [x] rmdir
 - [x] dd
 - [x] head
 - [ ] tail
 - [ ] grep
-- [ ] find
+- [ ] find (in progress)
 - [ ] truncate
 - [x] tree
 - [x] hex

@@ -23,6 +23,7 @@
 	X(pwd) \
 	X(readlink) \
 	X(rm) \
+	X(rmdir) \
 	X(sleep) \
 	X(stat) \
 	X(test) \
