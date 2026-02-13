@@ -4,6 +4,7 @@
 #include <string.h>
 #include <libgen.h>
 #include <stdio.h>
+#include <pwd.h>
 #include <tutils.h>
 
 
@@ -20,6 +21,9 @@ typedef struct node {
 	union {
 		long number;
 		char *str;
+		uid_t uid;
+		gid_t gid;
+		mode_t f_type;
 	};
 } node_t;
 
@@ -70,6 +74,7 @@ typedef struct primary {
 #define ARG_TYPE    4
 #define ARG_SIZE    5
 #define ARG_UTIL    6
+#define ARG_UID     7
 
 static primary_t primaries[] = {
 	PRIM("-name"   , NODE_NAME  , ARG_STRING),
@@ -81,7 +86,7 @@ static primary_t primaries[] = {
 	PRIM("-perm"   , NODE_PERM, ARG_MODE),
 	PRIM("-type"   , NODE_TYPE, ARG_TYPE),
 	PRIM("-links"  , NODE_LINKS, ARG_NUMBER),
-	PRIM("-user"   , NODE_USER, ARG_STRING),
+	PRIM("-user"   , NODE_USER, ARG_UID),
 	PRIM("-group"  , NODE_GROUP, ARG_STRING),
 	PRIM("-size"   , NODE_SIZE, ARG_SIZE),
 	PRIM("-atime"  , NODE_ATIME, ARG_NUMBER),
@@ -130,24 +135,80 @@ static long parse_int(void) {
 	return num;
 }
 
+static int parse_arg(node_t *node, primary_t *primary) {
+	if (primary->argtype == ARG_NOARG) {
+		return 0;
+	}
+	char *str = get_str();
+	if (!str) {
+		error("expected argument to '%s'", primary->name);
+		return -1;
+	}
+	switch (primary->argtype) {
+	case ARG_NUMBER:;
+		char *end;
+		node->number = strtol(str, &end, 10);
+		if (end == str || *end) {
+			error("invalid number '%s' to '%s'", str, primary->name);
+			return -1;
+		}
+		break;
+	case ARG_STRING:
+		node->str = str;
+		break;
+	case ARG_TYPE:
+		if (!str[0] || str[1]) {
+invalid_type:
+			error("invalid type '%s' to '%s'", str, primary->name);
+			return -1;
+		}
+		switch (str[0]) {
+		case 'b':
+			node->f_type = S_IFBLK;
+			break;
+		case 'c':
+			node->f_type = S_IFCHR;
+			break;
+		case 'd':
+			node->f_type = S_IFDIR;
+			break;
+		case 'l':
+			node->f_type = S_IFLNK;
+			break;
+		case 'p':
+			node->f_type = S_IFIFO;
+			break;
+		case 'f':
+			node->f_type = S_IFREG;
+			break;
+		case 's':
+			node->f_type = S_IFSOCK;
+			break;
+		default:
+			goto invalid_type;
+		}
+		break;
+	case ARG_UID:;
+		uid_t uid = str2uid(str);
+		if (uid < 0) {
+			error("invalid username or uid to '%s'", primary->name);
+			return -1;
+		}
+		node->uid = uid;
+		break;
+	}
+	return 0;
+}
+
 static node_t *parse_primary(void) {
 	char *name = get_str();
 	if (!name) return NULL;
 	for (size_t i=0; i<arraylen(primaries); i++) {
 		if (strcmp(name, primaries[i].name)) continue;
 		node_t *node = new_node(primaries[i].type);
-		switch (primaries[i].argtype) {
-		case ARG_NUMBER:
-			node->number = parse_int();
-			break;
-		case ARG_STRING:
-			node->str = get_str();
-			if (!node->str) {
-				error("expected string argument to '%s'", name);
-				free_node(node);
-				return NULL;
-			}
-			break;
+		if (parse_arg(node, &primaries[i]) < 0) {
+			free_node(node);
+			return NULL;
 		}
 		return node;
 	}
@@ -259,6 +320,12 @@ static int check_node(file_t *file, node_t *node) {
 	case NODE_PRINT:
 		puts(file->path);
 		return 1;
+	case NODE_NOUSER:
+		return getpwuid(file->st.st_uid) == NULL;
+	case NODE_TYPE:
+		return (file->st.st_mode & S_IFMT) == node->f_type;
+	case NODE_USER:
+		return file->st.st_uid == node->uid;
 	default:
 		error("TODO : unimplemented node");
 		ret = 1;
@@ -279,7 +346,7 @@ static int do_find(const char *path, node_t *node) {
 		.path = path,
 		.name = get_basename(path),
 	};
-	if (stat(path, &file.st) < 0) {
+	if (lstat(path, &file.st) < 0) {
 		perror(path);
 		ret = 1;
 		return -1;

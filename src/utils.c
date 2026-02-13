@@ -7,7 +7,7 @@
 uid_t str2uid(const char *str){
 	char *end;
 	uid_t ret = (uid_t)strtol(str,&end,10);
-	if(end == str){
+	if(end == str || *end){
 		struct passwd *pwd = getpwnam(str);
 		if(!pwd){
 			return -1;
