@@ -13,6 +13,7 @@ CMD_NOPT(find, "find [PATH...] [EXPR...]\n"
 
 static char **ptr;
 static int ret = 0;
+static int has_action = 0;
 
 typedef struct node {
 	int type;
@@ -206,6 +207,9 @@ static node_t *parse_primary(void) {
 	for (size_t i=0; i<arraylen(primaries); i++) {
 		if (strcmp(name, primaries[i].name)) continue;
 		node_t *node = new_node(primaries[i].type);
+		if (node->type == NODE_PRINT || node->type == NODE_EXEC || node->type == NODE_OK) {
+			has_action = 0;
+		}
 		if (parse_arg(node, &primaries[i]) < 0) {
 			free_node(node);
 			return NULL;
@@ -302,6 +306,24 @@ static node_t *parse_or_list(void) {
 	return left;
 }
 
+static node_t *parse_exprs(void) {
+	if (!peek_str()) {
+		// if nothing just print
+		return new_node(NODE_PRINT);
+	}
+	node_t *node = parse_or_list();
+	if (!node) return NULL;
+	if (!has_action) {
+		// by default add a print
+		node_t *print = new_node(NODE_PRINT);
+		node_t *and = new_node(NODE_AND);
+		and->left = node;
+		and->right = print;
+		return and;
+	}
+	return node;
+}
+
 // return 1 if true else 0
 static int check_node(file_t *file, node_t *node) {
 	switch (node->type) {
@@ -322,6 +344,8 @@ static int check_node(file_t *file, node_t *node) {
 		return 1;
 	case NODE_NOUSER:
 		return getpwuid(file->st.st_uid) == NULL;
+	case NODE_LINKS:
+		return file->st.st_nlink == node->number;
 	case NODE_TYPE:
 		return (file->st.st_mode & S_IFMT) == node->f_type;
 	case NODE_USER:
@@ -391,7 +415,7 @@ static int find_main(int argc, char **argv) {
 		get_str();
 	}
 	size_t path_count = ptr - argv;
-	node_t *root = parse_or_list();
+	node_t *root = parse_exprs();
 	if (!root) {
 		return 1;
 	}
