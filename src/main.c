@@ -180,6 +180,10 @@ static int parse_opts(int argc, char **argv, command_t *cmd){
 			}
 			i = parse_long_opt(argc, argv, i, cmd);
 		} else {
+			if (!cmd->options_count) {
+				// let the command handle args itself
+				break;
+			}
 			i = parse_short_opt(argc, argv, i, cmd);
 		}
 		continue;

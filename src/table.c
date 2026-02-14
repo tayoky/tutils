@@ -32,6 +32,7 @@
 	X(unlink) \
 	X(wc) \
 	X(whoami) \
+	X(xargs) \
 	X(yes) \
 
 #define X(name) extern command_t name ## _cmd;

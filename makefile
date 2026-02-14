@@ -34,6 +34,7 @@ CMDS = [ \
 	unlink \
 	whoami \
 	wc \
+	xargs\
 	yes
 
 include config.mk
