@@ -11,11 +11,10 @@
 
 static int ret = 0;
 static mode_t mode = S_IRWXU;
-static char *m = NULL;
 
 static opt_t opts[] = {
 	OPT('p',"--parents",FLAG_PARENT,"make parents directories if needed and ignore if any directory already exist"),
-	OPTV('m',"--mode",0,&m,"change mode of the news directories"),
+	OPTMODE('m',"--mode",0,&mode,"change mode of the news directories"),
 	OPT('v',"--verbose",FLAG_VERBOSE,"print a message for each created directory"),
 };
 
@@ -73,15 +72,6 @@ static void make_dir(const char *path){
 }
 
 static int mkdir_main(int argc, char **argv){
-	if(m){
-		//TODO : parse m in others format
-		char *end;
-		mode = strtol(m,&end,8);
-		if(end == m){
-			error("invalid mode '%s'\n",m);
-		}
-	}
-
 	if(argc < 1){
 		error("missing argument");
 		return 1;

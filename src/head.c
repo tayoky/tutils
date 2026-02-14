@@ -6,15 +6,13 @@
 #define FLAG_BYTES 0x10
 #define FLAG_QUIET 0x20
 
-static char *lines;
-static char *bytes;
 static int ret;
-static long line;
-static long byte;
+static size_t lines = 10;
+static size_t bytes = 0;
 
 static opt_t opts[] = {
-	OPTV('n',"--lines",FLAG_LINES,&lines,"print the first NUM lines instead of 10 lines"),
-	OPTV('c',"--bytes",FLAG_BYTES,&bytes,"the number of bytes to copy from the start"),
+	OPTSIZE('n',"--lines",FLAG_LINES,&lines,"print the first NUM lines instead of 10 lines"),
+	OPTSIZE('c',"--bytes",FLAG_BYTES,&bytes,"the number of bytes to copy from the start"),
 	OPT('q',"--quiet",FLAG_QUIET,"never print filename header"),
 };
 
@@ -46,7 +44,7 @@ static void head(const char *path){
 	if(flags & FLAG_LINES){
 		size_t size;
 		size_t found = 0;
-		if(found  >= line)goto finish;
+		if(found  >= lines)goto finish;
 		while((size = fread(buf,1,sizeof(buf),file))){
 			char *ptr = buf;
 			while(memchr(ptr,'\n',size)){
@@ -55,7 +53,7 @@ static void head(const char *path){
 				ptr += line_len;
 				size -= line_len;
 				found++;
-				if(found >= line)goto finish;
+				if(found >= lines)goto finish;
 			}
 			fwrite(ptr,size,1,stdout);
 		}
@@ -63,8 +61,8 @@ static void head(const char *path){
 		size_t size;
 		size_t total = 0;
 		while((size = fread(buf,1,sizeof(buf),file))){
-			if(size + total > byte){
-				fwrite(buf,byte - total,1,stdout);
+			if(size + total > bytes){
+				fwrite(buf,bytes - total,1,stdout);
 				break;
 			}
 			total += size;
@@ -78,28 +76,14 @@ finish:
 }
 
 static int head_main(int argc,char **argv){
-	//activate quiet mode for 0 or 1 file
+	// activate quiet mode for 0 or 1 file
 	if(argc < 2){
 		flags |= FLAG_QUIET;
 	}
 
-	if(flags & FLAG_LINES){
-		char *ptr;
-		line = strtol(lines,&ptr,10);
-		if(ptr == lines || line < 0){
-			error("positive numeric argument required");
-			return 1;
-		}
-	} else if(flags & FLAG_BYTES){
-		char *ptr;
-		byte= strtol(bytes,&ptr,10);
-		if(ptr == bytes|| byte < 0){
-			error("positive numeric argument required");
-			return 1;
-		}
-	} else {
+	if (!(flags & (FLAG_BYTES | FLAG_LINES))) {
 		flags |= FLAG_LINES;
-		line = 10;
+		lines = 10;
 	}
 
 	ret = 0;

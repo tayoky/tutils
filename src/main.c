@@ -103,6 +103,14 @@ static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
 			exit(1);
 		}
 		break;
+	case OPT_MODE:;
+		// TODO : parse in more format
+		*(mode_t*)opt->value = strtoul(argv[i], &end, 8);
+		if (end == argv[i] || *end) {
+			error("invalid mode to '%s' : '%s'", argv[i-1], argv[i]);
+			exit(1);
+		}
+		break;
 	}
 	return i;
 }
