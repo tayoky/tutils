@@ -20,9 +20,16 @@ typedef struct opt {
 	char c;
 	char *str;
 	int flags;
-	char **value;
+	int arg_type;
+	void *value;
 	char *desc;
 } opt_t;
+
+#define OPT_NOARG 0
+#define OPT_STR   1
+#define OPT_INT   2
+#define OPT_SIZE  3
+#define OPT_MODE  4
 
 typedef struct command {
 	const char *usage;
@@ -39,8 +46,17 @@ extern char *progname;
 
 uid_t str2uid(const char *str);
 
-#define OPT(pc,pstr,pflag,d) {.c = pc,.str = pstr,.flags = pflag,.desc = d}
-#define OPTV(pc,pstr,pflag,val,d) {.c = pc,.str = pstr,.flags = pflag,.value = val,.desc = d}
+#define OPT(_c, _str, _flags, _desc) {.c = _c, .str = _str, .flags = _flags, .desc = _desc}
+#define OPTARG(_c, _str, _flags, _arg_type, _ptr, _desc) {.c = _c, .str = _str, .flags = _flags, .arg_type = _arg_type, .value = _ptr, .desc = _desc}
+
+#define OPTSTR(_c, _str, _flags, _ptr, _desc) OPTARG(_c, _str, _flags, OPT_STR, _ptr, _desc)
+#define OPTINT(_c, _str, _flags, _ptr, _desc) OPTARG(_c, _str, _flags, OPT_INT, _ptr, _desc)
+#define OPTSIZE(_c, _str, _flags, _ptr, _desc) OPTARG(_c, _str, _flags, OPT_SIZE, _ptr, _desc)
+#define OPTMODE(_c, _str, _flags, _ptr, _desc) OPTARG(_c, _str, _flags, OPT_MODE, _ptr, _desc)
+
+// compatibility with some old utils
+#define OPTV(_c, _str, _flags, _ptr, _desc) OPTARG(_c, _str, _flags, OPT_STR, _ptr, _desc)
+
 #define CMD(_name, _usage, _opts) static int _name ## _main(int argc, char **argv);\
 	command_t _name ## _cmd = {.name = #_name, .usage = _usage, .options = _opts, .options_count = arraylen(_opts), .main = _name ## _main}
 #define CMD_NOPT(_name, _usage) static int _name ## _main(int argc, char **argv);\

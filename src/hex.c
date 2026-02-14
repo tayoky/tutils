@@ -7,14 +7,12 @@
 #define FLAG_SEEK   0x01
 #define FLAG_LENGHT 0x02
 
-static char *seek_str;
-static char *lenght_str;
-static size_t seek_value;
-static size_t lenght_value;
+static size_t seek_value = 0;
+static size_t lenght_value = 0;
 
 static opt_t opts[] = {
-	OPTV('s',"--seek",FLAG_SEEK,&seek_str,"seek to a specified location before dumping"),
-	OPTV('l',"--length",FLAG_LENGHT,&lenght_str,"dump up to LENGTH byte"),
+	OPTSIZE('s',"--seek",FLAG_SEEK,&seek_value,"seek to a specified location before dumping"),
+	OPTSIZE('l',"--length",FLAG_LENGHT,&lenght_value,"dump up to LENGTH byte"),
 };
 
 CMD(hex, "hex [OPTIONS] FILES\n"
@@ -103,22 +101,6 @@ static int hex_main(int argc,char **argv){
 	if(argc < 1){
 		error("missing argument");
 		return 1;
-	}
-	if(flags & FLAG_SEEK){
-		char *end;
-		seek_value = strtol(seek_str,&end,0);
-		if(end == seek_str){
-			error("invalid value '%s'",seek_str);
-			return 1;
-		}
-	}
-	if(flags & FLAG_LENGHT){
-		char *end;
-		lenght_value = strtol(lenght_str,&end,0);
-		if(end == lenght_str){
-			error("invalid value '%s'",lenght_str);
-			return 1;
-		}
 	}
 	int ret = 0;
 	for(int i=0;i<argc;i++){

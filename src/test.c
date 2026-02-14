@@ -4,8 +4,7 @@
 #include <unistd.h>
 #include <tutils.h>
 
-CMD_NOPT(test, "test [ARG1] OPTION [ARG2]\n"
-      "test a condition\n");
+CMD_NOPT(test, NULL);
 
 // [ is just an alias
 command_t bracket_cmd = {

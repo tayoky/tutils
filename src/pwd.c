@@ -7,7 +7,7 @@
 #define FLAG_L 0x10
 static opt_t opts[] = {
 	OPT('P',NULL,FLAG_P,"show the $PWD variable"),
-	OPT('L',NULL,FLAG_L,"show the physical path without sysmlink"),
+	OPT('L',NULL,FLAG_L,"show the physical path without symlink"),
 };
 
 CMD(pwd, "pwd [-L]\n"

@@ -75,77 +75,105 @@ static command_t *find_command(const char *name) {
 	return cmd ? *cmd : NULL;
 }
 
-int parse_arg(int argc, char **argv, command_t *cmd){
+// return the new index
+static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
+	if (i == argc - 1) {
+		// no more elements
+		error("expected argument after '%s'", argv[i]);
+		exit(1);
+	}
+	i++;
+	switch (opt->arg_type) {
+	case OPT_STR:;
+		*(char**)opt->value = argv[i];
+		break;
+	case OPT_INT:;
+		char *end;
+		*(int*)opt->value = strtol(argv[i], &end, 0);
+		if (end == argv[i] || *end) {
+			error("invalid number to '%s' : '%s'", argv[i-1], argv[i]);
+			exit(1);
+		}
+		break;
+	case OPT_SIZE:;
+		// TODO : support for suffix
+		*(size_t*)opt->value = strtoul(argv[i], &end, 0);
+		if (end == argv[i] || *end) {
+			error("invalid number to '%s' : '%s'", argv[i-1], argv[i]);
+			exit(1);
+		}
+		break;
+	}
+	return i;
+}
+
+// return the new index
+static int parse_long_opt(int argc, char **argv, int i, command_t *cmd) {
+	// special case for --, --help and --version
+	if (!strcmp("--help", argv[i])) {
+		help(cmd);
+		exit(0);
+	}
+	if (!strcmp("--version", argv[i])) {
+		version();
+		exit(0);
+	}
+	for (int j=0; j<cmd->options_count; j++) {
+		if (!cmd->options[j].str || strcmp(argv[i],cmd->options[j].str)) continue;
+
+		// we found a match
+		flags |= cmd->options[j].flags;
+		if (cmd->options[j].value) {
+			i = parse_arg(argc, argv, i, &cmd->options[j]);
+		}
+		return i;
+	}
+	error("unknow option '%s' (see --help)", argv[i]);
+	exit(1);
+}
+
+// return the new index
+static int parse_short_opt(int argc, char **argv, int i, command_t *cmd) {
+	// used to skip over the next element
+	// used for options that take an arg
+	int skip_next = 0;
+
+	for (int l=1; argv[i][l]; l++) {
+		for (int j=0; j<cmd->options_count; j++) {
+			if (cmd->options[j].c != argv[i][l]) continue;
+
+			// we found a match
+			flags |= cmd->options[j].flags;
+			if (cmd->options[j].value) {
+				parse_arg(argc, argv, i, &cmd->options[j]);
+				skip_next = 1;
+			}
+			goto finish_short;
+
+		}
+		error("unknow option '-%c' (see --help)",argv[i][l]);
+		exit(1);
+finish_short:
+		continue;
+	}
+	if (skip_next) i++;
+	return i;
+}
+
+static int parse_opts(int argc, char **argv, command_t *cmd){
 	flags = 0;
 	int i;
 	for (i=1; i<argc;i++) {
 		if (argv[i][0] != '-') break;
 		if (argv[i][1] == '-') {
-			//it's a long option
-			//special case for --, --help and --version
-			if (!strcmp("--", argv[i])) {
+			if (!strcmp("--",  argv[i])) {
 				i++;
 				break;
 			}
-			if (!strcmp("--help",argv[i])) {
-				help(cmd);
-				exit(0);
-			}
-			if (!strcmp("--version",argv[i])) {
-				version();
-				exit(0);
-			}
-			for (int j=0; j<cmd->options_count; j++) {
-				if (cmd->options[j].str && !strcmp(argv[i],cmd->options[j].str)) {
-					flags |= cmd->options[j].flags;
-					if (cmd->options[j].value) {
-						if (i == argc-1) {
-							error("expected argument after '%s'",argv[i]);
-							exit(1);
-						}
-						i++;
-						*cmd->options[j].value = argv[i];
-					}
-					goto finish;
-				}
-
-			}
-			if (cmd->options_count == 0) {
-				break;
-			}
-			error("unknow option '%s' (see --help)",argv[i]);
-			exit(1);
+			i = parse_long_opt(argc, argv, i, cmd);
 		} else {
-			//it's a short options
-			if (cmd->options_count == 0) {
-				break;
-			}
-			int skip_next = 0;
-			for (int l=1; argv[i][l]; l++) {
-				for (int j=0; j<cmd->options_count; j++) {
-					if (cmd->options[j].c == argv[i][l]) {
-						flags |= cmd->options[j].flags;
-						if(cmd->options[j].value) {
-							if (i == argc-1) {
-								error("expected argument after '%c'",argv[i][l]);
-								exit(1);
-							}
-							*cmd->options[j].value = argv[i+1];
-							skip_next = 1;
-						}
-					
-	goto finish_short;
-					}
-
-				}
-				error("unknow option '-%c' (see --help)",argv[i][l]);
-				exit(1);
-finish_short:
-				continue;
-			}
-			if (skip_next) i++;
+			i = parse_short_opt(argc, argv, i, cmd);
 		}
-finish:
 		continue;
 	}
 
@@ -176,6 +204,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	int i=1;
-	if (cmd->usage || cmd->options_count) i=parse_arg(argc, argv, cmd);
+	if (cmd->usage || cmd->options_count) i=parse_opts(argc, argv, cmd);
 	return cmd->main(argc - i, &argv[i]);
 }
