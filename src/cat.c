@@ -69,11 +69,19 @@ static void cat(const char *path){
 		}
 		prev = c;
 	}
+	if (ferror(file)) {
+		perror(path);
+		ret = 1;
+	}
 	} else {
 		char buffer[4096];
-		size_t size;
-		while((size = read(fileno(file),buffer,sizeof(buffer)))){
-			write(STDOUT_FILENO,buffer,size);
+		ssize_t rsize;
+		while((rsize = read(fileno(file),buffer,sizeof(buffer))) > 0){
+			write(STDOUT_FILENO, buffer, rsize);
+		}
+		if (rsize < 0) {
+			perror(path);
+			ret = 1;
 		}
 	}
 
