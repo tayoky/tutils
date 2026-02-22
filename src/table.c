@@ -24,6 +24,7 @@
 	X(readlink) \
 	X(rm) \
 	X(rmdir) \
+	X(seq) \
 	X(sleep) \
 	X(stat) \
 	X(test) \

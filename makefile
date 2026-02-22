@@ -26,6 +26,7 @@ CMDS = [ \
 	readlink \
 	rm \
 	rmdir \
+	seq \
 	sleep \
 	stat \
 	test \
