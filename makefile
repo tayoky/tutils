@@ -33,8 +33,9 @@ CMDS = [ \
 	touch \
 	true \
 	unlink \
-	whoami \
 	wc \
+	which \
+	whoami \
 	xargs\
 	yes
 

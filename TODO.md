@@ -30,6 +30,7 @@ this is the todo list :
 - [x] stat
 - [x] readlink
 - [x] wc
+- [x] which
 ## user/perm management
 - [x] whoami
 - [x] chmod (missing options)

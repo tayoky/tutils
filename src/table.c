@@ -1,5 +1,6 @@
 #include <tutils.h>
 
+// please keep this in alphabetic order
 #define CMD_LIST \
 	X(bracket)\
 	X(basename) \
@@ -32,6 +33,7 @@
 	X(true) \
 	X(unlink) \
 	X(wc) \
+	X(which) \
 	X(whoami) \
 	X(xargs) \
 	X(yes) \
