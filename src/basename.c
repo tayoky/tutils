@@ -46,10 +46,10 @@ static int basename_main(int argc,char **argv){
 			return 1;
 		}
 		if(argc == 3){
-			suffix = argv[2];
+			suffix = argv[1];
 			flags |= FLAG_SUFFIX;
 		}
-		bname(argv[1]);
+		bname(argv[0]);
 	}
 
 	return 0;
