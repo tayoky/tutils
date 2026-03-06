@@ -31,6 +31,7 @@ this is the todo list :
 - [x] readlink
 - [x] wc
 - [x] which
+- [x] tr (no class support)
 ## user/perm management
 - [x] whoami
 - [x] chmod (missing options)

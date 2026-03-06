@@ -30,6 +30,7 @@
 	X(stat) \
 	X(test) \
 	X(touch) \
+	X(tr) \
 	X(true) \
 	X(unlink) \
 	X(wc) \

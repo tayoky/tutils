@@ -31,6 +31,7 @@ CMDS = [ \
 	stat \
 	test \
 	touch \
+	tr \
 	true \
 	unlink \
 	wc \
