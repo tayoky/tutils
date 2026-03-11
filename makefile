@@ -24,6 +24,7 @@ CMDS = [ \
 	mv \
 	pwd \
 	readlink \
+	realpath \
 	rm \
 	rmdir \
 	seq \

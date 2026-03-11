@@ -23,6 +23,7 @@
 	X(mv) \
 	X(pwd) \
 	X(readlink) \
+	X(realpath) \
 	X(rm) \
 	X(rmdir) \
 	X(seq) \

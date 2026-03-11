@@ -29,6 +29,7 @@ this is the todo list :
 - [x] hex
 - [x] stat
 - [x] readlink
+- [x] realpath (missing a few options)
 - [x] wc
 - [x] which
 - [x] tr (no class support)
