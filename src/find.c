@@ -237,7 +237,7 @@ static node_t *parse_expr(void) {
 			return NULL;
 		}
 		return node;
-	} else if (!strcmp(current, "!")) {
+	} else if (!strcmp(current, "!") || !strcmp(current, "-not")) {
 		get_str();
 		node_t *child = parse_expr();
 		if (!child) return NULL;
