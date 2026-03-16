@@ -3,6 +3,9 @@
 #include <tutils.h>
 
 static opt_t opts[] = {
+	OPT('E', "--canonicalize", 0, "all components except the last must exist"),
+	OPT('e', "--canonicalize-existing", 0, "all components must exist"),
+	OPT('m', "--canonicalize-missing", 0, "no components need to exist"),
 };
 
 CMD(realpath, "realpath [OPTIONS...] FILE...\n"
