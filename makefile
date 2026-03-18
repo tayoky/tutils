@@ -3,6 +3,7 @@ MAKEFLAGS += --no-builtin-rules
 SRC = $(shell find src -name "*.c")
 OBJ = $(SRC:src/%.c=build/%.o)
 EXE = tutils
+VERSION = $(shell git describe --tags --always)
 CMDS = [ \
 	basename \
 	cat \
@@ -43,7 +44,7 @@ CMDS = [ \
 
 include config.mk
 
-CFLAGS += -DHOST="$(HOST)" $(OPT) -Iinclude
+CFLAGS += -DHOST="$(HOST)" -DVERSION='"$(VERSION)"' $(OPT) -Iinclude
 
 all :  build/$(EXE)
 

@@ -18,9 +18,10 @@ void error(const char *fmt,...){
 }
 
 void version(void) {
-	printf("tutils 0.6.0\n");
-	printf("see https://github.com/tayoky/tutils for last version\n");
-	printf("wrote by tayoky\n");
+	printf("tutils %s\n", VERSION);
+	puts("see https://github.com/tayoky/tutils for last version");
+	puts("Copyright (c) 2025-2026 Tayoky BSD 3-Clause");
+	puts("This is free software: you are free to change and redistribute it.");
 }
 
 void help(command_t *command) {
