@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <tutils.h>
+#include <limits.h>
 
 #define FLAG_MAX_LINES  0x01
 #define FLAG_MAX_ARGS   0x02
