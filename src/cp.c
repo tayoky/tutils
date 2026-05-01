@@ -27,7 +27,20 @@ CMD(cp, "cp [OPTIONS] SOURCE... DESTINATION\n"
 "copy files and directories\n",
 opts);
 
+static opt_t mv_opts[] = {
+	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
+	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
+	OPT('i',"--interactive",FLAG_INTERACTIVE,"ask before overwriting old file"),
+	OPT('f',"--force",FLAG_FORCE,"unlink destinations files if already exist"),
+};
+
+CMD(mv, "mv [OPTIONS] SOURCE... DESTINATION\n"
+"or mv OPTION\n"
+"move files and directories\n",
+mv_opts);
+
 static int ret = 0;
+static int is_mv = 0;
 
 static int copy(const char *src,const char *dest,int cmdline){
 	int src_fd = -1;
@@ -55,12 +68,17 @@ static int copy(const char *src,const char *dest,int cmdline){
 			ret = 1;
 			return -1;
 		}
+		if (src_st.st_dev == dest_st.st_dev && src_st.st_ino == dest_st.st_ino) {
+			error("'%s' and '%s' are the same file", src, dest);
+			ret = 1;
+			return -1;
+		}
 		if(S_ISDIR(src_st.st_mode)){
 			//TODO : copy perm i guess ? 
 		} else {
-			//prompt before overwriting if needed
+			// prompt before overwriting if needed
 			if(flags & FLAG_INTERACTIVE){
-				fprintf(stderr,"cp : overwrite '%s' ? [y/N] : ",dest);
+				fprintf(stderr,"%s : overwrite '%s' ? [y/N] : ", is_mv ? "mv" : "cp", dest);
 				char buf[4096];
 				fgets(buf,sizeof(buf),stdin);
 				if(strcasecmp(buf,"y") && strcasecmp(buf,"yes")){
@@ -68,34 +86,35 @@ static int copy(const char *src,const char *dest,int cmdline){
 					return -1;
 				}
 			}
-			dest_fd = open(dest,O_WRONLY | O_TRUNC);
-			if(dest_fd < 0 && (flags & FLAG_FORCE)){
-				unlink(dest);
-				dest_fd = open(dest,O_WRONLY | O_TRUNC | O_CREAT);
-			}
-			if(dest_fd < 0){
-				perror(dest);
-				ret = 1;
-				return -1;
-			}
 		}
+	}
+
+	if (is_mv) {
+		// first try rename
+		// FIXME : move this around
+		if (rename(src, dest) >= 0) {
+			return 0;
+		}
+	}
+
+	if(S_ISDIR(src_st.st_mode)){
+		mkdir(dest,src_st.st_mode);
 	} else {
-		if(S_ISDIR(src_st.st_mode)){
-			mkdir(dest,src_st.st_mode);
-		} else {
+		dest_fd = open(dest,O_CREAT|O_WRONLY | O_TRUNC);
+		if(dest_fd < 0 && (flags & FLAG_FORCE)){
+			unlink(dest);
 			dest_fd = open(dest,O_CREAT | O_TRUNC | O_WRONLY);
-			if(!dest_fd){
-				perror(dest);
-				ret = 1;
-				return -1;
-			}
+		}
+		if(dest_fd < 0){
+			perror(dest);
+			ret = 1;
+			return -1;
 		}
 	}
 	
 	chmod(dest,src_st.st_mode);
 
 	if(S_ISDIR(src_st.st_mode)){
-		//TODO : copy files
 		DIR *dir = opendir(src);
 		if(!dir){
 			perror(src);
@@ -121,8 +140,12 @@ static int copy(const char *src,const char *dest,int cmdline){
 			copy(s,d,0);
 		}
 		closedir(dir);
+		if (is_mv) {
+			// we rmdir only when we are sure the content have been copied
+			rmdir(src);
+		}
 	} else {
-		//copy content and meta
+		// copy content and meta
 		src_fd = open(src,O_RDONLY);
 		if(src_fd < 0){
 			perror(src);
@@ -148,6 +171,11 @@ static int copy(const char *src,const char *dest,int cmdline){
 		}
 		close(src_fd);
 		close(dest_fd);
+
+		if (is_mv) {
+			// we unlink only when we are sure the content have been copied
+			unlink(src);
+		}
 	}
 
 	return 0;
@@ -155,6 +183,8 @@ static int copy(const char *src,const char *dest,int cmdline){
 
 
 static int cp_main(int argc,char **argv){
+	is_mv = !strcmp(progname, "mv");
+
 	if(argc < 2){
 		error("missing argument");
 		return 1;
@@ -162,14 +192,14 @@ static int cp_main(int argc,char **argv){
 
 	if((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)){
 		//FIXME : this error message don't look professional
-		error("can't provide -T and -t at the same time");
+		error("cannot provide -T and -t at the same time");
 	}
 
 	char *dest = argv[argc-1];
 
-	//automatic
+	// automatic
 	if(!(flags & FLAG_TARGET_DIR) && !(flags & FLAG_TARGET_FILE)){
-		//let figure out ourself
+		// let figure out ourself
 		if(argc > 2 || dest[strlen(dest)-1] == '/'){
 			flags |= FLAG_TARGET_DIR;
 		} else {
@@ -184,7 +214,7 @@ static int cp_main(int argc,char **argv){
 		}
 	}
 
-	//check our guesses + user input
+	// check our guesses + user input
 	struct stat st;
 	if(stat(dest,&st) < 0){
 		if(flags & FLAG_TARGET_DIR){
@@ -205,12 +235,16 @@ static int cp_main(int argc,char **argv){
 		}
 	}
 	if(argc > 2 && (flags & FLAG_TARGET_FILE)){
-		error("can only copy one file with -T");
+		if (is_mv) {
+			error("can only move one file with -T");
+		} else {
+			error("can only copy one file with -T");
+		}
 		return 1;
 	}
 
 	for(int i=0; i<argc-1; i++){
-		//start by finding the dest path
+		// start by finding the dest path
 		char dst[strlen(argv[i]) + strlen(dest) + 2];
 		char src[strlen(argv[i]) + 1];
 		strcpy(src,argv[i]);
@@ -223,4 +257,10 @@ static int cp_main(int argc,char **argv){
 	}
 
 	return ret;
+}
+
+static int mv_main(int argc, char **argv) {
+	// mv does not need -r
+	flags |= FLAG_RECURSIVE;
+	return cp_main(argc, argv);
 }
