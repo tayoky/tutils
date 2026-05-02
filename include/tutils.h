@@ -45,6 +45,8 @@ extern size_t commands_count;
 extern char *progname;
 
 uid_t str2uid(const char *str);
+int foreach_file(char **argv, int (*callback)(const char *path));
+int foreach_file_open(char **argv, int (*callback)(const char *path, FILE *file));
 
 #define OPT(_c, _str, _flags, _desc) {.c = _c, .str = _str, .flags = _flags, .desc = _desc}
 #define OPTARG(_c, _str, _flags, _arg_type, _ptr, _desc) {.c = _c, .str = _str, .flags = _flags, .arg_type = _arg_type, .value = _ptr, .desc = _desc}
