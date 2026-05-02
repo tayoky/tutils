@@ -15,7 +15,7 @@ static opt_t opts[] = {
 	OPTSIZE('l',"--length",FLAG_LENGHT,&lenght_value,"dump up to LENGTH byte"),
 };
 
-CMD(hex, "hex [OPTIONS] FILES\n"
+CMD(hex, "hex [OPTIONS] [FILES...]\n"
 "do an hexadecimal dump of files\n",
 opts);
 
@@ -38,7 +38,7 @@ static void print_color(char c){
 
 static void print_line(unsigned char *line,size_t size){
 	for(size_t i=0;i<size;i++){
-		print_color(line[i]);
+		if (color) print_color(line[i]);
 		printf("%02hhX ",line[i]);
 	}
 	for(size_t i=size;i<col;i++){
@@ -57,13 +57,8 @@ static void print_line(unsigned char *line,size_t size){
 	putchar('\n');
 }
 
-static int hex_dump(char *path){
-	FILE *file = fopen(path,"r");
-	if(!file){
-		perror(path);
-		return 1;
-	}
-
+static int hex(const char *path ,FILE *file) {
+	(void)path;
 	if(flags & FLAG_SEEK){
 		fseek(file,seek_value,SEEK_SET);
 	}
@@ -91,22 +86,12 @@ static int hex_dump(char *path){
 		print_line(line,line_len);
 	}
 
-	printf(ESC"[0m");
+	if (color) printf(ESC"[0m");
 
-	fclose(file);
 	return 0;
 }
 
 static int hex_main(int argc,char **argv){
-	if(argc < 1){
-		error("missing argument");
-		return 1;
-	}
-	int ret = 0;
-	for(int i=0;i<argc;i++){
-		if(hex_dump(argv[i])){
-			ret = 1;
-		}
-	}
-	return ret;
+	(void)argc;
+	return -foreach_file_open(argv, hex);
 }

@@ -22,30 +22,13 @@ static opt_t opts[] = {
 	OPT('v',"--show-noprinting",FLAG_NOPRNT | FLAG_BYTE,"display non printable characters with ^ notation (except for NL and TAB)"),
 };
 
-static int ret;
-
 CMD(cat, "cat [FILES] ...\n"
 "concatenate files and print to stdout\n"
 "special file name \"-\" is equivalent to stdin\n"
 "if no files is specified stdin is used by default\n",
 opts);
 
-static void cat(const char *path){
-	FILE *file;
-	//"-" is stdin
-	if(!strcmp(path,"-")){
-		file = stdin;
-	} else {
-		file = fopen(path,"r");
-	}
-
-	//handle error
-	if(file == NULL){
-		perror(path);
-		ret = 1;
-		return;
-	}
-
+static int cat(const char *path, FILE *file){
 	if(flags & FLAG_BYTE){
 	int c;
 	int prev = EOF;
@@ -71,7 +54,7 @@ static void cat(const char *path){
 	}
 	if (ferror(file)) {
 		perror(path);
-		ret = 1;
+		return -1;
 	}
 	} else {
 		char buffer[4096];
@@ -81,28 +64,13 @@ static void cat(const char *path){
 		}
 		if (rsize < 0) {
 			perror(path);
-			ret = 1;
+			return -1;
 		}
 	}
-
-
-
-	//don't close stdin
-	if(file != stdin){
-		fclose(file);
-	}
+	return 0;
 }
 
 static int cat_main(int argc,char **argv){
-	ret = 0;
-	//if nothing stdin by default
-	if(argc < 1){
-		cat("-");
-	} else {
-		for(int i=0;i<argc;i++){
-			cat(argv[i]);
-		}
-	}
-	
-	return ret;
+	(void)argc;
+	return -foreach_file_open(argv, cat);
 }

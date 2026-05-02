@@ -6,7 +6,6 @@
 #define FLAG_BYTES 0x10
 #define FLAG_QUIET 0x20
 
-static int ret;
 static size_t lines = 10;
 static size_t bytes = 0;
 
@@ -22,29 +21,16 @@ CMD(head, "head [OPTIONS]... [FILES]...\n"
 "if no files is specified, '-' is used by default\n",
 opts);
 
-static void head(const char *path){
-	FILE *file;
-	if(!strcmp(path,"-")){
-		file = stdin;
-	} else {
-		file = fopen(path,"r");
-	}
-
+static int head(const char *path, FILE *file){
 	if(!(flags & FLAG_QUIET)){
 		printf("%s:\n",path);
-	}
-
-	if(!file){
-		perror(path);
-		ret = 1;
-		return;
 	}
 
 	char buf[4096];
 	if(flags & FLAG_LINES){
 		size_t size;
 		size_t found = 0;
-		if(found  >= lines)goto finish;
+		if(found  >= lines) return 0;
 		while((size = fread(buf,1,sizeof(buf),file))){
 			char *ptr = buf;
 			while(memchr(ptr,'\n',size)){
@@ -53,7 +39,7 @@ static void head(const char *path){
 				ptr += line_len;
 				size -= line_len;
 				found++;
-				if(found >= lines)goto finish;
+				if(found >= lines) return 0;
 			}
 			fwrite(ptr,size,1,stdout);
 		}
@@ -69,10 +55,7 @@ static void head(const char *path){
 			fwrite(buf,size,1,stdout);
 		}
 	}
-
-finish:
-	if(file != stdin)
-	fclose(file);
+	return 0;
 }
 
 static int head_main(int argc,char **argv){
@@ -86,15 +69,5 @@ static int head_main(int argc,char **argv){
 		lines = 10;
 	}
 
-	ret = 0;
-	if(argc < 1){
-		head("-");
-	} else {
-		for(int i=0; i < argc; i++){
-			head(argv[i]);
-		}
-	}
-
-	return ret;
-
+	return -foreach_file_open(argv, head);
 }
