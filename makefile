@@ -16,6 +16,8 @@ CMDS = [ \
 	echo \
 	false \
 	find \
+	gunzip \
+	gzip \
 	head \
 	hex \
 	id \
@@ -40,7 +42,8 @@ CMDS = [ \
 	which \
 	whoami \
 	xargs\
-	yes
+	yes \
+	zcat
 
 include config.mk
 

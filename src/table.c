@@ -14,6 +14,8 @@
 	X(echo) \
 	X(false) \
 	X(find) \
+	X(gunzip) \
+	X(gzip) \
 	X(head) \
 	X(hex) \
 	X(id) \
@@ -39,6 +41,7 @@
 	X(whoami) \
 	X(xargs) \
 	X(yes) \
+	X(zcat) \
 
 #define X(name) extern command_t name ## _cmd;
 CMD_LIST

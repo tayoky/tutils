@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-int deflate(FILE *in, FILE *out);
+int inflate(FILE *in, FILE *out);
 
 #endif
