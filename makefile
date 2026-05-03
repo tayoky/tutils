@@ -67,10 +67,10 @@ clean :
 	rm -fr bin build
 
 install : all
-	@mkdir -p "$(PREFIX)/bin"
-	cp "build/$(EXE)" "$(PREFIX)/bin"
-	rm -f $(foreach CMD, $(CMDS), "$(PREFIX)/bin/$(CMD)")
-	$(foreach CMD, $(CMDS), ln -s "$(EXE)" "$(PREFIX)/bin/$(CMD)" ;)
+	@mkdir -p "$(DESTDIR)$(PREFIX)/bin"
+	cp "build/$(EXE)" "$(DESTDIR)$(PREFIX)/bin"
+	rm -f $(foreach CMD, $(CMDS), "$(DESTDIR)$(PREFIX)/bin/$(CMD)")
+	$(foreach CMD, $(CMDS), ln -s "$(EXE)" "$(DESTDIR)$(PREFIX)/bin/$(CMD)" ;)
 
 config.mk :
 	$(error "run ./configure before running make")
