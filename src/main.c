@@ -26,8 +26,8 @@ void version(void) {
 
 void help(command_t *command) {
 	// first find size for left col
-	int size = 0;
-	for (int i=0; i<command->options_count; i++) {
+	size_t size = 0;
+	for (size_t i=0; i<command->options_count; i++) {
 		size_t cur = 0;
 		if (command->options[i].str) {
 			cur += strlen(command->options[i].str) + 1;
@@ -39,7 +39,7 @@ void help(command_t *command) {
 	}
 
 	printf("usage : %s", command->usage);
-	for (int i=0; i<command->options_count; i++) {
+	for (size_t i=0; i<command->options_count; i++) {
 		size_t cur = 0;
 		if (command->options[i].str) {
 			cur += strlen(command->options[i].str) + 1;
@@ -127,7 +127,7 @@ static int parse_long_opt(int argc, char **argv, int i, command_t *cmd) {
 		version();
 		exit(0);
 	}
-	for (int j=0; j<cmd->options_count; j++) {
+	for (size_t j=0; j<cmd->options_count; j++) {
 		if (!cmd->options[j].str || strcmp(argv[i],cmd->options[j].str)) continue;
 
 		// we found a match
@@ -147,8 +147,8 @@ static int parse_short_opt(int argc, char **argv, int i, command_t *cmd) {
 	// used for options that take an arg
 	int skip_next = 0;
 
-	for (int l=1; argv[i][l]; l++) {
-		for (int j=0; j<cmd->options_count; j++) {
+	for (size_t l=1; argv[i][l]; l++) {
+		for (size_t j=0; j<cmd->options_count; j++) {
 			if (cmd->options[j].c != argv[i][l]) continue;
 
 			// we found a match

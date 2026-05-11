@@ -267,7 +267,7 @@ static void ls(const char *path){
 
 
 static int ls_main(int argc, char **argv){
-	if((flags & FLAG_CTIME) || (flags & FLAG_ATIME) && !(flags & FLAG_LIST)){
+	if(((flags & FLAG_CTIME) || (flags & FLAG_ATIME)) && !(flags & FLAG_LIST)){
 		flags |= FLAG_SORT_TM;
 	}
 

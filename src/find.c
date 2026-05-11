@@ -125,17 +125,6 @@ static void free_node(node_t *node) {
 	free(node);
 }
 
-static long parse_int(void) {
-	char *str = get_str();
-	char *end;
-	long num = strtol(str, &end, 10);
-	if (str == end || *end) {
-		error("invalid number : '%s'", str);
-		exit(1);
-	}
-	return num;
-}
-
 static int parse_arg(node_t *node, primary_t *primary) {
 	if (primary->argtype == ARG_NOARG) {
 		return 0;
@@ -406,6 +395,7 @@ static int do_find(const char *path, node_t *node) {
 }
 
 static int find_main(int argc, char **argv) {
+	(void)argc;
 	ptr = argv;
 	while (peek_str()) {
 		int c = peek_str()[0];

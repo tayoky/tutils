@@ -7,3 +7,4 @@ tests/tmp/**
 
 #config
 config.mk
+Makefile

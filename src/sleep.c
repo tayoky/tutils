@@ -36,7 +36,7 @@ static int sleep_main(int argc,char **argv){
 		}
 
 		char *end;
-		unsigned long value = strtol(argv[i],NULL,10);
+		unsigned long value = strtol(argv[i], &end, 10);
 		if(argv[i] == end){
 			error("numeric argument required");
 			return 1;

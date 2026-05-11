@@ -17,6 +17,8 @@ CMD(pwd, "pwd [-L]\n"
 opts);
 
 static int pwd_main(int argc,char **argv){
+	(void)argc;
+	(void)argv;
 	if(flags & FLAG_P){
 		char cwd[256];
 		getcwd(cwd,256);

@@ -221,9 +221,9 @@ static int dd_main(int argc, char **argv){
 		return 1;
 	}
 
+	int ret = 0;
 	size_t total_w = 0;
 	size_t total_r = 0;
-	int ret = 0;
 	for(;;){
 		size_t content = read_by_blocks(in,buf,min(bs,ibs * count),ibs);
 		total_r += content;
@@ -259,5 +259,5 @@ end:
 	if(in != STDIN_FILENO)close(in);
 	if(out != STDOUT_FILENO)close(out);
 
-	return 0;
+	return ret;
 }
