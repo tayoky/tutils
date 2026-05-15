@@ -1,8 +1,8 @@
+#include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <tutils.h>
+#include <unistd.h>
 
 CMD_NOPT(test, NULL);
 
@@ -12,23 +12,23 @@ command_t bracket_cmd = {
 	.main = test_main,
 };
 
-//simple test command
-int test(int *argc,char ***r_argv){
+// simple test command
+int test(int *argc, char ***r_argv) {
 	char **argv = *r_argv;
 
-	if(*argc < 1){
+	if (*argc < 1) {
 		return 1;
 	}
 
-	//first check for parenthese
-	if(!strcmp(argv[0],"(")){
+	// first check for parenthese
+	if (!strcmp(argv[0], "(")) {
 		(*argc)--;
 		(*r_argv)++;
-		if(test(argc,r_argv)){
+		if (test(argc, r_argv)) {
 			return 1;
 		}
-		//check close parenthese
-		if(*argc < 1 || strcmp(*r_argv[0],")")){
+		// check close parenthese
+		if (*argc < 1 || strcmp(*r_argv[0], ")")) {
 			return 1;
 		}
 		(*argc)--;
@@ -36,37 +36,37 @@ int test(int *argc,char ***r_argv){
 		return 0;
 	}
 
-	//then check for one operand test
-	if(argv[0][0] == '-' && strlen(argv[0]) == 2){
-		if(*argc < 2){
+	// then check for one operand test
+	if (argv[0][0] == '-' && strlen(argv[0]) == 2) {
+		if (*argc < 2) {
 			return 1;
 		}
-		(*argc)-=2;
-		(*r_argv)+=2;
-		//first check if it is a string op
-		switch (argv[0][1]){
+		(*argc) -= 2;
+		(*r_argv) += 2;
+		// first check if it is a string op
+		switch (argv[0][1]) {
 		case 'z':
-			//empty check
-			return strlen(argv[1])>0;
+			// empty check
+			return strlen(argv[1]) > 0;
 		case 'n':
-			//not empty check
-			return strlen(argv[1])==0;
+			// not empty check
+			return strlen(argv[1]) == 0;
 		}
 
-		//it's a file op
-		//stat it
+		// it's a file op
+		// stat it
 		struct stat st;
-		int exist = stat(argv[1],&st) >= 0;
+		int exist = stat(argv[1], &st) >= 0;
 
-		//don't exist ? fail
-		if(!exist){
+		// don't exist ? fail
+		if (!exist) {
 			return 1;
 		}
 
-		switch(argv[0][1]){
+		switch (argv[0][1]) {
 		case 'a':
 		case 'e':
-			//aready check if exist
+			// aready check if exist
 			return 0;
 		case 'b':
 			return !S_ISBLK(st.st_mode);
@@ -86,13 +86,13 @@ int test(int *argc,char ***r_argv){
 		case 'g':
 			return !(st.st_mode & S_ISGID);
 		case 'k':
-			//TODO: sticky bit
+			// TODO: sticky bit
 			return 1;
 		case 's':
-			//TODO: not empty check
+			// TODO: not empty check
 			return 1;
 		case 'S':
-			//TODO: socket check
+			// TODO: socket check
 			return 1;
 		case 'O':
 			return st.st_uid != geteuid();
@@ -101,42 +101,41 @@ int test(int *argc,char ***r_argv){
 		case 'r':
 		case 'w':
 		case 'x':
-			//TODO : perm check
+			// TODO : perm check
 			return 1;
 		case 'N':
-			//modify since last write
+			// modify since last write
 			return st.st_atime > st.st_mtime;
 		default:
-			//invalid option
+			// invalid option
 			return 1;
 		}
 	}
 
-	//check for three operand
-	if(*argc < 3){
+	// check for three operand
+	if (*argc < 3) {
 		return 1;
 	}
-	(*argc)-=3;
-	(*r_argv)+=3;
-	if(!strcmp(argv[1],"=")){
-		return strcmp(argv[0],argv[2]) != 0;
+	(*argc) -= 3;
+	(*r_argv) += 3;
+	if (!strcmp(argv[1], "=")) {
+		return strcmp(argv[0], argv[2]) != 0;
 	}
-	if(!strcmp(argv[1],"!=")){
-		return strcmp(argv[0],argv[2]) == 0;
+	if (!strcmp(argv[1], "!=")) {
+		return strcmp(argv[0], argv[2]) == 0;
 	}
 
-	//other operand not supported
+	// other operand not supported
 	return 1;
-
 }
 
-static int test_main(int argc,char **argv){
+static int test_main(int argc, char **argv) {
 	if (!strcmp(progname, "[")) {
-		if (argc < 1 || strcmp(argv[argc-1], "]")) {
+		if (argc < 1 || strcmp(argv[argc - 1], "]")) {
 			error("no matching ']'");
 			return 1;
 		}
 		argc--;
 	}
-	return test(&argc,&argv);
-}	
+	return test(&argc, &argv);
+}

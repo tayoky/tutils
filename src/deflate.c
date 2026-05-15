@@ -1,9 +1,9 @@
+#include <deflate.h>
+#include <limits.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <limits.h>
 #include <stdio.h>
 #include <tutils.h>
-#include <deflate.h>
 
 // little lib to deflate/inflate
 
@@ -22,29 +22,73 @@ struct output {
 };
 
 struct table_entry {
-    uint16_t base;
-    uint8_t extra_bits;
+	uint16_t base;
+	uint8_t extra_bits;
 };
 
 static const struct table_entry lenght_table[] = {
-    {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 0}, {9, 0}, {10, 0}, // 257-264
-    {11, 1}, {13, 1}, {15, 1}, {17, 1},                              // 265-268
-    {19, 2}, {23, 2}, {27, 2}, {31, 2},                              // 269-272
-    {35, 3}, {43, 3}, {51, 3}, {59, 3},                              // 273-276
-    {67, 4}, {83, 4}, {99, 4}, {115, 4},                             // 277-280
-    {131, 5}, {163, 5}, {195, 5}, {227, 5},                          // 281-284
-    {258, 0}                                                         // 285
+	{3,   0},
+	{4,   0},
+	{5,   0},
+	{6,   0},
+	{7,   0},
+	{8,   0},
+	{9,   0},
+	{10,  0}, // 257-264
+	{11,  1},
+	{13,  1},
+	{15,  1},
+	{17,  1}, // 265-268
+	{19,  2},
+	{23,  2},
+	{27,  2},
+	{31,  2}, // 269-272
+	{35,  3},
+	{43,  3},
+	{51,  3},
+	{59,  3}, // 273-276
+	{67,  4},
+	{83,  4},
+	{99,  4},
+	{115, 4}, // 277-280
+	{131, 5},
+	{163, 5},
+	{195, 5},
+	{227, 5}, // 281-284
+	{258, 0}  // 285
 };
 
 static const struct table_entry dist_table[] = {
-    {1, 0}, {2, 0}, {3, 0}, {4, 0},                           // 0-3
-    {5, 1}, {7, 1}, {9, 2}, {13, 2},                          // 4-7
-    {17, 3}, {25, 3}, {33, 4}, {49, 4},                       // 8-11
-    {65, 5}, {97, 5}, {129, 6}, {193, 6},                     // 12-15
-    {257, 7}, {385, 7}, {513, 8}, {769, 8},                   // 16-19
-    {1025, 9}, {1537, 9}, {2049, 10}, {3073, 10},             // 20-23
-    {4097, 11}, {6145, 11}, {8193, 12}, {12289, 12},          // 24-27
-    {16385, 13}, {24577, 13}                                  // 28-29
+	{1,     0 },
+	{2,     0 },
+	{3,     0 },
+	{4,     0 }, // 0-3
+	{5,     1 },
+	{7,     1 },
+	{9,     2 },
+	{13,    2 }, // 4-7
+	{17,    3 },
+	{25,    3 },
+	{33,    4 },
+	{49,    4 }, // 8-11
+	{65,    5 },
+	{97,    5 },
+	{129,   6 },
+	{193,   6 }, // 12-15
+	{257,   7 },
+	{385,   7 },
+	{513,   8 },
+	{769,   8 }, // 16-19
+	{1025,  9 },
+	{1537,  9 },
+	{2049,  10},
+	{3073,  10}, // 20-23
+	{4097,  11},
+	{6145,  11},
+	{8193,  12},
+	{12289, 12}, // 24-27
+	{16385, 13},
+	{24577, 13}  // 28-29
 };
 
 static uint8_t mask(size_t size) {
@@ -72,7 +116,7 @@ static uint32_t read_bits(struct bits_stream *stream, size_t count) {
 		} else {
 			bits |= (stream->buffer & mask(count)) << offset;
 			stream->bits_left -= count;
-			stream->buffer >>= count; 
+			stream->buffer >>= count;
 			count = 0;
 		}
 	}
@@ -88,7 +132,7 @@ static int write_byte(struct output *out, uint8_t byte) {
 
 static uint32_t reverse(uint32_t bits, size_t size) {
 	uint32_t ret = 0;
-	for (size_t i=0; i<size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		ret = (ret << 1) | (bits & 1);
 		bits >>= 1;
 	}
@@ -96,7 +140,6 @@ static uint32_t reverse(uint32_t bits, size_t size) {
 }
 
 static uint16_t get_fixed_symbol(struct bits_stream *in) {
-
 	// handle 7 bits codes
 	uint16_t data = reverse(read_bits(in, 7), 7);
 	if (data <= 0b0010111) {
@@ -124,7 +167,7 @@ static uint16_t read_extra(struct bits_stream *in, const struct table_entry *ent
 
 static int handle_backward_ref(struct output *out, uint16_t len, uint16_t dist) {
 	size_t ptr = out->window_ptr - dist + WINDOW_SIZE;
-	for (uint16_t i=0; i<len; i++) {
+	for (uint16_t i = 0; i < len; i++) {
 		ptr %= WINDOW_SIZE;
 		write_byte(out, out->window[ptr]);
 		ptr++;
@@ -196,7 +239,7 @@ not_gzip:
 			if (len + nlen != 0xffff) {
 				error("invalid deflate uncompress block");
 			}
-			for (size_t i=0; i<len; i++) {
+			for (size_t i = 0; i < len; i++) {
 				uint8_t byte = read_bits(&in, 8);
 				write_byte(&out, byte);
 			}

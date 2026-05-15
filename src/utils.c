@@ -1,15 +1,15 @@
-#include <tutils.h>
-#include <stdlib.h>
 #include <pwd.h>
+#include <stdlib.h>
+#include <tutils.h>
 
 // random utils used commonly
 
-uid_t str2uid(const char *str){
+uid_t str2uid(const char *str) {
 	char *end;
-	uid_t ret = (uid_t)strtol(str,&end,10);
-	if(end == str || *end){
+	uid_t ret = (uid_t)strtol(str, &end, 10);
+	if (end == str || *end) {
 		struct passwd *pwd = getpwnam(str);
-		if(!pwd){
+		if (!pwd) {
 			return -1;
 		}
 		ret = pwd->pw_uid;

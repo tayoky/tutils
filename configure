@@ -7,6 +7,8 @@ tconf_search_cc "$HOST"
 tconf_require "C compiler" "$CC"
 tconf_find_os
 
+tconf_check_func "$CC" "stdlib.h" "qsort"
+
 tconf_fini
 
 ./tmakegen

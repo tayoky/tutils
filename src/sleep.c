@@ -1,48 +1,48 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <tutils.h>
+#include <unistd.h>
 
 CMD_NOPT(sleep, "sleep DURATION...\n"
-"or sleep OPTION\n"
-"where DURATION is an integer that can be folowed by a suffix to choice the unit\n"
-"s for second\n"
-"m for minute\n"
-"h for hour\n"
-"d for day\n"
-"if no suffix is provided assume seconds\n"
-"sleep will pause for the provided duration\n"
-"if multiples durations are provided sleep will pause for their sum\n");
+				"or sleep OPTION\n"
+				"where DURATION is an integer that can be folowed by a suffix to choice the unit\n"
+				"s for second\n"
+				"m for minute\n"
+				"h for hour\n"
+				"d for day\n"
+				"if no suffix is provided assume seconds\n"
+				"sleep will pause for the provided duration\n"
+				"if multiples durations are provided sleep will pause for their sum\n");
 
-static int sleep_main(int argc,char **argv){
-	if(argc < 1){
+static int sleep_main(int argc, char **argv) {
+	if (argc < 1) {
 		error("missing argument");
 		return 1;
 	}
 
 	long dur = 0;
-	for(int i=0; i<argc; i++){
-		if(argv[i][0] == '\0'){
+	for (int i = 0; i < argc; i++) {
+		if (argv[i][0] == '\0') {
 			error("numeric argument required");
 			return 1;
 		}
 		char suffix;
-		suffix = argv[i][strlen(argv[i])-1];
-		if(isdigit(suffix)){
+		suffix = argv[i][strlen(argv[i]) - 1];
+		if (isdigit(suffix)) {
 			suffix = 's';
 		} else {
-			argv[i][strlen(argv[i])-1] = '\0';
+			argv[i][strlen(argv[i]) - 1] = '\0';
 		}
 
 		char *end;
 		unsigned long value = strtol(argv[i], &end, 10);
-		if(argv[i] == end){
+		if (argv[i] == end) {
 			error("numeric argument required");
 			return 1;
 		}
 
-		switch(suffix){
+		switch (suffix) {
 		case 's':
 			break;
 		case 'm':
@@ -55,14 +55,14 @@ static int sleep_main(int argc,char **argv){
 			value *= 24 * 3600;
 			break;
 		default:
-			error("invalid suffix '%c'",suffix);
+			error("invalid suffix '%c'", suffix);
 			return 1;
 		}
 
 		dur += value;
 	}
 
-	if(sleep(dur) < 0){
+	if (sleep(dur) < 0) {
 		perror("sleep");
 		return 1;
 	}

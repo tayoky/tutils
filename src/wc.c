@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <grid.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <tutils.h>
 
@@ -21,14 +21,14 @@ static struct stats total = {0, 0, 0, "total"};
 static int ret = 0;
 
 static opt_t opts[] = {
-	OPT('c', "--bytes" ,FLAG_BYTES, "print bytes count"),
-	OPT('w', "--words" ,FLAG_WORDS, "print words count"),
-	OPT('l', "--lines" ,FLAG_LINES, "print newlines count"),
+	OPT('c', "--bytes", FLAG_BYTES, "print bytes count"),
+	OPT('w', "--words", FLAG_WORDS, "print words count"),
+	OPT('l', "--lines", FLAG_LINES, "print newlines count"),
 };
 
 CMD(wc, "wc [OPTIONS] [FILES]\n"
-"print newline word and byte count\n",
-opts);
+		"print newline word and byte count\n",
+	opts);
 
 static void add_stat(struct stats *stat) {
 	char buf[64];
@@ -44,7 +44,7 @@ static void add_stat(struct stats *stat) {
 		sprintf(buf, "%zu", stat->bytes);
 		grid[grid_index++] = strdup(buf);
 	}
-	grid[grid_index++] = (char*)stat->name;
+	grid[grid_index++] = (char *)stat->name;
 	lines_count++;
 }
 
@@ -79,7 +79,7 @@ static void wc(const char *name) {
 	char prev = '\0';
 	while ((size = fread(buf, 1, sizeof(buf), file))) {
 		stat.bytes += size;
-		for (size_t i=0; i<size; i++) {
+		for (size_t i = 0; i < size; i++) {
 			if (buf[i] == '\n') {
 				stat.lines++;
 			}
@@ -104,13 +104,13 @@ static int wc_main(int argc, char **argv) {
 		flags |= FLAG_LINES | FLAG_WORDS | FLAG_BYTES;
 	}
 	if (argc < 1) {
-		grid = malloc(sizeof(char*) * entries_per_line());
+		grid = malloc(sizeof(char *) * entries_per_line());
 		wc("-");
 		// do not print the name
 		grid_print(grid, entries_per_line() - 1, entries_per_line() - 1);
 	} else {
-		grid = malloc(sizeof(char*) * entries_per_line() * argc);
-		for (int i=0; i<argc; i++) {
+		grid = malloc(sizeof(char *) * entries_per_line() * argc);
+		for (int i = 0; i < argc; i++) {
 			wc(argv[i]);
 		}
 		if (argc > 1) {

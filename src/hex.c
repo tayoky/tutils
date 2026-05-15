@@ -1,9 +1,9 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <tutils.h>
 
-#define ESC "\033"
+#define ESC         "\033"
 #define FLAG_SEEK   0x01
 #define FLAG_LENGHT 0x02
 
@@ -11,43 +11,43 @@ static size_t seek_value = 0;
 static size_t lenght_value = 0;
 
 static opt_t opts[] = {
-	OPTSIZE('s',"--seek",FLAG_SEEK,&seek_value,"seek to a specified location before dumping"),
-	OPTSIZE('l',"--length",FLAG_LENGHT,&lenght_value,"dump up to LENGTH byte"),
+	OPTSIZE('s', "--seek", FLAG_SEEK, &seek_value, "seek to a specified location before dumping"),
+	OPTSIZE('l', "--length", FLAG_LENGHT, &lenght_value, "dump up to LENGTH byte"),
 };
 
 CMD(hex, "hex [OPTIONS] [FILES...]\n"
-"do an hexadecimal dump of files\n",
-opts);
+		 "do an hexadecimal dump of files\n",
+	opts);
 
 static size_t col = 8;
 static int color = 1;
 
-static void print_color(char c){
-	if(c){
-		if(isprint(c)){
-			printf(ESC"[1;32m");
-		} else if(iscntrl(c)){
-			printf(ESC"[1;33m");
+static void print_color(char c) {
+	if (c) {
+		if (isprint(c)) {
+			printf(ESC "[1;32m");
+		} else if (iscntrl(c)) {
+			printf(ESC "[1;33m");
 		} else {
-			printf(ESC"[1;31m");
+			printf(ESC "[1;31m");
 		}
 	} else {
-		printf(ESC"[0m");
+		printf(ESC "[0m");
 	}
 }
 
-static void print_line(unsigned char *line,size_t size){
-	for(size_t i=0;i<size;i++){
+static void print_line(unsigned char *line, size_t size) {
+	for (size_t i = 0; i < size; i++) {
 		if (color) print_color(line[i]);
-		printf("%02hhX ",line[i]);
+		printf("%02hhX ", line[i]);
 	}
-	for(size_t i=size;i<col;i++){
+	for (size_t i = size; i < col; i++) {
 		printf("   ");
 	}
 
-	for(size_t i=0;i<size;i++){
+	for (size_t i = 0; i < size; i++) {
 		print_color(line[i]);
-		if(isprint(line[i])){
+		if (isprint(line[i])) {
 			putchar(line[i]);
 		} else {
 			putchar('.');
@@ -57,41 +57,41 @@ static void print_line(unsigned char *line,size_t size){
 	putchar('\n');
 }
 
-static int hex(const char *path ,FILE *file) {
+static int hex(const char *path, FILE *file) {
 	(void)path;
-	if(flags & FLAG_SEEK){
-		fseek(file,seek_value,SEEK_SET);
+	if (flags & FLAG_SEEK) {
+		fseek(file, seek_value, SEEK_SET);
 	}
 
 	unsigned char buf[256];
 	unsigned char line[256];
 	size_t size;
-	size_t line_len=0;
+	size_t line_len = 0;
 	size_t total = 0;
-	while((size = fread(buf,1,sizeof(buf),file))){
-		if((flags & FLAG_LENGHT) && total >= lenght_value)break;
-		if((flags & FLAG_LENGHT) && size > lenght_value - total)size = lenght_value - total;
+	while ((size = fread(buf, 1, sizeof(buf), file))) {
+		if ((flags & FLAG_LENGHT) && total >= lenght_value) break;
+		if ((flags & FLAG_LENGHT) && size > lenght_value - total) size = lenght_value - total;
 		total += size;
-		for(size_t i=0;i<size;i++){
+		for (size_t i = 0; i < size; i++) {
 			line[line_len] = buf[i];
 			line_len++;
-			if(line_len >= col){
-				print_line(line,line_len);
+			if (line_len >= col) {
+				print_line(line, line_len);
 				line_len = 0;
 			}
 		}
 	}
 
-	if(line_len){
-		print_line(line,line_len);
+	if (line_len) {
+		print_line(line, line_len);
 	}
 
-	if (color) printf(ESC"[0m");
+	if (color) printf(ESC "[0m");
 
 	return 0;
 }
 
-static int hex_main(int argc,char **argv){
+static int hex_main(int argc, char **argv) {
 	(void)argc;
 	return -foreach_file_open(argv, hex);
 }

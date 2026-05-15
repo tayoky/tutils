@@ -1,16 +1,17 @@
 #include <sys/stat.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <tutils.h>
 
 #define FLAG_ALL 0x01
 
 static opt_t opts[] = {
-	OPT('a', "--all", FLAG_ALL ,"show all matches"),
+	OPT('a', "--all", FLAG_ALL, "show all matches"),
 };
 
 CMD(which, "which [-a] EXECUTABLE...\n"
-"show full path for executables in $PATH\n", opts);
+		   "show full path for executables in $PATH\n",
+	opts);
 
 static int ret = 0;
 
@@ -40,8 +41,8 @@ static void do_which(const char *exe) {
 
 	size_t path_count = 1;
 
-	for (size_t i = 0;path[i]; i++){
-		if(path[i] == ':'){
+	for (size_t i = 0; path[i]; i++) {
+		if (path[i] == ':') {
 			path_count++;
 			path[i] = '\0';
 		}
@@ -74,7 +75,7 @@ static int which_main(int argc, char **argv) {
 		error("missing argument");
 		return 1;
 	}
-	for (int i=0; i<argc; i++) {
+	for (int i = 0; i < argc; i++) {
 		do_which(argv[i]);
 	}
 	return ret;

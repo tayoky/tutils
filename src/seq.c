@@ -1,13 +1,13 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <tutils.h>
 
 #define ESC "\033"
 
 CMD_NOPT(seq, "seq [FIRST [INCREMENT]] LAST\n"
-"print number from FIRST to LAST\n");
+			  "print number from FIRST to LAST\n");
 
-static int seq_main(int argc,char **argv){
+static int seq_main(int argc, char **argv) {
 	if (argc < 1) {
 		error("missing argument");
 		return 1;
@@ -17,7 +17,7 @@ static int seq_main(int argc,char **argv){
 		return 1;
 	}
 	double args[3];
-	for (int i=0; i<argc; i++) {
+	for (int i = 0; i < argc; i++) {
 		char *end;
 		args[i] = strtof(argv[i], &end);
 		if (argv[i] == end || *end) {
@@ -26,8 +26,8 @@ static int seq_main(int argc,char **argv){
 		}
 	}
 
-	double start     = 1;
-	double end       = 0;
+	double start = 1;
+	double end = 0;
 	double increment = 1;
 
 	end = args[argc - 1];

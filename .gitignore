@@ -6,5 +6,6 @@ build
 tests/tmp/**
 
 #config
+tconf
 config.mk
 Makefile

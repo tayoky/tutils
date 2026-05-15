@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <tutils.h>
 
 // tutils's entry point
@@ -8,10 +8,10 @@
 char *progname;
 int flags;
 
-void error(const char *fmt,...){
+void error(const char *fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
-	fprintf(stderr,"%s : ", progname);
+	fprintf(stderr, "%s : ", progname);
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fputc('\n', stderr);
@@ -27,7 +27,7 @@ void version(void) {
 void help(command_t *command) {
 	// first find size for left col
 	size_t size = 0;
-	for (size_t i=0; i<command->options_count; i++) {
+	for (size_t i = 0; i < command->options_count; i++) {
 		size_t cur = 0;
 		if (command->options[i].str) {
 			cur += strlen(command->options[i].str) + 1;
@@ -39,7 +39,7 @@ void help(command_t *command) {
 	}
 
 	printf("usage : %s", command->usage);
-	for (size_t i=0; i<command->options_count; i++) {
+	for (size_t i = 0; i < command->options_count; i++) {
 		size_t cur = 0;
 		if (command->options[i].str) {
 			cur += strlen(command->options[i].str) + 1;
@@ -64,15 +64,15 @@ void help(command_t *command) {
 }
 
 static int command_cmp(const void *e1, const void *e2) {
-	const command_t *cmd1 = *(command_t**)e1;
-	const command_t *cmd2 = *(command_t**)e2;
+	const command_t *cmd1 = *(command_t **)e1;
+	const command_t *cmd2 = *(command_t **)e2;
 	return strcmp(cmd1->name, cmd2->name);
 }
 
 static command_t *find_command(const char *name) {
 	command_t search = {.name = name};
 	command_t *search_ptr = &search;
-	command_t **cmd = bsearch(&search_ptr, commands, commands_count, sizeof(command_t*), command_cmp);
+	command_t **cmd = bsearch(&search_ptr, commands, commands_count, sizeof(command_t *), command_cmp);
 	return cmd ? *cmd : NULL;
 }
 
@@ -86,29 +86,29 @@ static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
 	i++;
 	switch (opt->arg_type) {
 	case OPT_STR:;
-		*(char**)opt->value = argv[i];
+		*(char **)opt->value = argv[i];
 		break;
 	case OPT_INT:;
 		char *end;
-		*(int*)opt->value = strtol(argv[i], &end, 0);
+		*(int *)opt->value = strtol(argv[i], &end, 0);
 		if (end == argv[i] || *end) {
-			error("invalid number to '%s' : '%s'", argv[i-1], argv[i]);
+			error("invalid number to '%s' : '%s'", argv[i - 1], argv[i]);
 			exit(1);
 		}
 		break;
 	case OPT_SIZE:;
 		// TODO : support for suffix
-		*(size_t*)opt->value = strtoul(argv[i], &end, 0);
+		*(size_t *)opt->value = strtoul(argv[i], &end, 0);
 		if (end == argv[i] || *end) {
-			error("invalid number to '%s' : '%s'", argv[i-1], argv[i]);
+			error("invalid number to '%s' : '%s'", argv[i - 1], argv[i]);
 			exit(1);
 		}
 		break;
 	case OPT_MODE:;
 		// TODO : parse in more format
-		*(mode_t*)opt->value = strtoul(argv[i], &end, 8);
+		*(mode_t *)opt->value = strtoul(argv[i], &end, 8);
 		if (end == argv[i] || *end) {
-			error("invalid mode to '%s' : '%s'", argv[i-1], argv[i]);
+			error("invalid mode to '%s' : '%s'", argv[i - 1], argv[i]);
 			exit(1);
 		}
 		break;
@@ -127,8 +127,8 @@ static int parse_long_opt(int argc, char **argv, int i, command_t *cmd) {
 		version();
 		exit(0);
 	}
-	for (size_t j=0; j<cmd->options_count; j++) {
-		if (!cmd->options[j].str || strcmp(argv[i],cmd->options[j].str)) continue;
+	for (size_t j = 0; j < cmd->options_count; j++) {
+		if (!cmd->options[j].str || strcmp(argv[i], cmd->options[j].str)) continue;
 
 		// we found a match
 		flags |= cmd->options[j].flags;
@@ -147,8 +147,8 @@ static int parse_short_opt(int argc, char **argv, int i, command_t *cmd) {
 	// used for options that take an arg
 	int skip_next = 0;
 
-	for (size_t l=1; argv[i][l]; l++) {
-		for (size_t j=0; j<cmd->options_count; j++) {
+	for (size_t l = 1; argv[i][l]; l++) {
+		for (size_t j = 0; j < cmd->options_count; j++) {
 			if (cmd->options[j].c != argv[i][l]) continue;
 
 			// we found a match
@@ -158,9 +158,8 @@ static int parse_short_opt(int argc, char **argv, int i, command_t *cmd) {
 				skip_next = 1;
 			}
 			goto finish_short;
-
 		}
-		error("unknow option '-%c' (see --help)",argv[i][l]);
+		error("unknow option '-%c' (see --help)", argv[i][l]);
 		exit(1);
 finish_short:
 		continue;
@@ -169,13 +168,13 @@ finish_short:
 	return i;
 }
 
-static int parse_opts(int argc, char **argv, command_t *cmd){
+static int parse_opts(int argc, char **argv, command_t *cmd) {
 	flags = 0;
 	int i;
-	for (i=1; i<argc;i++) {
+	for (i = 1; i < argc; i++) {
 		if (argv[i][0] != '-') break;
 		if (argv[i][1] == '-') {
-			if (!strcmp("--",  argv[i])) {
+			if (!strcmp("--", argv[i])) {
 				i++;
 				break;
 			}
@@ -216,7 +215,7 @@ int main(int argc, char **argv) {
 		error("unknow command '%s'", progname);
 		return 1;
 	}
-	int i=1;
-	if (cmd->usage || cmd->options_count) i=parse_opts(argc, argv, cmd);
+	int i = 1;
+	if (cmd->usage || cmd->options_count) i = parse_opts(argc, argv, cmd);
 	return cmd->main(argc - i, &argv[i]);
 }

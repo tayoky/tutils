@@ -1,15 +1,15 @@
 #include <sys/stat.h>
 #include <dirent.h>
+#include <libgen.h>
+#include <pwd.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libgen.h>
-#include <stdio.h>
-#include <pwd.h>
 #include <tutils.h>
 
 
 CMD_NOPT(find, "find [PATH...] [EXPR...]\n"
-"find files\n");
+			   "find files\n");
 
 static char **ptr;
 static int ret = 0;
@@ -68,36 +68,36 @@ typedef struct primary {
 
 #define PRIM(_name, _type, _argtype) {.name = _name, .type = _type, .argtype = _argtype}
 
-#define ARG_NOARG   0
-#define ARG_STRING  1
-#define ARG_NUMBER  2
-#define ARG_MODE    3
-#define ARG_TYPE    4
-#define ARG_SIZE    5
-#define ARG_UTIL    6
-#define ARG_UID     7
+#define ARG_NOARG  0
+#define ARG_STRING 1
+#define ARG_NUMBER 2
+#define ARG_MODE   3
+#define ARG_TYPE   4
+#define ARG_SIZE   5
+#define ARG_UTIL   6
+#define ARG_UID    7
 
 static primary_t primaries[] = {
-	PRIM("-name"   , NODE_NAME  , ARG_STRING),
-	PRIM("-path"   , NODE_PATH  , ARG_STRING),
-	PRIM("-nouser" , NODE_NOUSER, ARG_NOARG),
+	PRIM("-name", NODE_NAME, ARG_STRING),
+	PRIM("-path", NODE_PATH, ARG_STRING),
+	PRIM("-nouser", NODE_NOUSER, ARG_NOARG),
 	PRIM("-nogroup", NODE_NOGROUP, ARG_NOARG),
-	PRIM("-xdev"   , NODE_XDEV, ARG_NOARG),
-	PRIM("-prune"  , NODE_PRUNE, ARG_NOARG),
-	PRIM("-perm"   , NODE_PERM, ARG_MODE),
-	PRIM("-type"   , NODE_TYPE, ARG_TYPE),
-	PRIM("-links"  , NODE_LINKS, ARG_NUMBER),
-	PRIM("-user"   , NODE_USER, ARG_UID),
-	PRIM("-group"  , NODE_GROUP, ARG_STRING),
-	PRIM("-size"   , NODE_SIZE, ARG_SIZE),
-	PRIM("-atime"  , NODE_ATIME, ARG_NUMBER),
-	PRIM("-ctime"  , NODE_CTIME, ARG_NUMBER),
-	PRIM("-mtime"  , NODE_MTIME, ARG_NUMBER),
-	PRIM("-exec"   , NODE_EXEC, ARG_UTIL),
-	PRIM("-ok"     , NODE_OK, ARG_UTIL),
-	PRIM("-print"  , NODE_PRINT, ARG_NOARG),
-	PRIM("-newer"  , NODE_NEWER, ARG_STRING),
-	PRIM("-depth"  , NODE_DEPTH, ARG_NOARG),
+	PRIM("-xdev", NODE_XDEV, ARG_NOARG),
+	PRIM("-prune", NODE_PRUNE, ARG_NOARG),
+	PRIM("-perm", NODE_PERM, ARG_MODE),
+	PRIM("-type", NODE_TYPE, ARG_TYPE),
+	PRIM("-links", NODE_LINKS, ARG_NUMBER),
+	PRIM("-user", NODE_USER, ARG_UID),
+	PRIM("-group", NODE_GROUP, ARG_STRING),
+	PRIM("-size", NODE_SIZE, ARG_SIZE),
+	PRIM("-atime", NODE_ATIME, ARG_NUMBER),
+	PRIM("-ctime", NODE_CTIME, ARG_NUMBER),
+	PRIM("-mtime", NODE_MTIME, ARG_NUMBER),
+	PRIM("-exec", NODE_EXEC, ARG_UTIL),
+	PRIM("-ok", NODE_OK, ARG_UTIL),
+	PRIM("-print", NODE_PRINT, ARG_NOARG),
+	PRIM("-newer", NODE_NEWER, ARG_STRING),
+	PRIM("-depth", NODE_DEPTH, ARG_NOARG),
 
 };
 
@@ -193,7 +193,7 @@ invalid_type:
 static node_t *parse_primary(void) {
 	char *name = get_str();
 	if (!name) return NULL;
-	for (size_t i=0; i<arraylen(primaries); i++) {
+	for (size_t i = 0; i < arraylen(primaries); i++) {
 		if (strcmp(name, primaries[i].name)) continue;
 		node_t *node = new_node(primaries[i].type);
 		if (node->type == NODE_PRINT || node->type == NODE_EXEC || node->type == NODE_OK) {
@@ -236,7 +236,7 @@ static node_t *parse_expr(void) {
 	}
 
 	node_t *node = parse_primary();
-	
+
 	return node;
 }
 
@@ -382,7 +382,7 @@ static int do_find(const char *path, node_t *node) {
 			continue;
 		}
 		char full_path[strlen(path) + strlen(entry->d_name) + 2];
-		if (path[0] && path[strlen(path)-1] == '/') {
+		if (path[0] && path[strlen(path) - 1] == '/') {
 			// aready has trailling "/"
 			sprintf(full_path, "%s%s", path, entry->d_name);
 		} else {
@@ -410,7 +410,7 @@ static int find_main(int argc, char **argv) {
 		return 1;
 	}
 	if (path_count > 0) {
-		for (size_t i=0; i<path_count; i++) {
+		for (size_t i = 0; i < path_count; i++) {
 			do_find(argv[i], root);
 		}
 	} else {

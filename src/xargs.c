@@ -1,20 +1,20 @@
 #include <sys/wait.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <tutils.h>
+#include <unistd.h>
 
-#define FLAG_MAX_LINES  0x01
-#define FLAG_MAX_ARGS   0x02
-#define FLAG_PROMPT     0x04
-#define FLAG_TRACE      0x08
+#define FLAG_MAX_LINES 0x01
+#define FLAG_MAX_ARGS  0x02
+#define FLAG_PROMPT    0x04
+#define FLAG_TRACE     0x08
 
 static char *eof_string = "";
 static int max_lines = 0;
-static int max_args  = 0;
+static int max_args = 0;
 static int used_lines = 0;
-static int used_args  = 0;
+static int used_args = 0;
 static int original_argc = 0;
 static char **original_argv = 0;
 static int ret = 0;
@@ -28,12 +28,13 @@ static opt_t opts[] = {
 };
 
 CMD(xargs, "xargs [OPTIONS...] [COMMAND [ARGUMENTS]]\n"
-"parse args and execute commands\n", opts);
+		   "parse args and execute commands\n",
+	opts);
 
 static void print_cmd(char **argv) {
-	for (char **cur=argv; *cur; cur++) {
+	for (char **cur = argv; *cur; cur++) {
 		if (cur[1]) {
-			fprintf(stderr ,"%s ", *cur);
+			fprintf(stderr, "%s ", *cur);
 		} else {
 			fprintf(stderr, "%s", *cur);
 		}
@@ -71,29 +72,28 @@ static void execute_cmd(char **argv) {
 		} else if (WEXITSTATUS(status) == 0) {
 			return;
 		}
-
 	}
 	ret = 123;
 	return;
 }
 
 static char **setup_args(void) {
-	char **new_argv = malloc(original_argc * sizeof(char*));
-	for (int i=0; i<original_argc; i++) {
+	char **new_argv = malloc(original_argc * sizeof(char *));
+	for (int i = 0; i < original_argc; i++) {
 		new_argv[i] = strdup(original_argv[i]);
 	}
 	return new_argv;
 }
 
 static void free_args(int argc, char **argv) {
-	for (int i=0; i<argc; i++) {
+	for (int i = 0; i < argc; i++) {
 		free(argv[i]);
 	}
 	free(argv);
 }
 
 static void add_arg(int *argc, char ***argv, const char *new_arg) {
-	*argv = realloc(*argv, (*argc + 2) * sizeof(char*));
+	*argv = realloc(*argv, (*argc + 2) * sizeof(char *));
 	(*argv)[*argc] = strdup(new_arg);
 	(*argc)++;
 	(*argv)[*argc] = NULL;
@@ -107,14 +107,13 @@ static void add_arg(int *argc, char ***argv, const char *new_arg) {
 		used_args = 0;
 		used_lines = 0;
 	}
-
 }
 
 static int xargs_main(int argc, char **argv) {
 	if (argc < 1) {
 		// by default execute echo
 		argc = 1;
-		argv = (char*[]){
+		argv = (char *[]){
 			"echo",
 			NULL,
 		};
@@ -138,7 +137,7 @@ static int xargs_main(int argc, char **argv) {
 		if ((flags & FLAG_MAX_LINES) && used_lines >= max_lines) {
 			error("TODO : run cmd");
 			used_lines = 0;
-			used_args  = 0;
+			used_args = 0;
 		}
 
 		int in_quote = 0;
@@ -191,7 +190,7 @@ default_case:
 			error("non matching '%c'", in_quote);
 			return 1;
 		}
-		
+
 		if (!prev_is_space) {
 			*dest = '\0';
 			add_arg(&cur_argc, &cur_argv, arg);

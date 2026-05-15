@@ -1,6 +1,6 @@
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <tutils.h>
 
 #define FLAG_COMPLEMENT 0x01
@@ -13,8 +13,8 @@ static opt_t opts[] = {
 };
 
 CMD(tr, "tr [OPTIONS] STRING1 [STRING2]\n"
-"translate characters from stdin to stdout\n",
-opts);
+		"translate characters from stdin to stdout\n",
+	opts);
 
 static int crtl_from_char(int c) {
 	switch (c) {
@@ -41,7 +41,7 @@ static int crtl_from_char(int c) {
 
 static int find_index(const char *str, int c, int *offset) {
 	if (offset) *offset = 0;
-	for (int i=0; *str; i++) {
+	for (int i = 0; *str; i++) {
 		if (*str == '\\') {
 			str++;
 			int test;
@@ -125,7 +125,7 @@ static int tr_main(int argc, char **argv) {
 
 	int c;
 	int last_out = EOF;
-	char *last = argv[argc-1];
+	char *last = argv[argc - 1];
 	while ((c = getchar()) != EOF) {
 		int offset;
 		int index = find_index(argv[0], c, &offset);

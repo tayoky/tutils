@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <tutils.h>
 
-#define FLAG_STDOUT 0x01
+#define FLAG_STDOUT     0x01
 #define FLAG_DECOMPRESS 0x01
-#define FLAG_FORCE 0x01
-#define FLAG_KEEP 0x01
+#define FLAG_FORCE      0x01
+#define FLAG_KEEP       0x01
 
 static opt_t gzip_opts[] = {
 	OPT('c', NULL, FLAG_STDOUT, "output to stdout"),
@@ -15,7 +15,8 @@ static opt_t gzip_opts[] = {
 };
 
 CMD(gzip, "gzip [OPTIONS] [FILES...]\n"
-"compress files in .gz\n", gzip_opts);
+		  "compress files in .gz\n",
+	gzip_opts);
 
 static opt_t gunzip_opts[] = {
 	OPT('c', NULL, FLAG_STDOUT, "output to stdout"),
@@ -24,14 +25,16 @@ static opt_t gunzip_opts[] = {
 };
 
 CMD(gunzip, "gunzip [OPTIONS] [FILES...]\n"
-"uncompress files in .gz\n", gunzip_opts);
+			"uncompress files in .gz\n",
+	gunzip_opts);
 
 static opt_t zcat_opts[] = {
 	OPT('f', NULL, FLAG_FORCE, "allow reading from tty"),
 };
 
 CMD(zcat, "zcat [OPTIONS] [FILES...]\n"
-"uncompress files in .gz to stdout\n", zcat_opts);
+		  "uncompress files in .gz to stdout\n",
+	zcat_opts);
 
 static int gzip(const char *path, FILE *in) {
 	if (flags & FLAG_DECOMPRESS) {
@@ -43,9 +46,9 @@ static int gzip(const char *path, FILE *in) {
 				error("%s : no .gz", path);
 				return -1;
 			}
-			char out_path[strlen(path)+1];
+			char out_path[strlen(path) + 1];
 			strcpy(out_path, path);
-			out_path[strlen(out_path)-3] = '\0';
+			out_path[strlen(out_path) - 3] = '\0';
 			// TODO : overwrite check
 			out = fopen(out_path, "w");
 			if (!out) {

@@ -1,13 +1,13 @@
 #include <sys/stat.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <libgen.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <libgen.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <tutils.h>
+#include <unistd.h>
 
-//TODO : this implementation need implicit . support
+// TODO : this implementation need implicit . support
 
 #define FLAG_TARGET_DIR  0x01
 #define FLAG_TARGET_FILE 0x02
@@ -17,31 +17,31 @@
 #define FLAG_RELATIVE    0x20
 
 static opt_t opts[] = {
-	OPT('t',"--target-directory",FLAG_TARGET_DIR,"treat DESTINATION as destination directory"),
-	OPT('T',"--no-target-directory",FLAG_TARGET_FILE,"treat DESTINATION as destination file (NOTE : can only move one file with this option"),
-	OPT('i',"--interactive",FLAG_INTERACTIVE,"ask before overwriting old file"),
-	OPT('f',"--force",FLAG_FORCE,"unlink destinations files if already exist"),
-	OPT('s',"--symbolic",FLAG_SYMLINK,"create symbolic link instead of hardlink"),
-	OPT('r',"--relative",FLAG_RELATIVE,"make symbolic link relative to their location"),
+	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
+	OPT('T', "--no-target-directory", FLAG_TARGET_FILE, "treat DESTINATION as destination file (NOTE : can only move one file with this option"),
+	OPT('i', "--interactive", FLAG_INTERACTIVE, "ask before overwriting old file"),
+	OPT('f', "--force", FLAG_FORCE, "unlink destinations files if already exist"),
+	OPT('s', "--symbolic", FLAG_SYMLINK, "create symbolic link instead of hardlink"),
+	OPT('r', "--relative", FLAG_RELATIVE, "make symbolic link relative to their location"),
 };
 
 CMD(ln, "ln [OPTIONS] SOURCE... DESTINATION\n"
-"or ln OPTION\n"
-"create hard link\n",
-opts);
+		"or ln OPTION\n"
+		"create hard link\n",
+	opts);
 
 static int ret = 0;
 
-static int ln(const char *src,const char *dest){
+static int ln(const char *src, const char *dest) {
 	struct stat src_st;
-	if(stat(src,&src_st) < 0 && lstat(src,&src_st) < 0){
+	if (stat(src, &src_st) < 0 && lstat(src, &src_st) < 0) {
 		perror(src);
 		ret = 1;
 		return -1;
 	}
 
-	//can't make hardlink to dir
-	if(S_ISDIR(src_st.st_mode) && !(flags & FLAG_SYMLINK)){
+	// can't make hardlink to dir
+	if (S_ISDIR(src_st.st_mode) && !(flags & FLAG_SYMLINK)) {
 		errno = EISDIR;
 		perror(src);
 		ret = 1;
@@ -49,40 +49,40 @@ static int ln(const char *src,const char *dest){
 	}
 
 	struct stat dest_st;
-	if(lstat(dest,&dest_st) >= 0){
-		if(S_ISDIR(src_st.st_mode)){
-			//can't overwrite dir
+	if (lstat(dest, &dest_st) >= 0) {
+		if (S_ISDIR(src_st.st_mode)) {
+			// can't overwrite dir
 			errno = EISDIR;
 			perror(dest);
 			ret = 1;
 			return -1;
 		}
-		//prompt before overwriting if needed
-		if(flags & FLAG_INTERACTIVE){
-			fprintf(stderr,"ln : overwrite '%s' ? [y/N] : ",dest);
+		// prompt before overwriting if needed
+		if (flags & FLAG_INTERACTIVE) {
+			fprintf(stderr, "ln : overwrite '%s' ? [y/N] : ", dest);
 			char buf[4096];
-			fgets(buf,sizeof(buf),stdin);
-			if(strcasecmp(buf,"y") && strcasecmp(buf,"yes")){
+			fgets(buf, sizeof(buf), stdin);
+			if (strcasecmp(buf, "y") && strcasecmp(buf, "yes")) {
 				ret = 1;
 				return -1;
 			}
-		} else if(!(flags & FLAG_FORCE)){
+		} else if (!(flags & FLAG_FORCE)) {
 			errno = EEXIST;
 			perror(dest);
 			ret = 1;
 			return -1;
 		}
-		if(remove(dest) < 0){
+		if (remove(dest) < 0) {
 			perror(dest);
 			ret = 1;
 			return -1;
 		}
 	}
 
-	if(flags & FLAG_SYMLINK){
-		//TODO : relative path support
-		char *target = realpath(src,NULL);
-		if(symlink(target,dest) < 0){
+	if (flags & FLAG_SYMLINK) {
+		// TODO : relative path support
+		char *target = realpath(src, NULL);
+		if (symlink(target, dest) < 0) {
 			free(target);
 			perror(dest);
 			ret = 1;
@@ -90,7 +90,7 @@ static int ln(const char *src,const char *dest){
 		}
 		free(target);
 	} else {
-		if(link(src,dest) < 0){
+		if (link(src, dest) < 0) {
 			perror(dest);
 			ret = 1;
 			return -1;
@@ -101,29 +101,29 @@ static int ln(const char *src,const char *dest){
 }
 
 
-static int ln_main(int argc,char **argv){
-	if(argc < 2){
+static int ln_main(int argc, char **argv) {
+	if (argc < 2) {
 		error("missing argument");
 		return 1;
 	}
 
-	if((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)){
-		//FIXME : this error message don't look professional
+	if ((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)) {
+		// FIXME : this error message don't look professional
 		error("can't provide -T and -t at the same time");
 	}
 
-	char *dest = argv[argc-1];
+	char *dest = argv[argc - 1];
 
-	//automatic
-	if(!(flags & FLAG_TARGET_DIR) && !(flags & FLAG_TARGET_FILE)){
-		//let figure out ourself
-		if(argc > 2 || dest[strlen(dest)-1] == '/'){
+	// automatic
+	if (!(flags & FLAG_TARGET_DIR) && !(flags & FLAG_TARGET_FILE)) {
+		// let figure out ourself
+		if (argc > 2 || dest[strlen(dest) - 1] == '/') {
 			flags |= FLAG_TARGET_DIR;
 		} else {
 			struct stat st;
-			if(stat(dest,&st) < 0){
+			if (stat(dest, &st) < 0) {
 				flags |= FLAG_TARGET_FILE;
-			} else if(S_ISDIR(st.st_mode)){
+			} else if (S_ISDIR(st.st_mode)) {
 				flags |= FLAG_TARGET_DIR;
 			} else {
 				flags |= FLAG_TARGET_FILE;
@@ -131,42 +131,42 @@ static int ln_main(int argc,char **argv){
 		}
 	}
 
-	//check our guesses + user input
+	// check our guesses + user input
 	struct stat st;
-	if(stat(dest,&st) < 0){
-		if(flags & FLAG_TARGET_DIR){
+	if (stat(dest, &st) < 0) {
+		if (flags & FLAG_TARGET_DIR) {
 			perror(dest);
 			return 1;
 		}
-	} else if(flags & FLAG_TARGET_DIR){
-		if(!S_ISDIR(st.st_mode)){
+	} else if (flags & FLAG_TARGET_DIR) {
+		if (!S_ISDIR(st.st_mode)) {
 			errno = ENOTDIR;
 			perror(dest);
 			return 1;
 		}
 	} else {
-		if(S_ISDIR(st.st_mode)){
+		if (S_ISDIR(st.st_mode)) {
 			errno = EISDIR;
 			perror(dest);
 			return 1;
 		}
 	}
-	if(argc > 2 && (flags & FLAG_TARGET_FILE)){
+	if (argc > 2 && (flags & FLAG_TARGET_FILE)) {
 		error("can only link one file with -T");
 		return 1;
 	}
 
-	for(int i=0; i<argc-1; i++){
-		//start by finding the dest path
+	for (int i = 0; i < argc - 1; i++) {
+		// start by finding the dest path
 		char dst[strlen(argv[i]) + strlen(dest) + 2];
 		char src[strlen(argv[i]) + 1];
-		strcpy(src,argv[i]);
-		if(flags & FLAG_TARGET_FILE){
-			strcpy(dst,dest);
+		strcpy(src, argv[i]);
+		if (flags & FLAG_TARGET_FILE) {
+			strcpy(dst, dest);
 		} else {
-			sprintf(dst,"%s/%s",dest,basename(src));
+			sprintf(dst, "%s/%s", dest, basename(src));
 		}
-		ln(argv[i],dst);
+		ln(argv[i], dst);
 	}
 
 	return ret;

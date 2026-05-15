@@ -2,7 +2,7 @@
 
 // please keep this in alphabetic order
 #define CMD_LIST \
-	X(bracket)\
+	X(bracket) \
 	X(basename) \
 	X(cat) \
 	X(chmod) \
@@ -41,16 +41,15 @@
 	X(whoami) \
 	X(xargs) \
 	X(yes) \
-	X(zcat) \
+	X(zcat)
 
-#define X(name) extern command_t name ## _cmd;
+#define X(name) extern command_t name##_cmd;
 CMD_LIST
 #undef X
 
-#define X(name) &name ## _cmd,
+#define X(name) &name##_cmd,
 command_t *commands[] = {
-	CMD_LIST
-};
+	CMD_LIST};
 #undef X
 
 size_t commands_count = arraylen(commands);
