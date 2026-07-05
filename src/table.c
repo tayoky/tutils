@@ -31,6 +31,7 @@
 	X(seq) \
 	X(sleep) \
 	X(stat) \
+	X(tee) \
 	X(test) \
 	X(touch) \
 	X(tr) \

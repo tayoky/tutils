@@ -35,6 +35,7 @@ CMDS="[ \
 	seq \
 	sleep \
 	stat \
+	tee \
 	test \
 	touch \
 	tr \

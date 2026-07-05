@@ -14,6 +14,7 @@ this is the todo list :
 - [x] touch
 - [x] mkdir
 - [x] cat
+- [x] tee
 - [x] ls
 - [x] cp (missing options)
 - [x] mv (missing options)
