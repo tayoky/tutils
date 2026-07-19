@@ -11,5 +11,3 @@ tconf_check_func "$CC" "stdlib.h" "qsort"
 tconf_check_func "$CC" "signal.h" "signal"
 
 tconf_fini
-
-./tmakegen
