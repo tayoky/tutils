@@ -14,9 +14,9 @@ static opt_t opts[] = {
 	OPT('c', "--no-create", FLAG_NO_CREATE, "don't create any file"),
 };
 
-CMD(touch, "touch [-cam] FILES...\n"
-		   "create files/update access and modification times\n",
-	opts);
+CMD(touch, "touch [-cam] FILES...",
+	"Create files/update access and modification times.",
+opts);
 
 #define DMODE S_IRUSR | S_IWUSR
 

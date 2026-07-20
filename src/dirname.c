@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <tutils.h>
 
-CMD_NOPT(dirname, "dirname NAME...\n"
-				  "strip last element from a file path\n");
+CMD_NOPT(dirname, "dirname NAME...",
+	"Strip last element from a file path.");
 
 static int dirname_main(int argc, char **argv) {
 	if (argc <= 0) {

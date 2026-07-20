@@ -33,6 +33,7 @@ typedef struct opt {
 
 typedef struct command {
 	const char *usage;
+	const char *desc;
 	const char *name;
 	int (*main)(int argc, char **argv);
 	opt_t *options;
@@ -59,10 +60,10 @@ int foreach_file_open(char **argv, int (*callback)(const char *path, FILE *file)
 // compatibility with some old utils
 #define OPTV(_c, _str, _flags, _ptr, _desc) OPTARG(_c, _str, _flags, OPT_STR, _ptr, _desc)
 
-#define CMD(_name, _usage, _opts) static int _name ## _main(int argc, char **argv);\
-	command_t _name ## _cmd = {.name = #_name, .usage = _usage, .options = _opts, .options_count = arraylen(_opts), .main = _name ## _main}
-#define CMD_NOPT(_name, _usage) static int _name ## _main(int argc, char **argv);\
-	command_t _name ## _cmd = {.name = #_name, .usage = _usage, .options = NULL, .options_count = 0, .main = _name ## _main}
+#define CMD(_name, _usage, _desc, _opts) static int _name ## _main(int argc, char **argv);\
+	command_t _name ## _cmd = {.name = #_name, .usage = _usage, .desc = _desc, .options = _opts, .options_count = arraylen(_opts), .main = _name ## _main}
+#define CMD_NOPT(_name, _usage, _desc) static int _name ## _main(int argc, char **argv);\
+	command_t _name ## _cmd = {.name = #_name, .usage = _usage, .desc = _desc, .options = NULL, .options_count = 0, .main = _name ## _main}
 
 void error(const char *fmt,...);
 int glob_match(const char *glob, const char *str);

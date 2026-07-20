@@ -12,9 +12,9 @@ static opt_t opts[] = {
 	OPT('v', "--verbose", FLAG_VERBOSE, "print a message for each removed directory"),
 };
 
-CMD(rmdir, "rmdir [-pv] DIRECTORIES ...\n"
-		   "remove directories\n",
-	opts);
+CMD(rmdir, "rmdir [-pv] DIRECTORIES ...",
+	"Remove directories.",
+opts);
 
 static int remove_dir(const char *path) {
 	if (rmdir(path) < 0) {

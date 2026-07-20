@@ -13,9 +13,9 @@ static opt_t opts[] = {
 	OPT('R', "--recursive", FLAG_RECURSIVE, "operate on files and directories recursively"),
 };
 
-CMD(chown, "chown [OPTIONS]... OWNER[:GROUP] FILES...\n"
-		   "change owner of files\n",
-	opts);
+CMD(chown, "chown [OPTIONS]... OWNER[:GROUP] FILES...",
+	"Change owner of files.",
+opts);
 
 static int ch(uid_t owner, gid_t group, const char *path) {
 	struct stat st;

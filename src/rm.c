@@ -17,9 +17,9 @@ static opt_t opts[] = {
 
 static int ret = 0;
 
-CMD(rm, "rm [-rf] FILES DIRECTORIES ...\n"
-		"delete files\n",
-	opts);
+CMD(rm, "rm [-rf] FILES DIRECTORIES ...",
+	"Delete files.",
+opts);
 
 static int rm(const char *path) {
 	// get info on it

@@ -23,9 +23,9 @@ static opt_t opts[] = {
 };
 
 CMD(cp, "cp [OPTIONS] SOURCE... DESTINATION\n"
-		"or cp OPTION\n"
-		"copy files and directories\n",
-	opts);
+	"or cp OPTION",
+	"Copy files and directories.",
+opts);
 
 static opt_t mv_opts[] = {
 	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
@@ -35,9 +35,9 @@ static opt_t mv_opts[] = {
 };
 
 CMD(mv, "mv [OPTIONS] SOURCE... DESTINATION\n"
-		"or mv OPTION\n"
-		"move files and directories\n",
-	mv_opts);
+	"or mv OPTION",
+	"Move files and directories.",
+mv_opts);
 
 static int ret = 0;
 static int is_mv = 0;

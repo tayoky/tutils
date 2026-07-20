@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <tutils.h>
 
-CMD_NOPT(yes, "yes [STRING]\nor yes OPTION\n"
-			  "repeatedly print a string to stdout\n");
+CMD_NOPT(yes, "yes [STRING]\nor yes OPTION",
+	"Repeatedly print a string to stdout.");
 
 static int yes_main(int argc, char **argv) {
 	for (;;) {

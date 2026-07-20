@@ -19,9 +19,9 @@ static opt_t opts[] = {
 };
 
 
-CMD(mkdir, "mkdir [-m MODE] [-pv] DIRECTORIES ...\n"
-		   "create directories\n",
-	opts);
+CMD(mkdir, "mkdir [-m MODE] [-pv] DIRECTORIES ...",
+	"Create directories.",
+opts);
 
 static void make_dir(const char *path) {
 	// simple check to avoid segfault

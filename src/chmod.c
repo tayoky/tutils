@@ -14,17 +14,17 @@ static opt_t opts[] = {
 	OPT('R', "--recursive", FLAG_RECURSIVE, "operate on files and directories recursively"),
 };
 
-CMD(chmod, "chmod [OPTIONS]... MODE[,MODE]... FILES...\n"
-		   "where MODE is [ugoa][-+=][perm...]\n"
-		   "where perm is zero or more characters from rwxst\n"
-		   "r for read\n"
-		   "w for write\n"
-		   "x for execute (or search on direcotories)\n"
-		   "s for setuid or/and setgid bit\n"
-		   "t for sticky bit (or restriction bit on directories\n"
-		   "multiples MODE can be given separated by comma\n"
-		   "change mode of files\n",
-	opts);
+CMD(chmod, "chmod [OPTIONS]... MODE[,MODE]... FILES...",
+	"Where MODE is [ugoa][-+=][perm...]\n."
+	"Where perm is zero or more characters from rwxst.\n"
+	"r for read\n"
+	"w for write\n"
+	"x for execute (or search on direcotories)\n"
+	"s for setuid or/and setgid bit\n"
+	"t for sticky bit (or restriction bit on directories\n"
+	"Multiples MODE can be given separated by comma.\n"
+	"Change mode of files.",
+opts);
 
 static int ch(const char *mode, const char *path) {
 	struct stat st;

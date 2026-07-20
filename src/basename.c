@@ -13,9 +13,9 @@ static opt_t opts[] = {
 };
 
 CMD(basename, "basename NAME [SUFFIX]\n"
-			  "or basename OPTIONS... NAME...\n"
-			  "strip directory name/suffix from files path\n",
-	opts);
+	"or basename OPTIONS... NAME...",
+	"Strip directory name/suffix from files path.",
+opts);
 
 static void bname(char *path) {
 	path = basename(path);

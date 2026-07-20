@@ -27,9 +27,9 @@ static opt_t opts[] = {
 	OPT('t', "--trace", FLAG_TRACE, "print each command before executing it"),
 };
 
-CMD(xargs, "xargs [OPTIONS...] [COMMAND [ARGUMENTS]]\n"
-		   "parse args and execute commands\n",
-	opts);
+CMD(xargs, "xargs [OPTIONS...] [COMMAND [ARGUMENTS]]",
+	"Parse arguments and execute commands.",
+opts);
 
 static void print_cmd(char **argv) {
 	for (char **cur = argv; *cur; cur++) {

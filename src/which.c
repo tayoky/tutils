@@ -9,9 +9,9 @@ static opt_t opts[] = {
 	OPT('a', "--all", FLAG_ALL, "show all matches"),
 };
 
-CMD(which, "which [-a] EXECUTABLE...\n"
-		   "show full path for executables in $PATH\n",
-	opts);
+CMD(which, "which [-a] EXECUTABLE...",
+	"Show full path for executables in $PATH.",
+opts);
 
 static int ret = 0;
 

@@ -4,16 +4,16 @@
 #include <tutils.h>
 #include <unistd.h>
 
-CMD_NOPT(sleep, "sleep DURATION...\n"
-				"or sleep OPTION\n"
-				"where DURATION is an integer that can be folowed by a suffix to choice the unit\n"
-				"s for second\n"
-				"m for minute\n"
-				"h for hour\n"
-				"d for day\n"
-				"if no suffix is provided assume seconds\n"
-				"sleep will pause for the provided duration\n"
-				"if multiples durations are provided sleep will pause for their sum\n");
+CMD_NOPT(sleep, "sleep DURATION...",
+	"or sleep OPTION\n"
+	"Where DURATION is an integer that can be folowed by a suffix to choice the unit.\n"
+	"s for second\n"
+	"m for minute\n"
+	"h for hour\n"
+	"d for day\n"
+	"If no suffix is provided assume seconds.\n"
+	"Sleep will pause for the provided duration.\n"
+	"If multiples durations are provided sleep will pause for their sum.\n");
 
 static int sleep_main(int argc, char **argv) {
 	if (argc < 1) {

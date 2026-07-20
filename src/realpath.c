@@ -8,9 +8,9 @@ static opt_t opts[] = {
 	OPT('m', "--canonicalize-missing", 0, "no components need to exist"),
 };
 
-CMD(realpath, "realpath [OPTIONS...] FILE...\n"
-			  "resolve absolute path to a file\n",
-	opts);
+CMD(realpath, "realpath [OPTIONS...] FILE...",
+	"Resolve absolute path to a file.",
+opts);
 
 static void rpath(char *path) {
 	path = realpath(path, NULL);

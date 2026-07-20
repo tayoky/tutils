@@ -6,9 +6,9 @@
 
 static opt_t opts[] = {};
 
-CMD(readlink, "readlink [OPTIONS] FILES...\n"
-			  "print value of symbolic link\n",
-	opts);
+CMD(readlink, "readlink [OPTIONS] FILES...",
+	"Print value of symbolic link.",
+opts);
 
 static int readlink_main(int argc, char **argv) {
 	if (argc < 1) {

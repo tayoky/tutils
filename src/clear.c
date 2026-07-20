@@ -3,8 +3,8 @@
 
 #define ESC "\033"
 
-CMD_NOPT(clear, "clear [OPTION]\n"
-				"clear screen\n");
+CMD_NOPT(clear, "clear [OPTION]",
+"Clear screen.");
 
 static int clear_main(int argc, char **argv) {
 	(void)argc;

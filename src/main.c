@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <tutils.h>
 
 // tutils's entry point
@@ -38,7 +39,10 @@ void help(command_t *command) {
 		if (size < cur) size = cur;
 	}
 
-	printf("usage : %s", command->usage);
+	printf("usage : %s\n", command->usage);
+	if (command->desc) {
+		printf("%s\n", command->desc);
+	}
 	for (size_t i = 0; i < command->options_count; i++) {
 		size_t cur = 0;
 		if (command->options[i].str) {
@@ -61,6 +65,51 @@ void help(command_t *command) {
 		}
 		printf(": %s\n", command->options[i].desc);
 	}
+}
+
+void man(command_t *command) {
+	// first find size for left col
+	size_t size = 0;
+	for (size_t i = 0; i < command->options_count; i++) {
+		size_t cur = 0;
+		if (command->options[i].str) {
+			cur += strlen(command->options[i].str) + 1;
+		}
+		if (command->options[i].c) {
+			cur += 2;
+		}
+		if (size < cur) size = cur;
+	}
+
+	char upper_name[256] = {0};
+	for (size_t i=0; i<strlen(command->name); i++) {
+		upper_name[i] = toupper(command->name[i]);
+	}
+	printf(".Dd 20 July 2026\n");
+	printf(".Dt %s 1\n", upper_name);
+	printf(".Os tutils %s\n", VERSION);
+	printf(".Sh NAME\n");
+	printf(".Nm %s\n", command->name);
+	printf(".Nd do stuff\n");
+	printf(".Sh SYNOPSIS\n");
+	printf("%s\n", command->usage);
+	printf(".Sh DESCRIPTION\n");
+	printf("%s\n", command->desc);
+	printf(".Sh OPTIONS\n");
+	printf(".Bl -tag -width \"%*s\"\n", (int)size, "");
+	for (size_t i = 0; i < command->options_count; i++) {
+		printf(".It Fl %c", command->options[i].c);
+		if (command->options[i].str) {
+			printf(" Fl %s", command->options[i].str + 1);
+		}
+		putchar('\n');
+		printf("%s\n", command->options[i].desc);
+	}
+	printf(".El\n");
+	printf(".Sh EXIT STATUS\n");
+	printf(".Ex -std\n");
+	printf(".Sh AUTHOR\n");
+	printf("Written by Tayoky\n");
 }
 
 static int command_cmp(const void *e1, const void *e2) {
@@ -125,6 +174,10 @@ static int parse_long_opt(int argc, char **argv, int i, command_t *cmd) {
 	}
 	if (!strcmp("--version", argv[i])) {
 		version();
+		exit(0);
+	}
+	if (!strcmp("--man", argv[i])) {
+		man(cmd);
 		exit(0);
 	}
 	for (size_t j = 0; j < cmd->options_count; j++) {

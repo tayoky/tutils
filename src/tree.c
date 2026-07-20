@@ -12,9 +12,9 @@ static opt_t opts[] = {
 	OPT('a', NULL, FLAG_ALL, "show hidden files and directories"),
 };
 
-CMD(tree, "tree [-a] [DIRECTORY]\n"
-		  "recursively show content of directories\n",
-	opts);
+CMD(tree, "tree [-a] [DIRECTORY]",
+	"Recursively show content of directories.",
+opts);
 
 static int ret = 0;
 

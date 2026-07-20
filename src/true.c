@@ -1,7 +1,7 @@
 #include <tutils.h>
 
-CMD_NOPT(true, "true\n"
-			   "exit with success\n");
+CMD_NOPT(true, "true",
+	"Exit with success.");
 
 static int true_main(int argc, char **argv) {
 	(void)argc;

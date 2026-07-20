@@ -14,22 +14,22 @@
 static char *fmt = NULL;
 
 static char *default_fmt = "  File : %n\n"
-						   "Size   : %s  Blocks : %b  IO Block : %B  %F\n"
-						   "Device : %Hd,%Ld  Inode : %i  Links : %h\n"
-						   "Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
-						   "Access : %x\n"
-						   "Modify : %y\n"
-						   "Change : %z\n"
-						   "Birth  : %w\n";
+	"Size   : %s  Blocks : %b  IO Block : %B  %F\n"
+	"Device : %Hd,%Ld  Inode : %i  Links : %h\n"
+	"Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
+	"Access : %x\n"
+	"Modify : %y\n"
+	"Change : %z\n"
+	"Birth  : %w\n";
 
 static char *dev_fmt = "  File : %n\n"
-					   "Size   : %s  Blocks : %b  IO Block : %B  %F\n"
-					   "Device : %Hd,%Ld  Inode : %i  Links : %h  Device type : %Hr,%Lr\n"
-					   "Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
-					   "Access : %x\n"
-					   "Modify : %y\n"
-					   "Change : %z\n"
-					   "Birth  : %w\n";
+	"Size   : %s  Blocks : %b  IO Block : %B  %F\n"
+	"Device : %Hd,%Ld  Inode : %i  Links : %h  Device type : %Hr,%Lr\n"
+	"Access : (%a/%A)  Uid : %U(%u)  Gid : %G(%g)\n"
+	"Access : %x\n"
+	"Modify : %y\n"
+	"Change : %z\n"
+	"Birth  : %w\n";
 
 static int ret;
 
@@ -42,9 +42,9 @@ static opt_t opts[] = {
 	OPT('t', "--terse", FLAG_TERSE, "print info in terse form"),
 };
 
-CMD(stat, "stat [OPTIONS]... FILE...\n"
-		  "display file or file system information\n",
-	opts);
+CMD(stat, "stat [OPTIONS]... FILE...",
+	"Display file or file system information.",
+opts);
 
 static void print_time(time_t t) {
 	char *str = ctime(&t);

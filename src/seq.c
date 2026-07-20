@@ -4,8 +4,8 @@
 
 #define ESC "\033"
 
-CMD_NOPT(seq, "seq [FIRST [INCREMENT]] LAST\n"
-			  "print number from FIRST to LAST\n");
+CMD_NOPT(seq, "seq [FIRST [INCREMENT]] LAST",
+	"Print number from FIRST to LAST.");
 
 static int seq_main(int argc, char **argv) {
 	if (argc < 1) {

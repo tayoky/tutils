@@ -4,7 +4,7 @@
 #include <tutils.h>
 #include <unistd.h>
 
-CMD_NOPT(test, NULL);
+CMD_NOPT(test, NULL, NULL);
 
 // [ is just an alias
 command_t bracket_cmd = {

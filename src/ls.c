@@ -29,13 +29,13 @@ static opt_t opts[] = {
 	OPT('S', NULL, FLAG_SORT_SZ, "sort by file size, biggest fist"),
 	OPT('t', NULL, FLAG_SORT_TM, "sort by time, newest fist"),
 	OPT('c', NULL, FLAG_CTIME, "use change time instead of modify time and automaticly short by time if -l is not specified"),
-	OPT('u', NULL, FLAG_ATIME, "use acces time instead of modify time and automaticly short by time if -l is not specified"),
+	OPT('u', NULL, FLAG_ATIME, "use access time instead of modify time and automaticly short by time if -l is not specified"),
 	OPT('h', "--human", FLAG_HUMAN, "print size in human readable format (eg 234M, 3G, ..)"),
 };
 
-CMD(ls, "ls [-laAUrStuch] [DIRECTORY]\n"
-		"list files in a directory\n",
-	opts);
+CMD(ls, "ls [-laAUrStuch] [DIRECTORY]",
+	"List files in a directory.",
+opts);
 
 
 static int to_tty = 0;

@@ -3,8 +3,8 @@
 #include <tutils.h>
 #include <unistd.h>
 
-CMD_NOPT(whoami, "whoami [OPTION]\n"
-				 "print current username or uid\n");
+CMD_NOPT(whoami, "whoami [OPTION]",
+	"Print current username or uid.");
 
 static int whoami_main(int argc, char **argv) {
 	(void)argc;

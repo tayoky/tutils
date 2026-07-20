@@ -19,9 +19,9 @@ static opt_t opts[] = {
 	OPT('n', "--name", FLAG_NAME, "print the name (string) instead of an id (integer)"),
 };
 
-CMD(id, "id [OPTIONS] [USER]...\n"
-		"print user identity\n",
-	opts);
+CMD(id, "id [OPTIONS] [USER]...",
+	"Print user identity.",
+opts);
 
 // TODO : support for suplementary groups + groups name
 static void print_info(uid_t uid) {

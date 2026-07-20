@@ -22,11 +22,11 @@ static opt_t opts[] = {
 	OPT('v', "--show-noprinting", FLAG_NOPRNT | FLAG_BYTE, "display non printable characters with ^ notation (except for NL and TAB)"),
 };
 
-CMD(cat, "cat [FILES] ...\n"
-		 "concatenate files and print to stdout\n"
-		 "special file name \"-\" is equivalent to stdin\n"
-		 "if no files is specified stdin is used by default\n",
-	opts);
+CMD(cat, "cat [FILES] ...",
+	"Concatenate files and print to stdout.\n"
+	"Special file name \"-\" is equivalent to stdin.\n"
+	"If no files is specified stdin is used by default.",
+opts);
 
 static int cat(const char *path, FILE *file) {
 	if (flags & FLAG_BYTE) {

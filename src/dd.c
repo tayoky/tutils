@@ -12,20 +12,20 @@
 #define max(a, b) (a > b ? a : b)
 
 CMD_NOPT(dd, "dd [OPERANDS]\n"
-			 "or dd OPTION\n"
-			 "copy and convert files\n"
-			 "by default dd read stdin and output to stdout with 512 bytes blocks\n"
-			 "operand are of the form OPERAND=VALUE ...\n"
-			 "valid operand are\n"
-			 "bs=BYTES  : use input and output blocks of size BYTES (overide ibs and obs)\n"
-			 "conv=CONV : precise convert option separated by comma\n"
-			 "count=N   : copy only up to N input block\n"
-			 "ibs=BYTES : use input blocks of size BYTES\n"
-			 "if=FILE   : read from FILE instead of stdin\n"
-			 "obs=BYTES : use output blocks of size BYTES\n"
-			 "of=FILE   : write to FILE instead of stdin\n"
-			 "skip=N (or iseek=N) : skip N input block\n"
-			 "seek=N (or oseek=N) : skip N output block\n");
+	"or dd OPTION",
+	"copy and convert files\n"
+	"by default dd read stdin and output to stdout with 512 bytes blocks\n"
+	"operand are of the form OPERAND=VALUE ...\n"
+	"valid operand are\n"
+	"bs=BYTES  : use input and output blocks of size BYTES (overide ibs and obs)\n"
+	"conv=CONV : precise convert option separated by comma\n"
+	"count=N   : copy only up to N input block\n"
+	"ibs=BYTES : use input blocks of size BYTES\n"
+	"if=FILE   : read from FILE instead of stdin\n"
+	"obs=BYTES : use output blocks of size BYTES\n"
+	"of=FILE   : write to FILE instead of stdin\n"
+	"skip=N (or iseek=N) : skip N input block\n"
+	"seek=N (or oseek=N) : skip N output block");
 
 
 static size_t str2int(const char *str) {

@@ -4,8 +4,8 @@
 #include <tutils.h>
 #include <unistd.h>
 
-CMD_NOPT(unlink, "unlink FILE\nor unlink OPTION\n"
-				 "unlink a symlink/hardlink or remove a file\n");
+CMD_NOPT(unlink, "unlink FILE\nor unlink OPTION",
+	"Unlink a symlink/hardlink or remove a file.");
 
 
 static int unlink_main(int argc, char **argv) {

@@ -3,9 +3,9 @@
 
 static opt_t opts[] = {};
 
-CMD(echo, "echo [STRING] ...\n"
-		  "print strings to stdout followed by a newline\n",
-	opts);
+CMD(echo, "echo [STRING] ...",
+	"Print strings to stdout followed by a newline.",
+opts);
 
 static int echo_main(int argc, char **argv) {
 	for (int i = 0; i < argc; i++) {

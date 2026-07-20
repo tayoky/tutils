@@ -12,9 +12,9 @@ static opt_t opts[] = {
 	OPT('s', "--squeeze-repeats", FLAG_SQUEEZE, "replace instance of repeated characters by one"),
 };
 
-CMD(tr, "tr [OPTIONS] STRING1 [STRING2]\n"
-		"translate characters from stdin to stdout\n",
-	opts);
+CMD(tr, "tr [OPTIONS] STRING1 [STRING2]",
+	"Translate characters from stdin to stdout.",
+opts);
 
 static int crtl_from_char(int c) {
 	switch (c) {

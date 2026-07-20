@@ -15,9 +15,9 @@ static opt_t opts[] = {
 	OPTSIZE('l', "--length", FLAG_LENGHT, &lenght_value, "dump up to LENGTH byte"),
 };
 
-CMD(hex, "hex [OPTIONS] [FILES...]\n"
-		 "do an hexadecimal dump of files\n",
-	opts);
+CMD(hex, "hex [OPTIONS] [FILES...]",
+	"Do an hexadecimal dump of files.",
+opts);
 
 static size_t col = 8;
 static int color = 1;

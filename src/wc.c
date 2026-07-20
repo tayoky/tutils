@@ -26,9 +26,9 @@ static opt_t opts[] = {
 	OPT('l', "--lines", FLAG_LINES, "print newlines count"),
 };
 
-CMD(wc, "wc [OPTIONS] [FILES]\n"
-		"print newline word and byte count\n",
-	opts);
+CMD(wc, "wc [OPTIONS] [FILES]",
+	"Print newline word and byte count.",
+opts);
 
 static void add_stat(struct stats *stat) {
 	char buf[64];

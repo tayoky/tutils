@@ -8,8 +8,8 @@
 #include <tutils.h>
 
 
-CMD_NOPT(find, "find [PATH...] [EXPR...]\n"
-			   "find files\n");
+CMD_NOPT(find, "find [PATH...] [EXPR...]",
+	"Find files.");
 
 static char **ptr;
 static int ret = 0;

@@ -14,9 +14,9 @@ static opt_t gzip_opts[] = {
 	OPT('k', NULL, FLAG_KEEP, "keep input files, default is to remove them"),
 };
 
-CMD(gzip, "gzip [OPTIONS] [FILES...]\n"
-		  "compress files in .gz\n",
-	gzip_opts);
+CMD(gzip, "gzip [OPTIONS] [FILES...]",
+	"Compress files in .gz.",
+gzip_opts);
 
 static opt_t gunzip_opts[] = {
 	OPT('c', NULL, FLAG_STDOUT, "output to stdout"),
@@ -24,17 +24,17 @@ static opt_t gunzip_opts[] = {
 	OPT('k', NULL, FLAG_KEEP, "keep input files, default is to remove them"),
 };
 
-CMD(gunzip, "gunzip [OPTIONS] [FILES...]\n"
-			"uncompress files in .gz\n",
-	gunzip_opts);
+CMD(gunzip, "gunzip [OPTIONS] [FILES...]",
+	"Uncompress files in .gz.",
+gunzip_opts);
 
 static opt_t zcat_opts[] = {
 	OPT('f', NULL, FLAG_FORCE, "allow reading from tty"),
 };
 
-CMD(zcat, "zcat [OPTIONS] [FILES...]\n"
-		  "uncompress files in .gz to stdout\n",
-	zcat_opts);
+CMD(zcat, "zcat [OPTIONS] [FILES...]",
+	"Uncompress files in .gz to stdout.",
+zcat_opts);
 
 static int gzip(const char *path, FILE *in) {
 	if (flags & FLAG_DECOMPRESS) {

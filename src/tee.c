@@ -16,9 +16,9 @@ static opt_t opts[] = {
 	OPT('i', "--ignore-interrupts", FLAG_IGNORE, "ignore SIGINT"),
 };
 
-CMD(tee, "tee [OPTIONS] [FILES] ...\n"
-	"copy stdin to files and stdout\n",
-	opts);
+CMD(tee, "tee [OPTIONS] [FILES] ...",
+	"Copy stdin to files and stdout.",
+opts);
 
 static int open_file(const char *path) {
 	int open_flags = O_WRONLY | O_CREAT;

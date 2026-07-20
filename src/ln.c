@@ -26,9 +26,9 @@ static opt_t opts[] = {
 };
 
 CMD(ln, "ln [OPTIONS] SOURCE... DESTINATION\n"
-		"or ln OPTION\n"
-		"create hard link\n",
-	opts);
+	"or ln OPTION",
+	"Create hard link.",
+opts);
 
 static int ret = 0;
 

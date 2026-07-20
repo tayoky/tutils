@@ -15,11 +15,11 @@ static opt_t opts[] = {
 	OPT('q', "--quiet", FLAG_QUIET, "never print filename header"),
 };
 
-CMD(head, "head [OPTIONS]... [FILES]...\n"
-		  "print the first 10 lines of a file\n"
-		  "the special filename '-' is treat as stdin\n"
-		  "if no files is specified, '-' is used by default\n",
-	opts);
+CMD(head, "head [OPTIONS]... [FILES]...",
+	"Print the first 10 lines of a file.\n"
+	"The special filename '-' is treat as stdin.\n"
+	"If no files is specified, '-' is used by default.",
+opts);
 
 static int head(const char *path, FILE *file) {
 	if (!(flags & FLAG_QUIET)) {

@@ -11,10 +11,10 @@ static opt_t opts[] = {
 };
 
 CMD(pwd, "pwd [-L]\n"
-		 "or pwd -P\n"
-		 "print the working directory\n"
-		 "by default pwd behave like called with -L\n",
-	opts);
+	"or pwd -P",
+	"Print the working directory.\n"
+	"By default pwd behave like called with -L.",
+opts);
 
 static int pwd_main(int argc, char **argv) {
 	(void)argc;

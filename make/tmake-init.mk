@@ -11,8 +11,19 @@ AS ?= as
 LN ?= ln
 LN_S ?= ln -s
 PREFIX ?= /usr/local
-BUILDDIR ?= $(CURDIR)/build
+BINDIR     ?= $(PREFIX)/bin
+SBINDIR    ?= $(PREFIX)/sbin
+LIBDIR     ?= $(PREFIX)/lib
+INCLUDEDIR ?= $(PREFIX)/include
+SHAREDIR   ?= $(PREFIX)/share
+MANDIR     ?= $(SHAREDIR)/man
+DOCDIR     ?= $(SHAREDIR)/doc
+NLSDIR     ?= $(SHAREDIR)/nls
+CONFDIR    ?= $(PREFIX)/etc
+BUILDDIR  ?= $(TOP)/build$(CURDIR:$(abspath $(TOP))%=%)
 TMAKE_DIR ?= $(TOP)/make
+
+CFLAGS += -DPREFIX='"$(PREFIX)"'
 
 ifeq ($(V),1)
 	Q =
