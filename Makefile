@@ -60,3 +60,7 @@ install-symlinks :
 		echo "LN_S tutils $(DESTDIR)$(PREFIX)/bin/$$CMD" ; \
 		$(LN_S) -f "tutils" "$(DESTDIR)$(PREFIX)/bin/$$CMD" ; \
 	done
+
+FILES = COPYING.txt README.md
+FILESDIR = $(DOCDIR)/tutils
+include $(TMAKE_DIR)/tmake-files.mk
