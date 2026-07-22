@@ -10,11 +10,11 @@ CMD_NOPT(unlink, "unlink FILE\nor unlink OPTION",
 
 static int unlink_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 	if (argc > 1) {
-		error("too many arguments");
+		error(_("too many arguments"));
 		return 1;
 	}
 

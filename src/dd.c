@@ -73,7 +73,7 @@ static size_t str2int(const char *str) {
 
 	return i;
 invalid:
-	error("invalid value for operand '%s'", str);
+	error(_("invalid value for operand '%s'"), str);
 	exit(1);
 }
 
@@ -116,7 +116,7 @@ static int dd_main(int argc, char **argv) {
 
 	for (int i = 0; i < argc; i++) {
 		if (!strchr(argv[i], '=')) {
-			error("invalid operand '%s'", argv[i]);
+			error(_("invalid operand '%s'"), argv[i]);
 			return 1;
 		}
 		char *operand = argv[i];
@@ -126,7 +126,7 @@ static int dd_main(int argc, char **argv) {
 #define OP(str) !strcmp(str, operand)
 		if (OP("bs")) {
 			ibs = obs = str2int(value);
-			if (!obs) error("invalid number '%s'", value);
+			if (!obs) error(_("invalid number to '%s' : '%s'"), operand, value);
 			continue;
 		}
 		if (OP("count")) {
@@ -149,7 +149,7 @@ static int dd_main(int argc, char **argv) {
 				} else if (!strcmp(ptr, "excl")) {
 					oflags |= O_EXCL;
 				} else {
-					error("invalid conv option '%s'", ptr);
+					error(_("invalid conv option '%s'"), ptr);
 					return 1;
 				}
 				ptr += strlen(ptr) + 1;
@@ -158,7 +158,7 @@ static int dd_main(int argc, char **argv) {
 		}
 		if (OP("ibs")) {
 			ibs = str2int(value);
-			if (!ibs) error("invalid number '%s'", value);
+			if (!ibs) error(_("invalid number to '%s' : '%s'"), operand, value);
 			continue;
 		}
 		if (OP("if")) {
@@ -167,7 +167,7 @@ static int dd_main(int argc, char **argv) {
 		}
 		if (OP("obs")) {
 			obs = str2int(value);
-			if (!obs) error("invalid number '%s'", value);
+			if (!obs) error(_("invalid number to '%s' : '%s'"), operand, value);
 			continue;
 		}
 		if (OP("of")) {
@@ -184,7 +184,7 @@ static int dd_main(int argc, char **argv) {
 		}
 
 		*(--value) = '=';
-		error("unknow operand '%s' (see --help)", operand);
+		error(_("unknow operand '%s' (see --help)"), operand);
 		return 1;
 	}
 
@@ -239,7 +239,7 @@ static int dd_main(int argc, char **argv) {
 			}
 			if (!w) {
 				// uh ???
-				error("suspicious write fail (write returned 0)");
+				error(_("suspicious write fail (write returned 0)"));
 				ret = 1;
 				goto end;
 			}

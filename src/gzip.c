@@ -43,7 +43,7 @@ static int gzip(const char *path, FILE *in) {
 			out = stdout;
 		} else {
 			if (strlen(path) < 3 || strcmp(path + strlen(path) - 3, ".gz")) {
-				error("%s : no .gz", path);
+				error(_("%s : no .gz"), path);
 				return -1;
 			}
 			char out_path[strlen(path) + 1];

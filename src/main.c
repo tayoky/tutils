@@ -129,7 +129,7 @@ static command_t *find_command(const char *name) {
 static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
 	if (i == argc - 1) {
 		// no more elements
-		error("expected argument after '%s'", argv[i]);
+		error(_("expected argument after '%s'"), argv[i]);
 		exit(1);
 	}
 	i++;
@@ -141,7 +141,7 @@ static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
 		char *end;
 		*(int *)opt->value = strtol(argv[i], &end, 0);
 		if (end == argv[i] || *end) {
-			error("invalid number to '%s' : '%s'", argv[i - 1], argv[i]);
+			error(_("invalid number to '%s' : '%s'"), argv[i - 1], argv[i]);
 			exit(1);
 		}
 		break;
@@ -149,7 +149,7 @@ static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
 		// TODO : support for suffix
 		*(size_t *)opt->value = strtoul(argv[i], &end, 0);
 		if (end == argv[i] || *end) {
-			error("invalid number to '%s' : '%s'", argv[i - 1], argv[i]);
+			error(_("invalid number to '%s' : '%s'"), argv[i - 1], argv[i]);
 			exit(1);
 		}
 		break;
@@ -157,7 +157,7 @@ static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
 		// TODO : parse in more format
 		*(mode_t *)opt->value = strtoul(argv[i], &end, 8);
 		if (end == argv[i] || *end) {
-			error("invalid mode to '%s' : '%s'", argv[i - 1], argv[i]);
+			error(_("invalid mode to '%s' : '%s'"), argv[i - 1], argv[i]);
 			exit(1);
 		}
 		break;
@@ -190,7 +190,7 @@ static int parse_long_opt(int argc, char **argv, int i, command_t *cmd) {
 		}
 		return i;
 	}
-	error("unknow option '%s' (see --help)", argv[i]);
+	error(_("unknow option '%s' (see --help)"), argv[i]);
 	exit(1);
 }
 
@@ -212,7 +212,7 @@ static int parse_short_opt(int argc, char **argv, int i, command_t *cmd) {
 			}
 			goto finish_short;
 		}
-		error("unknow option '-%c' (see --help)", argv[i][l]);
+		error(_("unknow option '-%c' (see --help)"), argv[i][l]);
 		exit(1);
 finish_short:
 		continue;
@@ -246,6 +246,7 @@ static int parse_opts(int argc, char **argv, command_t *cmd) {
 }
 
 int main(int argc, char **argv) {
+	setup_locale();
 	if (argc >= 1) {
 		progname = strrchr(argv[0], '/');
 		if (progname) {
@@ -265,7 +266,7 @@ int main(int argc, char **argv) {
 
 	command_t *cmd = find_command(progname);
 	if (!cmd) {
-		error("unknow command '%s'", progname);
+		error(_("unknow command '%s'"), progname);
 		return 1;
 	}
 	int i = 1;

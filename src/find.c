@@ -131,7 +131,7 @@ static int parse_arg(node_t *node, primary_t *primary) {
 	}
 	char *str = get_str();
 	if (!str) {
-		error("expected argument to '%s'", primary->name);
+		error(_("expected argument after '%s'"), primary->name);
 		return -1;
 	}
 	switch (primary->argtype) {
@@ -139,7 +139,7 @@ static int parse_arg(node_t *node, primary_t *primary) {
 		char *end;
 		node->number = strtol(str, &end, 10);
 		if (end == str || *end) {
-			error("invalid number '%s' to '%s'", str, primary->name);
+			error(_("invalid number to '%s' : '%s'"), primary->name, str);
 			return -1;
 		}
 		break;
@@ -149,7 +149,7 @@ static int parse_arg(node_t *node, primary_t *primary) {
 	case ARG_TYPE:
 		if (!str[0] || str[1]) {
 invalid_type:
-			error("invalid type '%s' to '%s'", str, primary->name);
+			error(_("invalid type to '%s' : '%s'"), primary->name, str);
 			return -1;
 		}
 		switch (str[0]) {
@@ -181,7 +181,7 @@ invalid_type:
 	case ARG_UID:;
 		uid_t uid = str2uid(str);
 		if (uid < 0) {
-			error("invalid username or uid to '%s'", primary->name);
+			error(_("invalid username or uid to '%s' : '%s'"), primary->name, str);
 			return -1;
 		}
 		node->uid = uid;
@@ -205,14 +205,14 @@ static node_t *parse_primary(void) {
 		}
 		return node;
 	}
-	error("unknow operand '%s'", name);
+	error(_("unknow operand '%s'"), name);
 	return NULL;
 }
 
 static node_t *parse_expr(void) {
 	char *current = peek_str();
 	if (!current) {
-		error("expected expression");
+		error(_("expected expression"));
 		return NULL;
 	}
 	if (!strcmp(current, "(")) {
@@ -222,7 +222,7 @@ static node_t *parse_expr(void) {
 		current = get_str();
 		if (!current || strcmp(current, ")")) {
 			free_node(node);
-			error("non matching ')'");
+			error(_("non matching ')'"));
 			return NULL;
 		}
 		return node;
@@ -280,7 +280,7 @@ static node_t *parse_or_list(void) {
 			get_str();
 		} else {
 			// how did we get here
-			error("unpossible error");
+			error(_("unpossible error"));
 		}
 		node_t *right = parse_and_list();
 		if (!right) {

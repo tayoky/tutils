@@ -1,0 +1,197 @@
+# French translations for tutils package.
+# Copyright (C) 2026 THE tutils'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the tutils package.
+# <tayoky4848@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tutils v0.7.0-14-gbd221bf\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-22 18:34+0200\n"
+"PO-Revision-Date: 2026-07-21 20:50+0200\n"
+"Last-Translator: <tayoky4848@gmail.com>\n"
+"Language-Team: French <nothing@example.com>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/basename.c:35 src/chmod.c:144 src/cp.c:189 src/dirname.c:10 src/ln.c:106
+#: src/mkdir.c:76 src/readlink.c:15 src/realpath.c:23 src/rm.c:93
+#: src/rmdir.c:62 src/seq.c:12 src/sleep.c:20 src/stat.c:253 src/touch.c:45
+#: src/tr.c:106 src/unlink.c:13 src/which.c:75
+msgid "missing argument"
+msgstr "argument manquant"
+
+#: src/basename.c:45 src/seq.c:16 src/tr.c:109 src/unlink.c:17
+msgid "too many arguments"
+msgstr "trop d'arguments"
+
+#: src/chown.c:64
+msgid "no owner specfied"
+msgstr "pas de propriétaire spécifié"
+
+#: src/chown.c:67
+msgid "no files specfied"
+msgstr "pas de fichier spécifié"
+
+#: src/cp.c:72
+#, c-format
+msgid "'%s' and '%s' are the same file"
+msgstr "'%s' et '%s' sont le même fichier"
+
+#: src/cp.c:195 src/ln.c:112
+msgid "cannot provide -T and -t at the same time"
+msgstr "-T et -t ne peuvent pas étre spécifiés en même temps"
+
+#: src/cp.c:240
+msgid "can only move one file with -T"
+msgstr "un seul fichier peut étre déplacé avec -T"
+
+#: src/cp.c:242
+msgid "can only copy one file with -T"
+msgstr "un seul fichier peut étre copié avec -T"
+
+#: src/dd.c:76
+#, c-format
+msgid "invalid value for operand '%s'"
+msgstr "valeur invalide '%s'"
+
+#: src/dd.c:119
+#, c-format
+msgid "invalid operand '%s'"
+msgstr "opérateur invalide '%s'"
+
+#: src/dd.c:129 src/dd.c:161 src/dd.c:170 src/find.c:142 src/main.c:144
+#: src/main.c:152
+#, c-format
+msgid "invalid number to '%s' : '%s'"
+msgstr "nombre invalide pour '%s' : '%s'"
+
+#: src/dd.c:152
+#, c-format
+msgid "invalid conv option '%s'"
+msgstr "option invalide pour conv '%s'"
+
+#: src/dd.c:187
+#, c-format
+msgid "unknow operand '%s' (see --help)"
+msgstr "opérateur inconnu '%s' (voir --help)"
+
+#: src/dd.c:242
+msgid "suspicious write fail (write returned 0)"
+msgstr "erreur suspecte de write() (write() à retourné 0)"
+
+#: src/deflate.c:204
+msgid "not a gzip file"
+msgstr "pas un fichier gzip"
+
+#: src/deflate.c:227
+msgid "invalid deflate block type : '3'"
+msgstr "type de block deflate invalide : '3'"
+
+#: src/deflate.c:240
+msgid "invalid deflate uncompress block"
+msgstr "block de decompression deflate invalide"
+
+#: src/find.c:134 src/main.c:132
+#, c-format
+msgid "expected argument after '%s'"
+msgstr "argument attendu après '%s'"
+
+#: src/find.c:152
+#, c-format
+msgid "invalid type to '%s' : '%s'"
+msgstr "type invalide pour '%s' : '%s'"
+
+#: src/find.c:184
+#, c-format
+msgid "invalid username or uid to '%s' : '%s'"
+msgstr "nom d'utilisateur ou uid invalide pour '%s' : '%s'"
+
+#: src/find.c:208
+#, c-format
+msgid "unknow operand '%s'"
+msgstr "operateur inconnu '%s'"
+
+#: src/find.c:215
+msgid "expected expression"
+msgstr "expression non attendu"
+
+#: src/find.c:225
+msgid "non matching ')'"
+msgstr "pas de ')' fermante"
+
+#: src/find.c:283
+msgid "unpossible error"
+msgstr "erreur théoriquement impossible"
+
+#: src/gzip.c:46
+#, c-format
+msgid "%s : no .gz"
+msgstr "%s : pas de fichier .gz"
+
+#: src/ln.c:156
+msgid "can only link one file with -T"
+msgstr "un seul lien peut être crée avec -T"
+
+#: src/main.c:160
+#, c-format
+msgid "invalid mode to '%s' : '%s'"
+msgstr "masque de pemission invalide pour '%s' : '%s'"
+
+#: src/main.c:193
+#, c-format
+msgid "unknow option '%s' (see --help)"
+msgstr "option inconnue '%s' (voir --help)"
+
+#: src/main.c:215
+#, c-format
+msgid "unknow option '-%c' (see --help)"
+msgstr "option inconnue '-%c' (voir --help)"
+
+#: src/main.c:269
+#, c-format
+msgid "unknow command '%s'"
+msgstr "commande inconnue '%s'"
+
+#: src/seq.c:24
+#, c-format
+msgid "invalid double point number : '%s'"
+msgstr "nombre a double precision invalide : '%s'"
+
+#: src/seq.c:40
+msgid "invalid increment value : '0'"
+msgstr "nombre d'incrementation invalide : '0'"
+
+#: src/sleep.c:27 src/sleep.c:41
+msgid "numeric argument required"
+msgstr "argument numérique requis"
+
+#: src/sleep.c:58
+#, c-format
+msgid "invalid suffix '%c'"
+msgstr "suffixe invalide '%c'"
+
+#: src/tr.c:59
+#, c-format
+msgid "range '%c-%c' is in reverse order"
+msgstr "la gamme '%c-%c' est dans l'ordre inverse"
+
+#: src/tr.c:115
+msgid "need only one argument when deleting"
+msgstr "un seul argument requis pour la supression"
+
+#: src/tr.c:118
+msgid "need two arguments when deleting and squeezing repeats"
+msgstr "deux arguments requis pour la supression et la compression des répétitions"
+
+#: src/tr.c:122
+msgid "need two arguments when translating"
+msgstr "deux arguments requis pour la transformation"
+
+#: src/xargs.c:190
+#, c-format
+msgid "non matching '%c'"
+msgstr "pas de '%c' fermante"

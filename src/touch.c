@@ -42,7 +42,7 @@ static int touch_main(int argc, char **argv) {
 
 	int ret = 0;
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 

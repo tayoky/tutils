@@ -1,5 +1,6 @@
 # makefile include to build a program
 
+PROG ?= $(PACKAGE)
 SRCS ?= $(wildcard *.[cs])
 OBJS += $(SRCS:%=$(BUILDDIR)/%.o)
 CFLAGS := -std=c99 -I ./ $(CFLAGS)

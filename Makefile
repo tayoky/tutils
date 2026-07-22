@@ -3,11 +3,12 @@ TMAKE_DIR = $(TOP)/make
 include $(TMAKE_DIR)/tmake-init.mk
 include $(TMAKE_DIR)/tmake-version.mk
 
-PROG = tutils
+PACKAGE = tutils
 SRCS = $(wildcard src/*.c)
 CFLAGS += -Iinclude
 
 include $(TMAKE_DIR)/tmake-prog.mk
+include $(TMAKE_DIR)/tmake-locale.mk
 
 # list of all commands
 # keep this in alphabetic order

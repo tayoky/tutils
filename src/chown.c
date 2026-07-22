@@ -61,10 +61,10 @@ static int ch(uid_t owner, gid_t group, const char *path) {
 
 static int chown_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("no owner specfied");
+		error(_("no owner specfied"));
 		return 1;
 	} else if (argc < 2) {
-		error("no files specfied");
+		error(_("no files specfied"));
 		return 1;
 	}
 

@@ -141,7 +141,7 @@ finish_m:
 
 static int chmod_main(int argc, char **argv) {
 	if (argc < 2) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 	ret = 0;

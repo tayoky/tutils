@@ -187,7 +187,7 @@ default_case:
 			src++;
 		}
 		if (in_quote) {
-			error("non matching '%c'", in_quote);
+			error(_("non matching '%c'"), in_quote);
 			return 1;
 		}
 

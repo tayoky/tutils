@@ -20,7 +20,7 @@ static void rpath(char *path) {
 
 static int realpath_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 

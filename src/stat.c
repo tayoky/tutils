@@ -250,7 +250,7 @@ static void do_stat(const char *path) {
 
 static int stat_main(int argc, char **argv) {
 	if (argc < 0) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 

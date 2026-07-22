@@ -59,7 +59,7 @@ static void do_rmdir(char *path) {
 
 static int rmdir_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 

@@ -32,7 +32,7 @@ static void bname(char *path) {
 
 static int basename_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 
@@ -42,7 +42,7 @@ static int basename_main(int argc, char **argv) {
 		}
 	} else {
 		if (argc > 3) {
-			error("too many arguments");
+			error(_("too many arguments"));
 			return 1;
 		}
 		if (argc == 3) {

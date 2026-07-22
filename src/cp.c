@@ -69,7 +69,7 @@ static int copy(const char *src, const char *dest, int cmdline) {
 			return -1;
 		}
 		if (src_st.st_dev == dest_st.st_dev && src_st.st_ino == dest_st.st_ino) {
-			error("'%s' and '%s' are the same file", src, dest);
+			error(_("'%s' and '%s' are the same file"), src, dest);
 			ret = 1;
 			return -1;
 		}
@@ -186,13 +186,14 @@ static int cp_main(int argc, char **argv) {
 	is_mv = !strcmp(progname, "mv");
 
 	if (argc < 2) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 
 	if ((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)) {
 		// FIXME : this error message don't look professional
-		error("cannot provide -T and -t at the same time");
+		error(_("cannot provide -T and -t at the same time"));
+		return 1;
 	}
 
 	char *dest = argv[argc - 1];
@@ -236,9 +237,9 @@ static int cp_main(int argc, char **argv) {
 	}
 	if (argc > 2 && (flags & FLAG_TARGET_FILE)) {
 		if (is_mv) {
-			error("can only move one file with -T");
+			error(_("can only move one file with -T"));
 		} else {
-			error("can only copy one file with -T");
+			error(_("can only copy one file with -T"));
 		}
 		return 1;
 	}

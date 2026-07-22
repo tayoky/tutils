@@ -73,7 +73,7 @@ static void make_dir(const char *path) {
 
 static int mkdir_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 

@@ -12,7 +12,7 @@ opts);
 
 static int readlink_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 	int ret = 0;

@@ -7,7 +7,7 @@ CMD_NOPT(dirname, "dirname NAME...",
 
 static int dirname_main(int argc, char **argv) {
 	if (argc <= 0) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 

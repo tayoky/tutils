@@ -72,7 +72,7 @@ static void do_which(const char *exe) {
 
 static int which_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 	for (int i = 0; i < argc; i++) {

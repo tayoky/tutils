@@ -1,6 +1,8 @@
 #!/bin/sh
 . ./tconf.sh
 
+OPTIONS="MULTI_LANGUAGES"
+: ${MULTI_LANGUAGES:="yes"}
 tconf_init "$@"
 
 tconf_search_cc "$HOST"

@@ -17,14 +17,14 @@ CMD_NOPT(sleep, "sleep DURATION...",
 
 static int sleep_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 
 	long dur = 0;
 	for (int i = 0; i < argc; i++) {
 		if (argv[i][0] == '\0') {
-			error("numeric argument required");
+			error(_("numeric argument required"));
 			return 1;
 		}
 		char suffix;
@@ -38,7 +38,7 @@ static int sleep_main(int argc, char **argv) {
 		char *end;
 		unsigned long value = strtol(argv[i], &end, 10);
 		if (argv[i] == end) {
-			error("numeric argument required");
+			error(_("numeric argument required"));
 			return 1;
 		}
 
@@ -55,7 +55,7 @@ static int sleep_main(int argc, char **argv) {
 			value *= 24 * 3600;
 			break;
 		default:
-			error("invalid suffix '%c'", suffix);
+			error(_("invalid suffix '%c'"), suffix);
 			return 1;
 		}
 

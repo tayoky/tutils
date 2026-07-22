@@ -56,7 +56,7 @@ static int find_index(const char *str, int c, int *offset) {
 		}
 		if (str[1] == '-' && str[2]) {
 			if (str[0] > str[2]) {
-				error("range '%c-%c' is in reverse order", str[0], str[2]);
+				error(_("range '%c-%c' is in reverse order"), str[0], str[2]);
 				exit(1);
 			}
 			if (c >= str[0] && c <= str[2]) {
@@ -103,23 +103,23 @@ static int for_index(const char *str, int index, int offset) {
 
 static int tr_main(int argc, char **argv) {
 	if (argc < 1) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	} else if (argc > 2) {
-		error("too many arguments");
+		error(_("too many arguments"));
 		return 1;
 	}
 
 	if (flags & FLAG_DELETE) {
 		if (argc == 2 && !(flags & FLAG_SQUEEZE)) {
-			error("need only one argument when deleting");
+			error(_("need only one argument when deleting"));
 			return 1;
 		} else if (argc == 1 && (flags & FLAG_SQUEEZE)) {
-			error("need two arguments when deleting and squeezing repeats");
+			error(_("need two arguments when deleting and squeezing repeats"));
 			return 1;
 		}
 	} else if (argc == 1 && !(flags & FLAG_SQUEEZE)) {
-		error("need two arguments when translating");
+		error(_("need two arguments when translating"));
 		return 1;
 	}
 

@@ -103,13 +103,14 @@ static int ln(const char *src, const char *dest) {
 
 static int ln_main(int argc, char **argv) {
 	if (argc < 2) {
-		error("missing argument");
+		error(_("missing argument"));
 		return 1;
 	}
 
 	if ((flags & FLAG_TARGET_DIR) && (flags & FLAG_TARGET_FILE)) {
 		// FIXME : this error message don't look professional
-		error("can't provide -T and -t at the same time");
+		error(_("cannot provide -T and -t at the same time"));
+		return 1;
 	}
 
 	char *dest = argv[argc - 1];
@@ -152,7 +153,7 @@ static int ln_main(int argc, char **argv) {
 		}
 	}
 	if (argc > 2 && (flags & FLAG_TARGET_FILE)) {
-		error("can only link one file with -T");
+		error(_("can only link one file with -T"));
 		return 1;
 	}
 

@@ -67,7 +67,9 @@ int foreach_file_open(char **argv, int (*callback)(const char *path, FILE *file)
 
 void error(const char *fmt,...);
 int glob_match(const char *glob, const char *str);
-
+void setup_locale(void);
+const char *locale_getstr(const char *msgid) __attribute((format_arg(1)));
+#define _ locale_getstr
 #define perror(str) error("%s : %s",str,strerror(errno));
 
 #endif

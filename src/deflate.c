@@ -201,7 +201,7 @@ int inflate(FILE *in_file, FILE *out_file) {
 	uint8_t header[10];
 	if (!fread(&header, sizeof(header), 1, in_file)) {
 not_gzip:
-		error("not a gzip file");
+		error(_("not a gzip file"));
 		return -1;
 	}
 	if (header[0] != 0x1f || header[1] != 0x8b) {
@@ -224,7 +224,7 @@ not_gzip:
 		int type = read_bits(&in, 2);
 
 		if (type == 3) {
-			error("invalid deflate block type : '3'");
+			error(_("invalid deflate block type : '3'"));
 			return -1;
 		}
 		switch (type) {
@@ -237,7 +237,7 @@ not_gzip:
 			uint16_t len = read_bits(&in, 16);
 			uint16_t nlen = read_bits(&in, 16);
 			if (len + nlen != 0xffff) {
-				error("invalid deflate uncompress block");
+				error(_("invalid deflate uncompress block"));
 			}
 			for (size_t i = 0; i < len; i++) {
 				uint8_t byte = read_bits(&in, 8);

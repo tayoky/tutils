@@ -19,11 +19,13 @@ SHAREDIR   ?= $(PREFIX)/share
 MANDIR     ?= $(SHAREDIR)/man
 DOCDIR     ?= $(SHAREDIR)/doc
 NLSDIR     ?= $(SHAREDIR)/nls
+LOCALEDIR  ?= $(SHAREDIR)/locale
 CONFDIR    ?= $(PREFIX)/etc
 BUILDDIR  ?= $(TOP)/build$(CURDIR:$(abspath $(TOP))%=%)
 TMAKE_DIR ?= $(TOP)/make
 
 CFLAGS += -DPREFIX='"$(PREFIX)"'
+CFLAGS += -DLOCALEDIR='"$(LOCALEDIR)"'
 
 ifeq ($(V),1)
 	Q =
