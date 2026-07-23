@@ -246,7 +246,9 @@ static int parse_opts(int argc, char **argv, command_t *cmd) {
 }
 
 int main(int argc, char **argv) {
-	setup_locale();
+#ifdef HAVE_TEXTDOMAIN
+	textdomain("tutils");
+#endif
 	if (argc >= 1) {
 		progname = strrchr(argv[0], '/');
 		if (progname) {

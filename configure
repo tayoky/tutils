@@ -9,7 +9,11 @@ tconf_search_cc "$HOST"
 tconf_require "C compiler" "$CC"
 tconf_find_os
 
+tconf_check_header "$CC" "libintl.h"
+
 tconf_check_func "$CC" "stdlib.h" "qsort"
 tconf_check_func "$CC" "signal.h" "signal"
+tconf_check_func "$CC" "libintl.h" "gettext"
+tconf_check_func "$CC" "libintl.h" "textdomain"
 
 tconf_fini

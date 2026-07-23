@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#ifdef HAVE_LIBINTL_H
+#include <libintl.h>
+#endif
 
 #undef arraylen
 #define arraylen(array) (sizeof(array) / sizeof(*array))
@@ -67,9 +70,11 @@ int foreach_file_open(char **argv, int (*callback)(const char *path, FILE *file)
 
 void error(const char *fmt,...);
 int glob_match(const char *glob, const char *str);
-void setup_locale(void);
-const char *locale_getstr(const char *msgid) __attribute((format_arg(1)));
-#define _ locale_getstr
+#ifdef HAVE_GETTEXT
+#define _ gettext
+#else
+#define _(str) str
+#endif
 #define perror(str) error("%s : %s",str,strerror(errno));
 
 #endif
