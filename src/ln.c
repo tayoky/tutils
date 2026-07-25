@@ -33,24 +33,26 @@ opts);
 static int ret = 0;
 
 static int ln(const char *src, const char *dest) {
-	struct stat src_st;
-	if (stat(src, &src_st) < 0 && lstat(src, &src_st) < 0) {
-		perror(src);
-		ret = 1;
-		return -1;
-	}
+	if (!(flags & FLAG_SYMLINK)) {
+		struct stat src_st;
+		if (stat(src, &src_st) < 0 && lstat(src, &src_st) < 0) {
+			perror(src);
+			ret = 1;
+			return -1;
+		}
 
-	// can't make hardlink to dir
-	if (S_ISDIR(src_st.st_mode) && !(flags & FLAG_SYMLINK)) {
-		errno = EISDIR;
-		perror(src);
-		ret = 1;
-		return -1;
+		// can't make hardlink to dir
+		if (S_ISDIR(src_st.st_mode)) {
+			errno = EISDIR;
+			perror(src);
+			ret = 1;
+			return -1;
+		}
 	}
 
 	struct stat dest_st;
 	if (lstat(dest, &dest_st) >= 0) {
-		if (S_ISDIR(src_st.st_mode)) {
+		if (S_ISDIR(dest_st.st_mode)) {
 			// can't overwrite dir
 			errno = EISDIR;
 			perror(dest);
@@ -59,7 +61,7 @@ static int ln(const char *src, const char *dest) {
 		}
 		// prompt before overwriting if needed
 		if (flags & FLAG_INTERACTIVE) {
-			fprintf(stderr, "ln : overwrite '%s' ? [y/N] : ", dest);
+			fprintf(stderr, _("ln : replace '%s' ? [y/N] : "), dest);
 			char buf[4096];
 			fgets(buf, sizeof(buf), stdin);
 			if (strcasecmp(buf, "y") && strcasecmp(buf, "yes")) {
@@ -80,15 +82,11 @@ static int ln(const char *src, const char *dest) {
 	}
 
 	if (flags & FLAG_SYMLINK) {
-		// TODO : relative path support
-		char *target = realpath(src, NULL);
-		if (symlink(target, dest) < 0) {
-			free(target);
+		if (symlink(src, dest) < 0) {
 			perror(dest);
 			ret = 1;
 			return -1;
 		}
-		free(target);
 	} else {
 		if (link(src, dest) < 0) {
 			perror(dest);

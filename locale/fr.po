@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tutils v0.7.0-14-gbd221bf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-22 18:34+0200\n"
+"POT-Creation-Date: 2026-07-25 09:51+0200\n"
 "PO-Revision-Date: 2026-07-21 20:50+0200\n"
 "Last-Translator: <tayoky4848@gmail.com>\n"
 "Language-Team: French <nothing@example.com>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/basename.c:35 src/chmod.c:144 src/cp.c:189 src/dirname.c:10 src/ln.c:106
+#: src/basename.c:35 src/chmod.c:144 src/cp.c:189 src/dirname.c:10 src/ln.c:104
 #: src/mkdir.c:76 src/readlink.c:15 src/realpath.c:23 src/rm.c:93
 #: src/rmdir.c:62 src/seq.c:12 src/sleep.c:20 src/stat.c:253 src/touch.c:45
 #: src/tr.c:106 src/unlink.c:13 src/which.c:75
@@ -41,7 +41,7 @@ msgstr "pas de fichier spécifié"
 msgid "'%s' and '%s' are the same file"
 msgstr "'%s' et '%s' sont le même fichier"
 
-#: src/cp.c:195 src/ln.c:112
+#: src/cp.c:195 src/ln.c:110
 msgid "cannot provide -T and -t at the same time"
 msgstr "-T et -t ne peuvent pas étre spécifiés en même temps"
 
@@ -132,7 +132,12 @@ msgstr "erreur théoriquement impossible"
 msgid "%s : no .gz"
 msgstr "%s : pas de fichier .gz"
 
-#: src/ln.c:156
+#: src/ln.c:64
+#, c-format
+msgid "ln : replace '%s' ? [y/N] : "
+msgstr "ln : remplacer '%s' ? [y/N] : "
+
+#: src/ln.c:154
 msgid "can only link one file with -T"
 msgstr "un seul lien peut être crée avec -T"
 
@@ -151,7 +156,7 @@ msgstr "option inconnue '%s' (voir --help)"
 msgid "unknow option '-%c' (see --help)"
 msgstr "option inconnue '-%c' (voir --help)"
 
-#: src/main.c:269
+#: src/main.c:271
 #, c-format
 msgid "unknow command '%s'"
 msgstr "commande inconnue '%s'"
@@ -185,7 +190,8 @@ msgstr "un seul argument requis pour la supression"
 
 #: src/tr.c:118
 msgid "need two arguments when deleting and squeezing repeats"
-msgstr "deux arguments requis pour la supression et la compression des répétitions"
+msgstr ""
+"deux arguments requis pour la supression et la compression des répétitions"
 
 #: src/tr.c:122
 msgid "need two arguments when translating"
