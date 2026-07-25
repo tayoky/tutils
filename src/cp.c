@@ -1,4 +1,7 @@
 #include <sys/stat.h>
+#ifdef HAVE_UTIME
+#include <utime.h>
+#endif
 #include <dirent.h>
 #include <fcntl.h>
 #include <libgen.h>
@@ -13,19 +16,21 @@
 #define FLAG_FORCE       0x04
 #define FLAG_INTERACTIVE 0x08
 #define FLAG_RECURSIVE   0x10
+#define FLAG_PRESERVE    0x20
 
-static opt_t opts[] = {
+static opt_t cp_opts[] = {
 	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
 	OPT('T', "--no-target-directory", FLAG_TARGET_FILE, "treat DESTINATION as destination file (NOTE : can only move one file with this option"),
 	OPT('i', "--interactive", FLAG_INTERACTIVE, "ask before overwriting old file"),
 	OPT('f', "--force", FLAG_FORCE, "unlink destinations files if already exist"),
 	OPT('r', "--recursive", FLAG_RECURSIVE, "copy directories and their content"),
+	OPT('p', "--preserve", FLAG_PRESERVE, "preserve timestamps owner and mode"),
 };
 
 CMD(cp, "cp [OPTIONS] SOURCE... DESTINATION\n"
 	"or cp OPTION",
 	"Copy files and directories.",
-opts);
+cp_opts);
 
 static opt_t mv_opts[] = {
 	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
@@ -98,9 +103,9 @@ static int copy(const char *src, const char *dest, int cmdline) {
 	}
 
 	if (S_ISDIR(src_st.st_mode)) {
-		mkdir(dest, src_st.st_mode);
+		mkdir(dest, flags & FLAG_PRESERVE ? src_st.st_mode : 0777);
 	} else {
-		dest_fd = open(dest, O_CREAT | O_WRONLY | O_TRUNC);
+		dest_fd = open(dest, O_CREAT | O_WRONLY | O_TRUNC, flags & FLAG_PRESERVE ? src_st.st_mode : 0666);
 		if (dest_fd < 0 && (flags & FLAG_FORCE)) {
 			unlink(dest);
 			dest_fd = open(dest, O_CREAT | O_TRUNC | O_WRONLY);
@@ -111,8 +116,6 @@ static int copy(const char *src, const char *dest, int cmdline) {
 			return -1;
 		}
 	}
-
-	chmod(dest, src_st.st_mode);
 
 	if (S_ISDIR(src_st.st_mode)) {
 		DIR *dir = opendir(src);
@@ -176,6 +179,20 @@ static int copy(const char *src, const char *dest, int cmdline) {
 			// we unlink only when we are sure the content have been copied
 			unlink(src);
 		}
+	}
+
+	// update time/owner only at the end
+	// as we might update time by creating files
+	// and changing owner can prevent us from creating files
+	if (flags & FLAG_PRESERVE) {
+		chown(dest, src_st.st_uid, src_st.st_gid);
+#ifdef HAVE_UTIME
+		struct utimbuf buf = {
+			.actime  = src_st.st_atime,
+			.modtime = src_st.st_mtime,
+		};
+		utime(dest, &buf);
+#endif
 	}
 
 	return 0;
@@ -261,7 +278,7 @@ static int cp_main(int argc, char **argv) {
 }
 
 static int mv_main(int argc, char **argv) {
-	// mv does not need -r
-	flags |= FLAG_RECURSIVE;
+	// mv does not need -r/-p
+	flags |= FLAG_RECURSIVE | FLAG_PRESERVE;
 	return cp_main(argc, argv);
 }

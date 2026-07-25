@@ -15,10 +15,14 @@ _$(1)_OWN   := $$(or $$($(1)OWN),$$(FILESOWN))
 _$(1)_GRP   := $$(or $$($(1)GRP),$$(FILESGRP))
 _$(1)_MODE  := $$(or $$($(1)MODE),$$(FILESMODE))
 _$(1)_LOWER := $$(shell echo "$(1)" | tr 'A-Z_' 'a-z-')
+_$(1)_STAMP := $(BUILDDIR)/.stamp-$$(_$(1)_LOWER)
 
 .PHONY : all all-$$(_$(1)_LOWER)
 all : all-$$(_$(1)_LOWER)
-all-$$(_$(1)_LOWER) : $$(_$(1)_FILES)
+all-$$(_$(1)_LOWER) : $$(_$(1)_STAMP)
+$$(_$(1)_STAMP) : $$(_$(1)_FILES)
+	$(Q)touch "$$(_$(1)_STAMP)"
+	$(Q)touch "$(STAMP)"
 
 .PHONY : install install-$$(_$(1)_LOWER)
 install : install-$$(_$(1)_LOWER)
