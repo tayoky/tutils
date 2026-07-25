@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tutils v0.7.0-14-gbd221bf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-25 09:51+0200\n"
+"POT-Creation-Date: 2026-07-25 09:57+0200\n"
 "PO-Revision-Date: 2026-07-21 20:50+0200\n"
 "Last-Translator: <tayoky4848@gmail.com>\n"
 "Language-Team: French <nothing@example.com>\n"
@@ -40,6 +40,11 @@ msgstr "pas de fichier spécifié"
 #, c-format
 msgid "'%s' and '%s' are the same file"
 msgstr "'%s' et '%s' sont le même fichier"
+
+#: src/cp.c:81
+#, c-format
+msgid "%s : overwrite '%s' ? [y/N] : "
+msgstr "%s : écraser '%s' ? [y/N] : "
 
 #: src/cp.c:195 src/ln.c:110
 msgid "cannot provide -T and -t at the same time"

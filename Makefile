@@ -3,6 +3,10 @@ TMAKE_DIR = $(TOP)/make
 include $(TMAKE_DIR)/tmake-init.mk
 include $(TMAKE_DIR)/tmake-version.mk
 
+DOCS = COPYING.txt README.md
+DOCSDIR = $(DOCDIR)/tutils
+FILESGROUPS += DOCS
+
 PACKAGE = tutils
 SRCS = $(wildcard src/*.c)
 CFLAGS += -Iinclude
@@ -56,12 +60,8 @@ CMDS = [ \
 
 .PHONY : install-symlinks
 install : install-symlinks
-install-symlinks :
+install-symlinks : install-bin
 	$(Q)for CMD in $(CMDS) ; do \
 		echo "LN_S tutils $(DESTDIR)$(PREFIX)/bin/$$CMD" ; \
 		$(LN_S) -f "tutils" "$(DESTDIR)$(PREFIX)/bin/$$CMD" ; \
 	done
-
-FILES = COPYING.txt README.md
-FILESDIR = $(DOCDIR)/tutils
-include $(TMAKE_DIR)/tmake-files.mk

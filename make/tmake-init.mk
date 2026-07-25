@@ -21,8 +21,13 @@ DOCDIR     ?= $(SHAREDIR)/doc
 NLSDIR     ?= $(SHAREDIR)/nls
 LOCALEDIR  ?= $(SHAREDIR)/locale
 CONFDIR    ?= $(PREFIX)/etc
-BUILDDIR  ?= $(TOP)/build$(CURDIR:$(abspath $(TOP))%=%)
 TMAKE_DIR ?= $(TOP)/make
+
+ifeq ($(BUILDDIR),)
+	BUILDDIR  ?= $(TOP)/build$(CURDIR:$(abspath $(TOP))%=%)
+else
+	BUILDDIR  := $(BUILDDIR)$(CURDIR:$(abspath $(TOP))%=%)
+endif
 
 CFLAGS += -DPREFIX='"$(PREFIX)"'
 CFLAGS += -DLOCALEDIR='"$(LOCALEDIR)"'
@@ -32,3 +37,8 @@ ifeq ($(V),1)
 else
 	Q = @
 endif
+
+# define mains targets
+all :
+install : all
+.PHONY : all install

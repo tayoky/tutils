@@ -78,7 +78,7 @@ static int copy(const char *src, const char *dest, int cmdline) {
 		} else {
 			// prompt before overwriting if needed
 			if (flags & FLAG_INTERACTIVE) {
-				fprintf(stderr, "%s : overwrite '%s' ? [y/N] : ", is_mv ? "mv" : "cp", dest);
+				fprintf(stderr, _("%s : overwrite '%s' ? [y/N] : "), progname, dest);
 				char buf[4096];
 				fgets(buf, sizeof(buf), stdin);
 				if (strcasecmp(buf, "y") && strcasecmp(buf, "yes")) {

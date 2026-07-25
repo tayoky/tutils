@@ -3,6 +3,7 @@
 LOCALES ?= $(wildcard locale/*.po)
 TEMPLATE_POT ?= $(BUILDDIR)/locale/template.pot
 LOCALES_MO ?= $(LOCALES:%.po=$(BUILDDIR)/%.mo)
+DOMAIN ?= $(PACKAGE)
 
 ifneq ($(MULTI_LANGUAGES),no)
 ifneq ($(strip $(LOCALES_MO)),)
@@ -14,16 +15,22 @@ $(BUILDDIR)/%.mo : %.po
 
 .PHONY : install-locale
 install : install-locale
-install-locale : $(LOCALES)
-	@mkdir -p "$(LOCALEDIR)/$(PACKAGE)"
-	@echo "INSTALL $(LOCALES_MO)"
-	@cp $(LOCALES_MO) "$(LOCALEDIR)/$(PACKAGE)"
+install-locale : $(LOCALES_MO)
+	@echo "INSTALL $(DOMAIN).mo"
+	$(Q)for I in $(LOCALES_MO) ; do \
+		LOC=$$(basename "$${I%%.mo}") ; \
+		mkdir -p "$(LOCALEDIR)/$$LOC/LC_MESSAGES/" ; \
+		cp "$$I" "$(LOCALEDIR)/$$LOC/LC_MESSAGES/$(DOMAIN).mo" ; \
+	done
 
 .PHONY : uninstall-locale
 uninstall : uninstall-locale
 uninstall-locale :
-	@echo "UNINSTALL $(LOCALEDIR)/$(PACKAGE)"
-	@rm -fr "$(LOCALEDIR)/$(PACKAGE)"
+	@echo "UNINSTALL $(DOMAIN).mo"
+	$(Q)for I in $(LOCALES) ; do \
+		LOC=$$(basename "$${I%%.po}") ; \
+		rm -f "$(LOCALEDIR)/$$LOC/LC_MESSAGES/$(DOMAIN).mo" ; \
+	done
 endif
 
 .PHONY : update-po
@@ -31,7 +38,7 @@ update-po : $(TEMPLATE_POT)
 $(TEMPLATE_POT) : $(SRCS)
 	@mkdir -p "$(@D)"
 	@echo "GEN $(TEMPLATE_POT)"
-	$(Q)xgettext --keyword=_ \
+	$(Q)xgettext --keyword=_ --keyword=N_ \
 		--package-name="$(PACKAGE)" \
 		--package-version="$(VERSION)" \
 		-o "$@" $^
