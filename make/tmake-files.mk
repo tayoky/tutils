@@ -29,7 +29,7 @@ install : install-$$(_$(1)_LOWER)
 install-$$(_$(1)_LOWER) : all-$$(_$(1)_LOWER)
 	@mkdir -p "$(DESTDIR)$$(_$(1)_DIR)"
 	@echo "INSTALL $$(_$(1)_FILES)"
-	$(Q)cp -r $$(_$(1)_FILES) "$(DESTDIR)$$(_$(1)_DIR)/"
+	$(Q)$(INSTALL) -m $$(_$(1)_MODE) $$(_$(1)_FILES) "$(DESTDIR)$$(_$(1)_DIR)/"
 
 .PHONY : uninstall uninstall-$$(_$(1)_LOWER)
 uninstall : uninstall-$$(_$(1)_LOWER)

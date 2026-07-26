@@ -17,6 +17,9 @@
 #define FLAG_INTERACTIVE 0x08
 #define FLAG_RECURSIVE   0x10
 #define FLAG_PRESERVE    0x20
+#define FLAG_MODE        0x40
+
+static mode_t file_mode = 0666;
 
 static opt_t cp_opts[] = {
 	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
@@ -31,6 +34,17 @@ CMD(cp, "cp [OPTIONS] SOURCE... DESTINATION\n"
 	"or cp OPTION",
 	"Copy files and directories.",
 cp_opts);
+
+static opt_t install_opts[] = {
+	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
+	OPT('T', "--no-target-directory", FLAG_TARGET_FILE, "treat DESTINATION as destination file (NOTE : can only move one file with this option"),
+	OPTMODE('m', "--mode", FLAG_MODE, &file_mode, "change mode of the newly installed files"),
+};
+
+CMD(install, "install [OPTIONS] SOURCE... DESTINATION\n"
+	"or install OPTION",
+	"Install files.",
+install_opts);
 
 static opt_t mv_opts[] = {
 	OPT('t', "--target-directory", FLAG_TARGET_DIR, "treat DESTINATION as destination directory"),
@@ -103,9 +117,9 @@ static int copy(const char *src, const char *dest, int cmdline) {
 	}
 
 	if (S_ISDIR(src_st.st_mode)) {
-		mkdir(dest, flags & FLAG_PRESERVE ? src_st.st_mode : 0777);
+		mkdir(dest, 0777);
 	} else {
-		dest_fd = open(dest, O_CREAT | O_WRONLY | O_TRUNC, flags & FLAG_PRESERVE ? src_st.st_mode : 0666);
+		dest_fd = open(dest, O_CREAT | O_WRONLY | O_TRUNC, file_mode);
 		if (dest_fd < 0 && (flags & FLAG_FORCE)) {
 			unlink(dest);
 			dest_fd = open(dest, O_CREAT | O_TRUNC | O_WRONLY);
@@ -185,6 +199,10 @@ static int copy(const char *src, const char *dest, int cmdline) {
 	// as we might update time by creating files
 	// and changing owner can prevent us from creating files
 	if (flags & FLAG_PRESERVE) {
+		// explicit chmod to bypass umask
+		if (flags & FLAG_PRESERVE) {
+			chmod(dest, flags & FLAG_PRESERVE ? src_st.st_mode : file_mode);
+		}
 		chown(dest, src_st.st_uid, src_st.st_gid);
 #ifdef HAVE_UTIME
 		struct utimbuf buf = {
@@ -275,6 +293,16 @@ static int cp_main(int argc, char **argv) {
 	}
 
 	return ret;
+}
+
+static int install_main(int argc, char **argv) {
+#ifdef HAVE_UMASK
+	umask(0);
+#endif
+	if (!(flags & FLAG_MODE)) {
+		file_mode = 0755;
+	}
+	return cp_main(argc, argv);
 }
 
 static int mv_main(int argc, char **argv) {

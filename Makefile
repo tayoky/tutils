@@ -33,6 +33,7 @@ CMDS = [ \
 	head \
 	hex \
 	id \
+	install \
 	ln \
 	ls \
 	mkdir \

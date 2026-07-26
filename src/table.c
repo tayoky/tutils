@@ -19,6 +19,7 @@
 	X(head) \
 	X(hex) \
 	X(id) \
+	X(install) \
 	X(ln) \
 	X(ls) \
 	X(mkdir) \

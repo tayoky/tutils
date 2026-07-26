@@ -10,6 +10,7 @@ LD ?= ld
 AS ?= as
 LN ?= ln
 LN_S ?= ln -s
+INSTALL ?= install
 PREFIX ?= /usr/local
 BINDIR    ?= $(PREFIX)/bin
 SBINDIR   ?= $(PREFIX)/sbin

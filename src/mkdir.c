@@ -14,7 +14,7 @@ static mode_t mode = S_IRWXU;
 
 static opt_t opts[] = {
 	OPT('p', "--parents", FLAG_PARENT, "make parents directories if needed and ignore if any directory already exist"),
-	OPTMODE('m', "--mode", 0, &mode, "change mode of the news directories"),
+	OPTMODE('m', "--mode", 0, &mode, "change mode of the new directories"),
 	OPT('v', "--verbose", FLAG_VERBOSE, "print a message for each created directory"),
 };
 

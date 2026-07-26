@@ -126,38 +126,42 @@ static command_t *find_command(const char *name) {
 }
 
 // return the new index
-static int parse_arg(int argc, char **argv, int i, opt_t *opt) {
-	if (i == argc - 1) {
-		// no more elements
-		error(_("expected argument after '%s'"), argv[i]);
-		exit(1);
+static int parse_arg(int argc, char **argv, int i, char *arg, opt_t *opt) {
+	char *name = argv[i];
+	if (!arg) {
+		if (i == argc - 1) {
+			// no more elements
+			error(_("expected argument after '%s'"), argv[i]);
+			exit(1);
+		}
+		i++;
+		arg = argv[i];
 	}
-	i++;
 	switch (opt->arg_type) {
 	case OPT_STR:;
-		*(char **)opt->value = argv[i];
+		*(char **)opt->value = arg;
 		break;
 	case OPT_INT:;
 		char *end;
-		*(int *)opt->value = strtol(argv[i], &end, 0);
-		if (end == argv[i] || *end) {
-			error(_("invalid number to '%s' : '%s'"), argv[i - 1], argv[i]);
+		*(int *)opt->value = strtol(arg, &end, 0);
+		if (end == arg || *end) {
+			error(_("invalid number to '%s' : '%s'"), name, arg);
 			exit(1);
 		}
 		break;
 	case OPT_SIZE:;
 		// TODO : support for suffix
-		*(size_t *)opt->value = strtoul(argv[i], &end, 0);
-		if (end == argv[i] || *end) {
-			error(_("invalid number to '%s' : '%s'"), argv[i - 1], argv[i]);
+		*(size_t *)opt->value = strtoul(arg, &end, 0);
+		if (end == arg || *end) {
+			error(_("invalid number to '%s' : '%s'"), name, arg);
 			exit(1);
 		}
 		break;
 	case OPT_MODE:;
-		// TODO : parse in more format
-		*(mode_t *)opt->value = strtoul(argv[i], &end, 8);
-		if (end == argv[i] || *end) {
-			error(_("invalid mode to '%s' : '%s'"), argv[i - 1], argv[i]);
+		// TODO : parse in more formats
+		*(mode_t *)opt->value = strtoul(arg, &end, 8);
+		if (end == arg || *end) {
+			error(_("invalid mode to '%s' : '%s'"), name, arg);
 			exit(1);
 		}
 		break;
@@ -180,13 +184,18 @@ static int parse_long_opt(int argc, char **argv, int i, command_t *cmd) {
 		man(cmd);
 		exit(0);
 	}
+	char *arg = strchr(argv[i], '=');
+	if (arg) {
+		*arg = '\0';
+		arg++;
+	}
 	for (size_t j = 0; j < cmd->options_count; j++) {
 		if (!cmd->options[j].str || strcmp(argv[i], cmd->options[j].str)) continue;
 
 		// we found a match
 		flags |= cmd->options[j].flags;
 		if (cmd->options[j].value) {
-			i = parse_arg(argc, argv, i, &cmd->options[j]);
+			i = parse_arg(argc, argv, i, arg, &cmd->options[j]);
 		}
 		return i;
 	}
@@ -207,7 +216,7 @@ static int parse_short_opt(int argc, char **argv, int i, command_t *cmd) {
 			// we found a match
 			flags |= cmd->options[j].flags;
 			if (cmd->options[j].value) {
-				parse_arg(argc, argv, i, &cmd->options[j]);
+				parse_arg(argc, argv, i, NULL, &cmd->options[j]);
 				skip_next = 1;
 			}
 			goto finish_short;
