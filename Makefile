@@ -63,6 +63,6 @@ CMDS = [ \
 install : install-symlinks
 install-symlinks : install-bin
 	$(Q)for CMD in $(CMDS) ; do \
-		echo "LN_S tutils $(DESTDIR)$(PREFIX)/bin/$$CMD" ; \
-		$(LN_S) -f "tutils" "$(DESTDIR)$(PREFIX)/bin/$$CMD" ; \
+		echo "LN_S tutils $(DESTDIR)$(BINDIR)/$$CMD" ; \
+		$(LN_S) -f "tutils" "$(DESTDIR)$(BINDIR)/$$CMD" ; \
 	done
