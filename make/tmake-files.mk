@@ -2,8 +2,8 @@
 
 # look into FILES by default
 FILESDIR ?= $(SHAREDIR)
-FILESOWN ?= root
-FILESGRP ?= root
+FILESOWN ?= $(shell id -u -n)
+FILESGRP ?= $(shell id -g -n)
 FILESMODE ?= 0644
 FILESGROUPS ?=
 FILESGROUPS += FILES
@@ -21,6 +21,7 @@ _$(1)_STAMP := $(BUILDDIR)/.stamp-$$(_$(1)_LOWER)
 all : all-$$(_$(1)_LOWER)
 all-$$(_$(1)_LOWER) : $$(_$(1)_STAMP)
 $$(_$(1)_STAMP) : $$(_$(1)_FILES)
+	@mkdir -p "$$(@D)"
 	$(Q)touch "$$(_$(1)_STAMP)"
 	$(Q)touch "$(STAMP)"
 
