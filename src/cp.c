@@ -122,7 +122,7 @@ static int copy(const char *src, const char *dest, int cmdline) {
 		dest_fd = open(dest, O_CREAT | O_WRONLY | O_TRUNC, file_mode);
 		if (dest_fd < 0 && (flags & FLAG_FORCE)) {
 			unlink(dest);
-			dest_fd = open(dest, O_CREAT | O_TRUNC | O_WRONLY);
+			dest_fd = open(dest, O_CREAT | O_TRUNC | O_WRONLY, file_mode);
 		}
 		if (dest_fd < 0) {
 			perror(dest);
