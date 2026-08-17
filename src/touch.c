@@ -18,7 +18,7 @@ CMD(touch, "touch [-cam] FILES...",
 	"Create files/update access and modification times.",
 opts);
 
-#define DMODE S_IRUSR | S_IWUSR
+#define DMODE 0666
 
 static int touch_main(int argc, char **argv) {
 	if (!(flags & (FLAG_ACCESS | FLAG_MODIFY))) {
