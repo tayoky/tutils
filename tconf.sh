@@ -1,6 +1,6 @@
-# source this script in your configure
+# a collection of various utilities to make configure scripts
 
-TCONF_VERSION="v0.1.1"
+TCONF_VERSION="0.2.0"
 
 tconf_print () {
 	echo "$@" 1>&2
@@ -15,7 +15,7 @@ tconf_get_var () {
 }
 
 tconf_to_macro_name () {
-	echo "$@" | tr "a-z./ " "A-Z___" | tr -s _
+	echo "$@" | tr "a-z./ -" "A-Z____" | tr -s _
 }
 
 tconf_to_file_name () {
@@ -59,16 +59,12 @@ generate config.mk from environement
 }
 
 tconf_init () {
-	TOP="$(realpath "$(dirname $0)")"
+	SRCDIR="$(realpath "$(dirname $0)")"
+	TOP="$SRCDIR"
 	OPT=""
-	if test -z "$TCONF_DIR" ; then
-		# export so subdirs can use the same tconf dir
-		export TCONF_DIR="$TOP/tconf"
-		mkdir -p "$TCONF_DIR"
-	fi
 
 	# defaults
-	: ${BUILDDIR:="$TOP/build"}
+	: ${BUILDDIR:="$PWD"}
 	: ${PREFIX:="/usr/local"}
 	: ${CFLAGS:="-Wall -Wextra"}
 	: ${DEBUG:="no"}
@@ -163,6 +159,14 @@ tconf_init () {
 	PREFIX="$(realpath -m "$PREFIX")"
 	test -n "$SYSROOT" && SYSROOT="$(realpath -m "$SYSROOT")"
 	BUILDDIR="$(realpath -m "$BUILDDIR")"
+
+	if test -z "$TCONF_DIR" ; then
+		# export so subdirs can use the same tconf dir
+		export TCONF_DIR="$BUILDDIR/tconf"
+		mkdir -p "$TCONF_DIR"
+	fi
+
+	test "$DEBUG" = "yes" && OPT="$OPT -g -DDEBUG=1"
 	
 	return 0
 }
@@ -174,6 +178,7 @@ tconf_echo_conf () {
 	fi
 	test -n "$2" && echo "$1=$2"
 }
+
 tconf_echo_conf_util () {
 	if [ $# != 2 ] ; then
 		tconf_print "usage : tconf_echo_conf_util NAME VAR"
@@ -182,38 +187,39 @@ tconf_echo_conf_util () {
 	tconf_echo_conf "$1" "$(which "$2")"
 }
 
-tconf_fini () {
-	test "$DEBUG" = "yes" && OPT="$OPT -g -DDEBUG=1"
-	{
-		echo "# automaticly generated from $(basename "$0")"
-		tconf_echo_conf PREFIX "$PREFIX"
-		tconf_echo_conf SYSROOT "$SYSROOT"
-		tconf_echo_conf BUILDDIR "$BUILDDIR"
-		tconf_echo_conf_util CC "$CC"
-		tconf_echo_conf_util CXX "$CXX"
-		tconf_echo_conf_util AS "$AS"
-		tconf_echo_conf_util AR "$AR"
-		tconf_echo_conf_util LD "$LD"
-		tconf_echo_conf_util READELF "$READELF"
-		tconf_echo_conf_util OBJCOPY "$OBJCOPY"
-		tconf_echo_conf_util STRIP "$STRIP"
-		tconf_echo_conf_util NM "$NM"
-		tconf_echo_conf_util PKGCONFIG "$PKGCONFIG"
+tconf_gen_conf () {
+	tconf_echo_conf PREFIX "$PREFIX"
+	tconf_echo_conf SYSROOT "$SYSROOT"
+	tconf_echo_conf BUILDDIR "$BUILDDIR"
+	tconf_echo_conf SRCDIR "$SRCDIR"
+	tconf_echo_conf TOP "$TOP"
+	tconf_echo_conf_util CC "$CC"
+	tconf_echo_conf_util CXX "$CXX"
+	tconf_echo_conf_util AS "$AS"
+	tconf_echo_conf_util AR "$AR"
+	tconf_echo_conf_util LD "$LD"
+	tconf_echo_conf_util READELF "$READELF"
+	tconf_echo_conf_util OBJCOPY "$OBJCOPY"
+	tconf_echo_conf_util STRIP "$STRIP"
+	tconf_echo_conf_util NM "$NM"
+	tconf_echo_conf_util PKGCONFIG "$PKGCONFIG"
 
-		# avoid triggering CFLAGS or CXXFLAGS just because of options
-		# use them only if the corresponding compiler is used
-		test -n "$CC"  && tconf_echo_conf CFLAGS "$CFLAGS$OPT"
-		test -n "$CXX" && tconf_echo_conf CXXFLAGS "$CXXFLAGS$OPT"
-		tconf_echo_conf ASFLAGS "$ASFLAGS"
-		tconf_echo_conf ARFLAGS "$ASFLAGS"
-		tconf_echo_conf LDFLAGS "$LDFLAGS"
-		tconf_echo_conf HOST "$HOST"
-		tconf_echo_conf ARCH "$ARCH"
-		tconf_echo_conf DEBUG "$DEBUG"
-		for OPTION in $OPTIONS ; do
-			tconf_echo_conf $OPTION $(tconf_get_var $OPTION)
-		done
-	} > "$TOP/config.mk"
+	# avoid triggering CFLAGS or CXXFLAGS just because of options
+	# use them only if the corresponding compiler is used
+	test -n "$CC"  && tconf_echo_conf CFLAGS "$CFLAGS$OPT"
+	test -n "$CXX" && tconf_echo_conf CXXFLAGS "$CXXFLAGS$OPT"
+	tconf_echo_conf ASFLAGS "$ASFLAGS"
+	tconf_echo_conf ARFLAGS "$ASFLAGS"
+	tconf_echo_conf LDFLAGS "$LDFLAGS"
+	tconf_echo_conf HOST "$HOST"
+	tconf_echo_conf ARCH "$ARCH"
+	tconf_echo_conf DEBUG "$DEBUG"
+	for OPTION in $OPTIONS ; do
+		tconf_echo_conf $OPTION $(tconf_get_var $OPTION)
+	done
+}
+
+tconf_fini () {
 	return 0
 }
 
@@ -225,14 +231,14 @@ tconf_add_subdir () {
 	export CC CXX AS AR LD NM
 	export READELF OBJCOPY STRIP PKGCONFIG
 	export CFLAGS CXXFLAGS ASFLAGS
-	export ARFLAGS LDFLAGS OPT
+	export ARFLAGS LDFLAGS
 	export HOST BUILD TARGET
 	export PREFIX SYSROOT DEBUG
 	export $OPTIONS
 	SUBDIR="$1"
 	shift
 	tconf_print "entering subdir $SUBDIR"
-	(export BUILDDIR="$BUILDDIR/$SUBDIR" && cd "$SUBDIR" && ./configure "$@")
+	(export BUILDDIR="$BUILDDIR/$SUBDIR" && "$SUBDIR"/configure "$@")
 	CODE=$?
 	tconf_print "exiting subdir $SUBDIR"
 	test "$CODE" != 0 && exit $CODE
@@ -476,7 +482,7 @@ tconf_find_build () {
 		tconf_print "$BUILD"
 		return 0
 	fi
-	tconf_print "unknow"
+	tconf_print "unknown"
 	return 1
 }
 
@@ -490,11 +496,30 @@ tconf_find_host () {
 		tconf_print "$HOST"
 		return 0
 	fi
-	tconf_print "unknow"
+	tconf_print "unknown"
 	return 1
 }
 
 tconf_find_os () {
 	tconf_find_build
 	tconf_find_host
+}
+
+tconf_gen_makefiles () {
+	if [ $# = 0 ] ; then
+		tconf_print "usage : tconf_gen_makefiles MAKEFILES..."
+		return 1
+	fi
+
+	for FILE in "$@" ; do
+		REL="${FILE#"$SRCDIR/"}"
+		echo "generate ${REL%.in}"
+		{
+			echo "# automatically generated by $(basename "$0") $TCONF_VERSION
+# from $REL"
+			tconf_gen_conf
+			echo 
+			cat "$FILE"
+		} > "$BUILDDIR/${REL%.in}"
+	done
 }

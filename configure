@@ -1,5 +1,5 @@
 #!/bin/sh
-. ./tconf.sh
+. "$(dirname "$0")/tconf.sh"
 
 OPTIONS="MULTI_LANGUAGES"
 : ${MULTI_LANGUAGES:="yes"}
@@ -17,5 +17,7 @@ tconf_check_func "$CC" "utime.h" "utime"
 tconf_check_func "$CC" "sys/stat.h" "umask"
 tconf_check_func "$CC" "libintl.h" "gettext"
 tconf_check_func "$CC" "libintl.h" "textdomain"
+
+tconf_gen_makefiles "$SRCDIR/Makefile.in"
 
 tconf_fini

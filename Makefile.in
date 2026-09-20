@@ -1,15 +1,14 @@
-TOP = $(CURDIR)
 TMAKE_DIR = $(TOP)/make
 include $(TMAKE_DIR)/tmake-init.mk
 include $(TMAKE_DIR)/tmake-version.mk
 
-DOCS = COPYING.txt README.md
+DOCS = $(SRCDIR)/COPYING.txt $(SRCDIR)/README.md
 DOCSDIR = $(DOCDIR)/tutils
 FILESGROUPS += DOCS
 
 PACKAGE = tutils
-SRCS = $(wildcard src/*.c)
-CFLAGS += -Iinclude
+SRCS = $(wildcard $(SRCDIR)/src/*.c)
+CFLAGS += -I$(SRCDIR)/include
 
 include $(TMAKE_DIR)/tmake-prog.mk
 include $(TMAKE_DIR)/tmake-locale.mk
