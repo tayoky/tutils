@@ -1,5 +1,6 @@
 #include <deflate.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <tutils.h>
 
 #define FLAG_STDOUT     0x01

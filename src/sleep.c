@@ -62,7 +62,7 @@ static int sleep_main(int argc, char **argv) {
 		dur += value;
 	}
 
-	if (sleep(dur) < 0) {
+	if (sleep(dur) > 0) {
 		perror("sleep");
 		return 1;
 	}

@@ -2,8 +2,9 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <tutils.h>
+#include <limits.h>
 #include <unistd.h>
+#include <tutils.h>
 
 #define FLAG_MAX_LINES 0x01
 #define FLAG_MAX_ARGS  0x02

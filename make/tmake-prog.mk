@@ -5,7 +5,7 @@ SRCS ?= $(wildcard *.[cs])
 SRCNAMES = $(notdir $(SRCS))
 SRCDIRS += $(dir $(SRCS))
 OBJS += $(SRCNAMES:%=$(BUILDDIR)/%.o)
-CFLAGS := -std=c99 -I ./ $(CFLAGS)
+CFLAGS := -I ./ $(CFLAGS)
 
 BIN += $(BUILDDIR)/$(PROG)
 BINCLEANFILES += $(BUILDDIR)/$(PROG) $(OBJS)

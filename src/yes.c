@@ -15,4 +15,5 @@ static int yes_main(int argc, char **argv) {
 			puts("y");
 		}
 	}
+	return 0;
 }

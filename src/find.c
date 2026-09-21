@@ -180,7 +180,7 @@ invalid_type:
 		break;
 	case ARG_UID:;
 		uid_t uid = str2uid(str);
-		if (uid < 0) {
+		if ((long)uid < 0) {
 			error(_("invalid username or uid to '%s' : '%s'"), primary->name, str);
 			return -1;
 		}
@@ -334,7 +334,7 @@ static int check_node(file_t *file, node_t *node) {
 	case NODE_NOUSER:
 		return getpwuid(file->st.st_uid) == NULL;
 	case NODE_LINKS:
-		return file->st.st_nlink == node->number;
+		return file->st.st_nlink == (nlink_t)node->number;
 	case NODE_TYPE:
 		return (file->st.st_mode & S_IFMT) == node->f_type;
 	case NODE_USER:
@@ -347,9 +347,9 @@ static int check_node(file_t *file, node_t *node) {
 }
 
 static char *get_basename(const char *path) {
-	// this should work with all basename
+	// this should work with every basename
 	char *first_dup = strdup(path);
-	char *result = strdup(basename(path));
+	char *result = strdup(basename(first_dup));
 	free(first_dup);
 	return result;
 }

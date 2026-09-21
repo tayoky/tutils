@@ -4,6 +4,7 @@
 #ifdef HAVE_SIGNAL
 #include <signal.h>
 #endif
+#include <fcntl.h>
 #include <tutils.h>
 
 #define FLAG_APPEND 0x1

@@ -115,7 +115,7 @@ static void do_stat(const char *path) {
 				printf("%ld", st.st_blocks);
 				break;
 			case 'B':
-				printf("%d", st.st_blksize);
+				printf("%ld", st.st_blksize);
 				break;
 			case 'd':
 				printf("%ld", st.st_dev);
