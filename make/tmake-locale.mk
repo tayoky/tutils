@@ -42,9 +42,10 @@ $(TEMPLATE_POT) : $(SRCS)
 	@mkdir -p "$(@D)"
 	@echo "GEN $(TEMPLATE_POT)"
 	$(Q)xgettext --keyword=_ --keyword=N_ \
+		--directory "$(SRCDIR)" \
 		--package-name="$(PACKAGE)" \
 		--package-version="$(VERSION)" \
-		-o "$@" $^
+		-o "$@" $(patsubst $(SRCDIR)/%,%,$^)
 	$(Q)for I in $(LOCALES) ; do \
 		msgmerge --update $$I "$@"; \
 	done

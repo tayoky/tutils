@@ -1,5 +1,6 @@
 #include <sys/stat.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <tutils.h>
 #include <unistd.h>
@@ -11,6 +12,16 @@ command_t bracket_cmd = {
 	.name = "[",
 	.main = test_main,
 };
+
+static long parse_long(const char *opt, const char *arg) {
+	char *end;
+	long l = strtol(arg, &end, 0);
+	if (end == arg || *end) {
+		error(_("invalid number to '%s' : '%s'"), opt, arg);
+		exit(2);
+	}
+	return l;
+}
 
 // simple test command
 int test(int *argc, char ***r_argv) {
@@ -36,7 +47,7 @@ int test(int *argc, char ***r_argv) {
 		return 0;
 	}
 
-	// then check for one operand test
+	// then check for operands with one argument
 	if (argv[0][0] == '-' && strlen(argv[0]) == 2) {
 		if (*argc < 2) {
 			return 1;
@@ -112,7 +123,7 @@ int test(int *argc, char ***r_argv) {
 		}
 	}
 
-	// check for three operand
+	// check for operands with 3 arguments
 	if (*argc < 3) {
 		return 1;
 	}
@@ -120,9 +131,32 @@ int test(int *argc, char ***r_argv) {
 	(*r_argv) += 3;
 	if (!strcmp(argv[1], "=")) {
 		return strcmp(argv[0], argv[2]) != 0;
-	}
-	if (!strcmp(argv[1], "!=")) {
+	} else if (!strcmp(argv[1], "!=")) {
 		return strcmp(argv[0], argv[2]) == 0;
+	} else if (!strcmp(argv[1], "-eq")) {
+		long l1 = parse_long(argv[1], argv[0]);
+		long l2 = parse_long(argv[1], argv[2]);
+		return l1 != l2;
+	} else if (!strcmp(argv[1], "-ne")) {
+		long l1 = parse_long(argv[1], argv[0]);
+		long l2 = parse_long(argv[1], argv[2]);
+		return l1 != l2;
+	} else if (!strcmp(argv[1], "-lt")) {
+		long l1 = parse_long(argv[1], argv[0]);
+		long l2 = parse_long(argv[1], argv[2]);
+		return l1 >= l2;
+	} else if (!strcmp(argv[1], "-le")) {
+		long l1 = parse_long(argv[1], argv[0]);
+		long l2 = parse_long(argv[1], argv[2]);
+		return l1 > l2;
+	} else if (!strcmp(argv[1], "-gt")) {
+		long l1 = parse_long(argv[1], argv[0]);
+		long l2 = parse_long(argv[1], argv[2]);
+		return l1 <= l2;
+	} else if (!strcmp(argv[1], "-ge")) {
+		long l1 = parse_long(argv[1], argv[0]);
+		long l2 = parse_long(argv[1], argv[2]);
+		return l1 < l2;
 	}
 
 	// other operand not supported
